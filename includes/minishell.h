@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/02 06:43:14 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/03 16:13:19 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,19 @@
 # include <unistd.h>
 # include <stdio.h> // Delete
 
-typedef struct	s_mini
+typedef struct s_data
 {
-	int			i;
+	char			*command;
+	char			*flags;
+	char			*args;
+	struct s_mini	*next;
+}					t_data;
+
+typedef struct s_mini
+{
+	t_data		*data;
 }				t_mini;
+
 /*
 ** MINISHELL
 */
@@ -28,6 +37,7 @@ typedef struct	s_mini
 /*
 ** PARSING
 */
+
 
 /*
 ** UTILS
