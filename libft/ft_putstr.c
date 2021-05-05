@@ -1,26 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_putstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 09:52:34 by meunostu         ###   ########.fr       */
+/*   Created: 2020/02/03 10:33:44 by meunostu          #+#    #+#             */
+/*   Updated: 2021/04/26 11:53:30 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-static void	all_mem_free(t_mini *mini)
+int	ft_putstr(char *str)
 {
-	while (mini->my_env)
-		mem_free(mini->my_env++);
-}
+	int	count;
 
-void	exit_game_with_error(t_mini *mini, char *massage)
-{
-	all_mem_free(mini);
-	printf("Error: %s\n", massage);
-	exit(-1);
+	count = 0;
+	while (*str)
+		count += ft_putchar(*(str++));
+	return (count);
 }

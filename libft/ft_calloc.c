@@ -1,26 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 09:52:34 by meunostu         ###   ########.fr       */
+/*   Created: 2020/10/29 16:05:10 by meunostu          #+#    #+#             */
+/*   Updated: 2021/01/30 08:26:19 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-static void	all_mem_free(t_mini *mini)
+void	*ft_calloc(size_t count, size_t size)
 {
-	while (mini->my_env)
-		mem_free(mini->my_env++);
-}
+	char	*dest;
 
-void	exit_game_with_error(t_mini *mini, char *massage)
-{
-	all_mem_free(mini);
-	printf("Error: %s\n", massage);
-	exit(-1);
+	dest = (char *)malloc(count * size);
+	if (!dest)
+		return (NULL);
+	ft_bzero(dest, count * size);
+	return (dest);
 }

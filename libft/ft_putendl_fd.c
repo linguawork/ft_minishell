@@ -1,26 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 09:52:34 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/06 15:19:08 by meunostu          #+#    #+#             */
+/*   Updated: 2021/01/30 08:26:19 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-static void	all_mem_free(t_mini *mini)
+void	ft_putendl_fd(char *s, int fd)
 {
-	while (mini->my_env)
-		mem_free(mini->my_env++);
-}
-
-void	exit_game_with_error(t_mini *mini, char *massage)
-{
-	all_mem_free(mini);
-	printf("Error: %s\n", massage);
-	exit(-1);
+	if (s != NULL)
+	{
+		write(fd, s, ft_strlen(s));
+		write(fd, "\n", 1);
+	}
 }

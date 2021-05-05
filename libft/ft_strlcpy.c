@@ -1,26 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 09:52:34 by meunostu         ###   ########.fr       */
+/*   Created: 2020/10/28 21:06:11 by meunostu          #+#    #+#             */
+/*   Updated: 2021/01/30 08:26:19 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-static void	all_mem_free(t_mini *mini)
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
-	while (mini->my_env)
-		mem_free(mini->my_env++);
-}
+	size_t	src_len;
 
-void	exit_game_with_error(t_mini *mini, char *massage)
-{
-	all_mem_free(mini);
-	printf("Error: %s\n", massage);
-	exit(-1);
+	if (dst == NULL || src == NULL)
+		return (0);
+	src_len = ft_strlen(src);
+	if (src_len < dstsize)
+		ft_memcpy(dst, src, src_len + 1);
+	else if (dstsize != 0)
+	{
+		ft_memcpy(dst, src, dstsize - 1);
+		dst[dstsize - 1] = '\0';
+	}
+	return (src_len);
 }

@@ -1,26 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 09:52:34 by meunostu         ###   ########.fr       */
+/*   Created: 2020/10/30 16:24:55 by meunostu          #+#    #+#             */
+/*   Updated: 2021/01/30 08:26:19 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-static void	all_mem_free(t_mini *mini)
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	while (mini->my_env)
-		mem_free(mini->my_env++);
-}
+	char			*dest;
+	unsigned int	i;
 
-void	exit_game_with_error(t_mini *mini, char *massage)
-{
-	all_mem_free(mini);
-	printf("Error: %s\n", massage);
-	exit(-1);
+	i = 0;
+	if (!s)
+		return (NULL);
+	dest = (char *)malloc(sizeof(char) * (ft_strlen(s) + 1));
+	if (!dest)
+		return (NULL);
+	while (*s)
+	{
+		dest[i] = f(i, *s++);
+		if (!dest[i])
+			return (NULL);
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
 }
