@@ -6,48 +6,53 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 10:08:12 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/07 13:05:57 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	copy_env(t_mini *mini, char **env)
+static void	copy_env(t_main *main, char **env)
 {
 	int i;
 
 	i = 0;
 	while (env[i])
 		i++;
-	mini->my_env = (char **)malloc(sizeof(char *) * (i + 1));
-	if (!mini->my_env)
+	main->my_env = (char **)malloc(sizeof(char *) * (i + 1));
+	if (!main->my_env)
 	i++;
 	while (--i)
 	{
-		mini->my_env[i] = ft_strdup(env[i]);
-		if (!mini->my_env[i])
-			exit_game_with_error(mini, ERROR_MALLOC);
+		main->my_env[i] = ft_strdup(env[i]);
+		if (!main->my_env[i])
+			exit_game_with_error(main, ERROR_MALLOC);
 	}
 }
-static void	init_shell(t_mini *mini, char **env)
+static void	init_shell(t_main *main, char **env)
 {
-	t_data	data;
+	t_job	job;
+	t_pipe	pipe;
+	t_redir	redir;
 
-	mini->data = &data;
-	mini->exit = 0;
-	copy_env(mini, env);
+	redir.redir_to = 0;
+	main->job = &job;
+	main->job->pipe = &pipe;
+	main->job->pipe->redir = &redir;
+	main->exit = 0;
+	copy_env(main, env);
 }
 
 int	main(int ac, char **av, char **env)
 {
-	t_mini	mini;
+	t_main	main;
 
-	init_shell(&mini, env);
-	while (!mini.exit)
+	init_shell(&main, env);
+	while (!main.exit)
 	{
 		printf("minishell: ");
-		parser(&mini);
-		if (mini.exit == 1)
+		parser(&main);
+		if (main.exit == 1)
 			exit(0);
 	}
 	av[ac] = env[ac];
