@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 08:52:50 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/07 12:59:05 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,35 @@
 
 # define ERROR_MALLOC "malloc"
 
-typedef struct s_data
+
+typedef struct s_redir
 {
 	char			*command;
 	char			*flags;
-	char			*args;
-	struct s_data	*next;
-}					t_data;
+	char			**args;
+	int 			redir_to;
+	struct t_job	*job_next;
+}					t_redir;
 
-typedef struct s_mini
+typedef struct s_pipe
 {
-	t_data		*data;
-	char		**my_env;
-	int			exit;
-}				t_mini;
+	t_redir			*redir;
+	t_redir			*redir_next;
+}					t_pipe;
 
+typedef struct s_job
+{
+	t_pipe			*pipe;
+	t_pipe			*pipe_next;
+}					t_job;
+
+typedef struct s_main
+{
+	t_job			*job;
+	t_job			*next_job;
+	char			**my_env;
+	int				exit;
+}					t_main;
 
 /*
 ** Functoins
@@ -44,12 +58,12 @@ typedef struct s_mini
 /*
 ** PARSING
 */
-void	parser(t_mini *mini);
+void	parser(t_main *main);
 
 
 /*
 ** UTILS
 */
-void	exit_game_with_error(t_mini *mini, char *massage);
+void	exit_game_with_error(t_main *main, char *massage);
 
 #endif //MINISHELL_H

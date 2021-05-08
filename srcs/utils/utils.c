@@ -6,21 +6,21 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/05 09:52:34 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/07 11:41:28 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	all_mem_free(t_mini *mini)
+static void	all_mem_free(t_main *main)
 {
-	while (mini->my_env)
-		mem_free(mini->my_env++);
+	while (main->my_env)
+		mem_free(main->my_env++);
 }
 
-void	exit_game_with_error(t_mini *mini, char *massage)
+void	exit_game_with_error(t_main *main, char *massage)
 {
-	all_mem_free(mini);
+	all_mem_free(main);
 	printf("Error: %s\n", massage);
 	exit(-1);
 }
