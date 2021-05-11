@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/07 12:59:05 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/11 09:22:39 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,13 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
-# include "../libft/libft.h"
+# include "libft.h"
 
+# define NO_VALID_ENV_VAR ".,-'?/$"
+
+/*
+** Errors
+*/
 # define ERROR_MALLOC "malloc"
 
 
@@ -42,6 +47,11 @@ typedef struct s_job
 	t_pipe			*pipe_next;
 }					t_job;
 
+typedef struct s_parser
+{
+	char			*line;
+}					t_parser;
+
 typedef struct s_main
 {
 	t_job			*job;
@@ -51,8 +61,7 @@ typedef struct s_main
 }					t_main;
 
 /*
-** Functoins
-** MINISHELL
+** MAIN
 */
 
 /*
@@ -65,5 +74,12 @@ void	parser(t_main *main);
 ** UTILS
 */
 void	exit_game_with_error(t_main *main, char *massage);
+
+/*
+** TESTS
+*/
+void	tests(void);
+char	*pars_env_variables(t_main *main, char **line);
+void	test_pars_env_variables(t_main *main);
 
 #endif //MINISHELL_H

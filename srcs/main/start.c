@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/07 13:05:57 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/11 09:25:25 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ static void	copy_env(t_main *main, char **env)
 		i++;
 	main->my_env = (char **)malloc(sizeof(char *) * (i + 1));
 	if (!main->my_env)
+		exit_game_with_error(main, ERROR_MALLOC);
 	i++;
 	while (--i)
 	{
@@ -48,12 +49,14 @@ int	main(int ac, char **av, char **env)
 	t_main	main;
 
 	init_shell(&main, env);
+	tests();
+	printf("minishell: ");
 	while (!main.exit)
 	{
-		printf("minishell: ");
 		parser(&main);
 		if (main.exit == 1)
 			exit(0);
+		printf("minishell: ");
 	}
 	av[ac] = env[ac];
 	return (0);
