@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/11 09:22:39 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/18 08:23:21 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,22 @@
 # include "libft.h"
 
 # define NO_VALID_ENV_VAR ".,-'?/$"
+# define NO_VALID_COMMAND_SIMBOLS ":\"'$"
 
 /*
 ** Errors
 */
 # define ERROR_MALLOC "malloc"
+# define ERROR_COMMAND "command not found"
 
+typedef struct s_parser
+{
+	char			*line;
+	int 			cur_c;
+	int 			pars_command;
+	int 			pars_var;
+	int 			pars_args;
+}					t_parser;
 
 typedef struct s_redir
 {
@@ -32,7 +42,7 @@ typedef struct s_redir
 	char			*flags;
 	char			**args;
 	int 			redir_to;
-	struct t_job	*job_next;
+	char			*error;
 }					t_redir;
 
 typedef struct s_pipe
@@ -45,17 +55,12 @@ typedef struct s_job
 {
 	t_pipe			*pipe;
 	t_pipe			*pipe_next;
+	struct t_job	*job_next;
 }					t_job;
-
-typedef struct s_parser
-{
-	char			*line;
-}					t_parser;
 
 typedef struct s_main
 {
 	t_job			*job;
-	t_job			*next_job;
 	char			**my_env;
 	int				exit;
 }					t_main;
@@ -73,13 +78,14 @@ void	parser(t_main *main);
 /*
 ** UTILS
 */
-void	exit_game_with_error(t_main *main, char *massage);
+void	exit_with_error(t_main *main, char *massage);
+int		add_char(char **str, int c);
+int		get_next_char(int *c);
 
 /*
 ** TESTS
 */
 void	tests(void);
-char	*pars_env_variables(t_main *main, char **line);
-void	test_pars_env_variables(t_main *main);
+char	*pars_env_variables(t_main *main, t_parser *parser);
 
 #endif //MINISHELL_H

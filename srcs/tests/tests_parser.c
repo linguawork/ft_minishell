@@ -6,42 +6,70 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/10 10:35:39 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/11 12:17:35 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/11 14:26:02 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void test_pars_env_variables(t_main *main)
+void test_pars_env_variables(t_main *main, t_parser *parser)
 {
-	char *str;
+	parser->line = "$PATH,";
+	(!ft_strnstr(pars_env_variables(main, parser), "$PATH", ft_strlen
+	(parser->line))) ? printf("OK ") : printf("KO ");
 
-	str = "$PATH,";
-	printf("|%s| - $%s\n", str, pars_env_variables(main, &str));
+	parser->line = "$PATH.";
+	(!ft_strnstr(pars_env_variables(main, parser), "$PATH", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
 
-	str = "$PWD";
-	printf("|%s| - $%s\n", str, pars_env_variables(main, &str));
+	parser->line = "$PATH-";
+	(!ft_strnstr(pars_env_variables(main, parser), "$PATH", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
 
-	str = "$321";
-	printf("|%s| - $%s\n", str, pars_env_variables(main, &str));
+	parser->line = "$PATH'";
+	(!ft_strnstr(pars_env_variables(main, parser), "$PATH", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
 
-	str = "$fdsgbkldmbklfdsmklfmd";
-	printf("|%s| - $%s\n", str, pars_env_variables(main, &str));
+	parser->line = "$PATH/";
+	(!ft_strnstr(pars_env_variables(main, parser), "$PATH", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
 
-	str = "$?";
-	printf("|%s| - $%s\n", str, pars_env_variables(main, &str));
+	parser->line = "$PWD";
+	(!ft_strnstr(pars_env_variables(main, parser), "$PWD", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
 
-	str = "$w$e'";
-	printf("|%s| - $%s\n", str, pars_env_variables(main, &str));
+	parser->line = "$321";
+	(!ft_strnstr(pars_env_variables(main, parser), "$3211", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
 
-	str = "$lkjlkjllkdfs$q$w$e$r";
-	printf("|%s| - $%s\n", str, pars_env_variables(main, &str));
+	parser->line = "$fdsgbkldmbklfdsmklfmd";
+	(!ft_strnstr(pars_env_variables(main, parser), "$fdsgbkldmbklfdsmklfmd", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
+
+	parser->line = "$lkjlkjllkdfs$q$w$e$r";
+	(!ft_strnstr(pars_env_variables(main, parser), "$lkjlkjllkdfs", ft_strlen
+			(parser->line))) ? printf("OK ") : printf("KO ");
+
+	parser->line = "$?";
+	printf("\nfix|%s| - $%s\n", parser->line, pars_env_variables(main, parser));
+
+	parser->line = "$1";
+	printf("\nfix|%s| - $%s\n", parser->line, pars_env_variables(main, parser));
+
+	parser->line = "$12hello";
+	printf("\nfix|%s| - $%s\n", parser->line, pars_env_variables(main, parser));
+
+	parser->line = "Hello $2World";
+	printf("\nfix|%s| - $%s\n", parser->line, pars_env_variables(main, parser));
 }
 
 void tests(void)
 {
-	t_main	main;
+	t_main		main;
+	t_parser	parser;
 
-	test_pars_env_variables(&main);
+	printf("Tests\n");
+	test_pars_env_variables(&main, &parser);
+	printf("End tests\n");
 }
 
