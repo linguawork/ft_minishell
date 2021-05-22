@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/21 12:18:06 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/22 07:40:43 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void	parser_command(t_main *main, t_parser *parser)
 	int		c;
 
 	parser->pars_command = 1;
-	while (get_next_char(&c) && c != ' ')
+	while (get_next_char(&c) && c != ' ' && c != '\n')
 	{
 		parser->cur_c = c;
 		if (c == '$')

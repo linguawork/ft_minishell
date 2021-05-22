@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/21 11:44:04 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/22 07:40:43 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,18 @@ static void	copy_env(t_main *main, char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	main->my_env = (char **)malloc(sizeof(char *) * (i + 1));
+	main->my_env = (char **)malloc(sizeof(char *) * (i));
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
-	i++;
-	while (--i)
+	main->my_env[i] = NULL;
+	while (--i >= 0)
 	{
 		main->my_env[i] = ft_strdup(env[i]);
 		if (!main->my_env[i])
 			exit_with_error(main, ERROR_MALLOC);
 	}
 }
+
 static void	init_shell(t_main *main, char **env)
 {
 	t_job	*job;
