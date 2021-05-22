@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/21 13:52:50 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/22 17:54:05 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	parser_args_for_split(t_main *main, t_parser *parser)
 		readed = get_next_char(&c);
 	}
 	main->job->pipe->redir->args = ft_split(parser->line, ' ');
-//	while (main->job->pipe->redir->args != NULL)
+//	while (main->job->pipe->redir->args)
 //		printf("\n%s", *(main->job->pipe->redir->args)++);
 }
 
@@ -100,19 +100,18 @@ void	parser_command(t_main *main, t_parser *parser)
 	int		c;
 
 	parser->pars_command = 1;
-	while (get_next_char(&c) && c != ' ')
+	while (get_next_char(&c) && c != ' ' && c != '\n')
 	{
 		parser->cur_c = c;
 		if (c == '$')
 			pars_env_variables(main, parser);
 		else
 			pars_contract(main, parser);
-		printf("%c", c);
 	}
 	parser->cur_c = c;
 	main->job->pipe->redir->command = parser->line;
-//	mem_free(&parser->line);
 //	printf("%s\n", parser->line);
+	mem_free(&parser->line);
 }
 
 void	parser_start(t_main *main, t_parser *parser)
