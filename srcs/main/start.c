@@ -45,6 +45,7 @@ static void	init_shell(t_main *main, char **env)
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
 	main->exit = 0;
+    main->job->pipe->redir->flags = ft_strdup("-n");
 	copy_env(main, env);
 }
 
@@ -58,6 +59,7 @@ int	main(int ac, char **av, char **env)
 	{
 		write(1, "minishell: ", 11);
 		parser(&main);
+        process_builtins_and_divide_externals(&main);
 		if (main.exit == 1)
 			exit(0);
 	}

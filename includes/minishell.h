@@ -17,6 +17,7 @@
 # include <unistd.h>
 # include <stdio.h>
 # include "libft.h"
+# include <string.h>
 
 # define NO_VALID_ENV_VAR ".,-'?/$"
 # define NO_VALID_COMMAND_SIMBOLS ":\"'$"
@@ -87,5 +88,14 @@ int		get_next_char(int *c);
 */
 void	tests(void);
 char	*pars_env_variables(t_main *main, t_parser *parser);
+
+/*
+** EXECUTION BUILTINS
+*/
+int pwd(t_main *main);
+int	ft_strcmp(const char *s1, const char *s2);
+void process_externals(t_main *main);
+void process_builtins_and_divide_externals(t_main *main);
+
 
 #endif //MINISHELL_H

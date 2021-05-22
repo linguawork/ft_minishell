@@ -34,6 +34,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	while (s2 && *s2)
 		*cat_s++ = *s2++;
 	*cat_s = '\0';
-	free(start_s1);
+//	free(start_s1);
 	return (start_cat_s);
 }

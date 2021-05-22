@@ -1,26 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memcmp.c                                        :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/06 14:23:16 by meunostu          #+#    #+#             */
-/*   Updated: 2021/01/30 08:26:19 by meunostu         ###   ########.fr       */
+/*   Created: 2021/05/16 18:41:33 by areggie           #+#    #+#             */
+/*   Updated: 2021/05/16 18:52:55 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_memcmp(const void *s1, const void *s2, size_t n)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	const unsigned char	*copy1;
-	const unsigned char	*copy2;
+	unsigned char	*line1;
+	unsigned char	*line2;
+	int				i;
 
-	copy1 = s1;
-	copy2 = s2;
-	while (n--)
-		if (*copy1++ != *copy2++)
-			return (*--copy1 - *--copy2);
+	line1 = (unsigned char *)s1;
+	line2 = (unsigned char *)s2;
+	i = 0;
+	while (line1[i] == line2[i] && line1[i] != '\0' && line2[i] != '\0')
+		i++;
+	return (line1[i] - line2[i]);
 	return (0);
 }

@@ -100,18 +100,18 @@ void	parser_command(t_main *main, t_parser *parser)
 	int		c;
 
 	parser->pars_command = 1;
-	while (get_next_char(&c) && c != ' ')
+	while (get_next_char(&c) && c != ' ' && c != '\n')
 	{
 		parser->cur_c = c;
 		if (c == '$')
 			pars_env_variables(main, parser);
 		else
 			pars_contract(main, parser);
-		printf("%c", c);
+//		printf("%c", c);
 	}
 	parser->cur_c = c;
 	main->job->pipe->redir->command = parser->line;
-//	mem_free(&parser->line);
+	parser->line= NULL;
 //	printf("%s\n", parser->line);
 }
 

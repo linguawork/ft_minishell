@@ -9,18 +9,25 @@ int echo(t_main *main)
 	char *flags;
 
 	command = main->job->pipe->redir->command;
+    args = main->job->pipe->redir->args;
 	flags = main->job->pipe->redir->flags;
 	if (command != '\0')
 	{
-		if(!(flags))
-			fputc('\n', stdout);
-		else if (ft_strncmp(flags, "-n", 2) == 0)
-			fputc('\n', stdout);
+	    if (command && !(flags) && !(args))
+            fputc('\n', stdout);
+        else if (command && flags && !(args))
+        {
+            if (ft_strncmp(flags, "-n", 2) == 0)
+
+//	    if(!(flags))
+//			fputc('\n', stdout);
+
 		else if (ft_strncmp(flags, "-", 1) == 0)
 			fputc('\n', stdout);
 		else
 			fputs(flags, stdout);
 	}
+	else
 	// fputc('\n', stdout);
 	return(0);
 }
@@ -69,6 +76,10 @@ int cd(t_main *main)
 
 int pwd(t_main *main)
 {
+	char *command;
+	char *flags;
+	command = main->job->pipe->redir->command;
+	flags = main->job->pipe->redir->flags;
 	char buffer[1024];
 
 	// if (*flags != NULL) // по сабжекту не нужно отрабатывать аргументы
@@ -123,7 +134,7 @@ void	double_for_sort_algo(t_main *main, int size)
     char **args;
 
 	args = main->job->pipe->redir->args;
-	const char *tmp;
+	char *tmp;
 	int i;
 	int j;
 
@@ -144,10 +155,10 @@ void	double_for_sort_algo(t_main *main, int size)
 	}
 }
 
-int how_many_lines(const char **a)
+int how_many_lines(char **a)
 {
 	int i;
-	const char **env;
+	char **env;
 
 	i = 0;
 	env = a;
@@ -185,8 +196,8 @@ void reconstruct(t_main *main)
 
 	str[0] = 0;
 	splitstr = ft_split(*args,'=');// можно в одинарных (это инт и он символ)
-	strcpy(str, splitstr[0]);
-	strcat(str, "=");
+	strcpy(str, splitstr[0]);//написать свою функцию
+	strcat(str, "=");//написать свою функцию
 	strcat(str,"\"");// нельзя в одинарных (это инт) в двойных это char pointer
 	strcat(str, splitstr[1]);
 	strcat(str,"\"");// нельзя в одинарных (это инт) в двойных это char pointer
@@ -231,9 +242,9 @@ void check_equal_sign_add_quotes(t_main *main)
 		while (args[i][j] != '\0')
 		{
 			if (args[i][j] == '=' && args[i][j+1] != 0)
-				reconstruct(&args[i]);
+				reconstruct(main);
 			else if (args[i][j] == '=' && args[i][j + 1] == 0)
-				withzero(&args[i]);
+				withzero(main);
 			++j;
 		}
 		++i;
@@ -332,20 +343,20 @@ void divider(t_main *main)
 	char *name;
 	char *value;
 	char *s;
-	int i;
 	int len;
 	int len2;
 	char **args;
 
 	args = main->job->pipe->redir->args;
 	len = char_count(*args); // lenght до знака равно
-	s = (char *)malloc(sizeof(char *)*(len+1 + len2+1+3));
-	s[0] = 0;
 	name = ft_substr(*args, 0, len);
 	value = ft_strdup(ft_strchr(*args, ('='+1)));
-	len2=ft_strlen(value);
+	len2 = ft_strlen(value);
 
+	s = (char *)malloc(sizeof(char *)*(len+1 + len2+1+3));
+	s[0] = 0;
 
+	
 	strcpy(s, name); // пока сделаем без маллока
 	strcat(s, "=");
 	strcat(s, "\"");
@@ -364,25 +375,26 @@ int export(t_main *main)
 	char *prefix;
 	int len;
 	int newlen;
+    int i;
 
 	envir = main->my_env;
 	args = main->job->pipe->redir->args;
 	prefix = "declare -x ";
-	len = how_many_lines((const char **)envir);
-	newenvir = (const char **)malloc(sizeof(char*)*(len+1));
-
-	int i = 0;
-	while (envir[i]) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
-	{
-		newenvir[i] = ft_strdup(envir[i]);// лучше записывать через индекс
-		i++;
-	}
-	newenvir[i] = NULL;
+	len = how_many_lines(envir);
+//	newenvir = ( char **)malloc(sizeof(char*)*(len+1));
+//
+//	int i = 1;
+//	while (envir[i]) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
+//	{
+//		newenvir[i] = ft_strdup(envir[i]);// лучше записывать через индекс
+//		i++;
+//	}
+//	newenvir[i] = NULL;
 	newlen= how_many_lines(newenvir);
-	i = 0;
+	i = 1;
 	if (command && *args == NULL)
 	{
-		double_for_sort_algo(envir, newlen);
+		double_for_sort_algo(main, newlen);
 		while(newenvir[i])
 		{
 			newenvir[i] = ft_strjoin(prefix, newenvir[i]);
@@ -398,12 +410,12 @@ int export(t_main *main)
 
 		// divider(args);
 		check_duplicates(main);
-		check_equal_sign_add_quotes(&args[i]);
+		check_equal_sign_add_quotes(main);
 		while ( i >= 0 && args[i] != NULL)
 		{
 			newlen= how_many_lines(newenvir);
 			printf("%d\n", newlen);
-			newenvir = (const char **)realloc(envir,(sizeof(char*)*(newlen + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
+			newenvir = ( char **)realloc(envir,(sizeof(char*)*(newlen + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
 			newenvir[newlen + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
 			// printf("test%s\n", args[i]);
 			newenvir[newlen] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива
@@ -414,7 +426,7 @@ int export(t_main *main)
 		}
 
 		i = 0;
-		double_for_sort_algo(newenvir, newlen);
+		double_for_sort_algo(main, newlen);
 		while(newenvir[i])
 		{
 			newenvir[i] = ft_strjoin(prefix, newenvir[i]);
