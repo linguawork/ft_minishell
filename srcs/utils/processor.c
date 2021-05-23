@@ -1,6 +1,15 @@
 #include "minishell.h"
 
 // предлагаю использовать указатель на структуру
+int count_args(char **args)
+{
+    int i;
+
+    i = 0;
+    while(args[i])
+        i++;
+    return(i);
+}
 
 int echo(t_main *main)
 {
@@ -15,27 +24,31 @@ int echo(t_main *main)
 	{
 	    if (command && !(flags) && !(args))
             fputc('\n', stdout);
-        else if (command && flags && !(args))
+	    if (command && flags && !(args))
         {
-            if (ft_strncmp(flags, "-n", 2) == 0)
-
-//	    if(!(flags))
-//			fputc('\n', stdout);
-
-		else if (ft_strncmp(flags, "-", 1) == 0)
-			fputc('\n', stdout);
-		else
-			fputs(flags, stdout);
+            if (command && ft_strncmp(flags, "-n", 2) == 0)
+                return(1);
+        }
+        if (command && !*flags && *args)
+        {
+            if (command && args)
+            {
+                fputs(*args++, stdout);
+                while (*args)
+                {
+                    fputc(' ', stdout);
+                    fputs(*args++, stdout);
+                }
+            }
+        }
 	}
-	else
-	// fputc('\n', stdout);
+
 	return(0);
 }
 
 int cd(t_main *main)
-// функция отрабатывает, но прога завершается и просходит возврат директорию программы
 {
-	char *command;
+	char *command;// функция отрабатывает, но прога завершается и просходит возврат директорию программы
 	char **args;
 	char *flags;
 
@@ -131,9 +144,11 @@ int env(t_main *main)
 
 void	double_for_sort_algo(t_main *main, int size)
 {
-    char **args;
+    // char **args;
+	char **envir;
 
-	args = main->job->pipe->redir->args;
+	// args = main->job->pipe->redir->args;
+	envir = main->my_env;
 	char *tmp;
 	int i;
 	int j;
@@ -144,11 +159,11 @@ void	double_for_sort_algo(t_main *main, int size)
 		j = i + 1;
 		while (j < size)
 		{
-			if (ft_strcmp(args[i], args[j]) > 0)
+			if (ft_strcmp(envir[i], envir[j]) > 0)
 			{
-				tmp = args[i];
-				args[i] = args[j];
-				args[j] = tmp;
+				tmp = envir[i];
+				envir[i] = envir[j];
+				envir[j] = tmp;
 			}
 			j++;
 		}
@@ -368,69 +383,59 @@ void divider(t_main *main)
 
 int export(t_main *main)
 {
+    // 2021 05 22 20-31 export works with space
 	char *command;
 	char **args;
 	char **envir;
-	char **newenvir;
+
 	char *prefix;
 	int len;
-	int newlen;
+
     int i;
 
 	envir = main->my_env;
+    command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
 	prefix = "declare -x ";
 	len = how_many_lines(envir);
-//	newenvir = ( char **)malloc(sizeof(char*)*(len+1));
-//
-//	int i = 1;
-//	while (envir[i]) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
-//	{
-//		newenvir[i] = ft_strdup(envir[i]);// лучше записывать через индекс
-//		i++;
-//	}
-//	newenvir[i] = NULL;
-	newlen= how_many_lines(newenvir);
-	i = 1;
-	if (command && *args == NULL)
+
+	i = 0;
+	if (command && !args)
 	{
-		double_for_sort_algo(main, newlen);
-		while(newenvir[i])
+		double_for_sort_algo(main, len);
+		while(envir[i])
 		{
-			newenvir[i] = ft_strjoin(prefix, newenvir[i]);
-			printf("%s\n", newenvir[i]);
+			envir[i] = ft_strjoin(prefix, envir[i]);
+			printf("%s\n", envir[i]);
 			i++;
 		}
 	}
 	if (command && *args != NULL)
 	{
-		// printf("I am working on it\n");
-		int i;
 		i = 0;
-
 		// divider(args);
 		check_duplicates(main);
 		check_equal_sign_add_quotes(main);
-		while ( i >= 0 && args[i] != NULL)
+		while ( i >= 0 && args[i] != NULL) // в цикле реалок еще на один аргумент с каждым новым аргументом
 		{
-			newlen= how_many_lines(newenvir);
-			printf("%d\n", newlen);
-			newenvir = ( char **)realloc(envir,(sizeof(char*)*(newlen + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
-			newenvir[newlen + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
+			len= how_many_lines(envir);
+			printf("%d\n", len); // проверка длины до
+			envir = ( char **)realloc(envir,(sizeof(char*)*(len + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
+			envir[len + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
 			// printf("test%s\n", args[i]);
-			newenvir[newlen] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива
-			newlen = newlen + 1;
-			i++;
-			newlen= how_many_lines(newenvir);
-			printf("%d\n", newlen);
+			envir[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива
+			len = len + 1; // длина увеличили на один так как я вставил еще один аргумент
+			i++; // переход к следующему аргументу
+			len= how_many_lines(envir);// длина должна быть больше на одну единицу на выходе чем при входе
+			printf("%d\n", len); // проверка длины после
 		}
 
 		i = 0;
-		double_for_sort_algo(main, newlen);
-		while(newenvir[i])
+		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов
+		while(envir[i])
 		{
-			newenvir[i] = ft_strjoin(prefix, newenvir[i]);
-			printf("%s\n", newenvir[i]);
+			envir[i] = ft_strjoin(prefix, envir[i]);
+			printf("%s\n", envir[i]);
 			i++;
 		}
 	}
@@ -462,7 +467,11 @@ void process_builtins_and_divide_externals(t_main *main)
 
 void process_externals(t_main *main)
 {
-	printf("worked in externals");
+	char *command; 
+
+	command = main->job->pipe->redir->command;
+
+	printf("%s", command);
 }
 
 //int echo(t_main *main)

@@ -59,6 +59,6 @@ int			ft_putstr(char *str);
 int			get_next_line(int fd, char **line);
 void		mem_free(char **str);
 int			my_malloc(char **dest, int size);
-int	ft_strcmp(const char *s1, const char *s2);
+int         ft_strcmp(const char *s1, const char *s2);
 
 #endif

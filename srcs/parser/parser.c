@@ -100,7 +100,7 @@ void	parser_command(t_main *main, t_parser *parser)
 	int		c;
 
 	parser->pars_command = 1;
-	while (get_next_char(&c) && c != ' ' && c != '\n')
+	while (get_next_char(&c) && c != ' ')
 	{
 		parser->cur_c = c;
 		if (c == '$')
