@@ -149,10 +149,10 @@ int env(t_main *main)
 
 void	double_for_sort_algo(t_main *main, int size)
 {
-    // char **args;
+    char **args;
 	char **envir;
 
-	// args = main->job->pipe->redir->args;
+	args = main->job->pipe->redir->args;
 	envir = main->my_env;
 	char *tmp;
 	int i;
@@ -170,6 +170,8 @@ void	double_for_sort_algo(t_main *main, int size)
 				envir[i] = envir[j];
 				envir[j] = tmp;
 			}
+//            if (ft_strcmp(envir[i], envir[j]) <= 0)
+//			    return;
 			j++;
 		}
 	}
@@ -392,10 +394,8 @@ int export(t_main *main)
 	char *command;
 	char **args;
 	char **envir;
-
 	char *prefix;
 	int len;
-
     int i;
 
 	envir = main->my_env;
@@ -417,34 +417,35 @@ int export(t_main *main)
 	}
 	if (command && args)// условие != NULL дает сегу
 	{
-		i = 0;
+
 		// divider(args);
 		check_duplicates(main);
 		check_equal_sign_add_quotes(main);
-		while ( i >= 0 && args[i] != NULL) // в цикле реалок еще на один аргумент с каждым новым аргументом
+        i = 0;
+		while ( i >= 0 && args[i]) // в цикле реалок еще на один аргумент с каждым новым аргументом
 		{
 			len= how_many_lines(envir);
 			printf("%d\n", len); // проверка длины до
 			envir = ( char **)realloc(envir,(sizeof(char*)*(len + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
-			envir[len + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
 			// printf("test%s\n", args[i]);
 			envir[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива
-			len = len + 1; // длина увеличили на один так как я вставил еще один аргумент
+            envir[len + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
+//			len = len + 1; //  Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлять
 			i++; // переход к следующему аргументу
-			len= how_many_lines(envir);// длина должна быть больше на одну единицу на выходе чем при входе
-			printf("--->%d\n", len); // проверка длины после
-			printf("here");
+//			len= how_many_lines(envir);//  Длина у меня уже увеличилась на один в функции realloc
+//			printf("--->%d\n", len); // проверка длины после
 		}
 
-		printf("here");
-		i = 0;
+
 		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов
+        i = 0;
 		while(envir[i])
 		{
 			envir[i] = ft_strjoin(prefix, envir[i]);
 			printf("%s\n", envir[i]);
 			i++;
 		}
+//		printf("inside");
 	}
 	return(0);
 }
@@ -480,23 +481,5 @@ void process_externals(t_main *main)
 
 	printf("%s", command);
 }
-
-//int echo(t_main *main)
-//{
-//	char *command;
-//	char **args;
-//
-//	command = main->job->pipe->redir->command;
-//	args = main->job->pipe->redir->args;
-//	while (command)
-//	{
-//		if(!(args))
-//			fputc(' ', stdout);
-//		else
-//			fputs(*(args), stdout);
-//	}
-//	fputc('\n', stdout);
-//	return(0);
-//}
 
 
