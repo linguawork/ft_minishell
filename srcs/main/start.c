@@ -46,8 +46,8 @@ static void	init_shell(t_main *main, char **env)
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
 	main->exit = 0;
-//    main->job->pipe->redir->flags = ft_strdup("");
-    main->job->pipe->redir->flags = ft_strdup("-n");
+    main->job->pipe->redir->flags = ft_strdup("");
+//    main->job->pipe->redir->flags = ft_strdup("-n");
 	copy_env(main, env);
 }
 
