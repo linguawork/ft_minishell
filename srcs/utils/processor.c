@@ -1,17 +1,8 @@
 #include "minishell.h"
 
 // предлагаю использовать указатель на структуру
-int count_args(char **args)
-{
-    int i;
 
-    i = 0;
-    while(args[i])
-        i++;
-    return(i);
-}
-
-int echo(t_main *main) // работает с костылем флага в init shell
+int echo(t_main *main)
 {
 	char *command;
 	char **args;
@@ -22,15 +13,14 @@ int echo(t_main *main) // работает с костылем флага в ini
 	flags = main->job->pipe->redir->flags;
 	if (command != '\0')
 	{
-	    if (command && !*flags && !args)// при подаче просто команды echo без аргументов не заходит
-		// если я пишу в условии !args тогда заходит, но нам нужно разыменование как во флагах
+	    if (command && !(flags) && !(args))
             fputc('\n', stdout);
 	    if (command && flags && !(args))
         {
             if (command && ft_strncmp(flags, "-n", 2) == 0)
                 return(1);
         }
-        if (command && !*flags && args)
+        if (command && !*flags && *args)
         {
             if (command && args)
             {
@@ -43,36 +33,35 @@ int echo(t_main *main) // работает с костылем флага в ini
             }
         }
 	}
-
+	else
+	// fputc('\n', stdout);
 	return(0);
 }
 
 int cd(t_main *main)
+// функция отрабатывает, но прога завершается и просходит возврат директорию программы
 {
-	char *command;// функция отрабатывает, но прога завершается и просходит возврат директорию программы
+	char *command;
 	char **args;
 	char *flags;
 
-	// pwd(main); //проверка для отработки cd
+	pwd(main); //проверка для отработки cd
 	const char *p;
 
 	command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
 	flags = main->job->pipe->redir->flags;
-
-	if (args)
+	if (*args != NULL)
 	{
-		// printf("testing args\n");
 		p = *args;
 		// printf("%s", args[0]);
 		chdir(p);
 		// printf("%s\n", p);
-		// pwd (main); //проверка для отработки cd
+		pwd (main); //проверка для отработки cd
 	}
 	else
 	{
 		p = getenv("HOME");
-		// printf("no args"); //проверка отработки условия
 		if (p == NULL)
 		{
 			printf("There is no HOME env var\n");
@@ -83,11 +72,11 @@ int cd(t_main *main)
 		// 	pwd (command, flags); //проверка для отработки cd
 		// }
 	}
-	// if (chdir(p) < 0) // это условие я отключил на период пока не запускаем в цикле потом можно включить
-	// {
-	// 	perror(p);
-	// 	return(1);
-	// }
+	if (chdir(p) < 0)
+	{
+		perror(p);
+		return(1);
+	}
 	return(0);
 }
 
@@ -127,15 +116,14 @@ int exit_command(t_main *main)
 int env(t_main *main)
 {
 	char *command;
-	// char **args;// комманда env по сабджекту подается без аргументов и флагов
+	char **args;
 	char **envir;
 
 	command = main->job->pipe->redir->command;
-	// args = main->job->pipe->redir->args;
+	args = main->job->pipe->redir->args;
 	envir = main->my_env;
 
-	//if ((command && !args))// комманда env по сабджекту подается без аргументов и флагов
-	if (command)
+	if ((command && *args == NULL) || (command && *args != NULL))
 	{
 		while(*envir)
 		{
@@ -164,7 +152,7 @@ void	double_for_sort_algo(t_main *main, int size)
 		j = i + 1;
 		while (j < size)
 		{
-			if (ft_strcmp(envir[i], envir[j]) > 0 && (envir[i] != NULL || envir[j] != NULL))
+			if (ft_strcmp(envir[i], envir[j]) > 0)
 			{
 				tmp = envir[i];
 				envir[i] = envir[j];
@@ -388,61 +376,69 @@ void divider(t_main *main)
 
 int export(t_main *main)
 {
-    // 2021 05 22 20-31 export works with space
 	char *command;
 	char **args;
 	char **envir;
-
+	char **newenvir;
 	char *prefix;
 	int len;
-
+	int newlen;
     int i;
 
 	envir = main->my_env;
-    command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
 	prefix = "declare -x ";
 	len = how_many_lines(envir);
-
-	i = 0;
-	if (command && !args)
+//	newenvir = ( char **)malloc(sizeof(char*)*(len+1));
+//
+//	int i = 1;
+//	while (envir[i]) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
+//	{
+//		newenvir[i] = ft_strdup(envir[i]);// лучше записывать через индекс
+//		i++;
+//	}
+//	newenvir[i] = NULL;
+	newlen= how_many_lines(newenvir);
+	i = 1;
+	if (command && *args == NULL)
 	{
-		double_for_sort_algo(main, len);
-		while(envir[i])
+		double_for_sort_algo(main, newlen);
+		while(newenvir[i])
 		{
-			envir[i] = ft_strjoin(prefix, envir[i]);
-			printf("%s\n", envir[i]);
+			newenvir[i] = ft_strjoin(prefix, newenvir[i]);
+			printf("%s\n", newenvir[i]);
 			i++;
 		}
 	}
-	if (command && args)// условие != NULL дает сегу
+	if (command && *args != NULL)
 	{
+		// printf("I am working on it\n");
+		int i;
 		i = 0;
+
 		// divider(args);
 		check_duplicates(main);
 		check_equal_sign_add_quotes(main);
-		while ( i >= 0 && args[i] != NULL) // в цикле реалок еще на один аргумент с каждым новым аргументом
+		while ( i >= 0 && args[i] != NULL)
 		{
-			len= how_many_lines(envir);
-			printf("%d\n", len); // проверка длины до
-			envir = ( char **)realloc(envir,(sizeof(char*)*(len + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
-			envir[len + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
+			newlen= how_many_lines(newenvir);
+			printf("%d\n", newlen);
+			newenvir = ( char **)realloc(envir,(sizeof(char*)*(newlen + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
+			newenvir[newlen + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
 			// printf("test%s\n", args[i]);
-			envir[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива
-			len = len + 1; // длина увеличили на один так как я вставил еще один аргумент
-			i++; // переход к следующему аргументу
-			len= how_many_lines(envir);// длина должна быть больше на одну единицу на выходе чем при входе
-			printf("--->%d\n", len); // проверка длины после
-			printf("here");
+			newenvir[newlen] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива
+			newlen = newlen + 1;
+			i++;
+			newlen= how_many_lines(newenvir);
+			printf("%d\n", newlen);
 		}
 
-		printf("here");
 		i = 0;
-		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов
-		while(envir[i])
+		double_for_sort_algo(main, newlen);
+		while(newenvir[i])
 		{
-			envir[i] = ft_strjoin(prefix, envir[i]);
-			printf("%s\n", envir[i]);
+			newenvir[i] = ft_strjoin(prefix, newenvir[i]);
+			printf("%s\n", newenvir[i]);
 			i++;
 		}
 	}
@@ -474,11 +470,7 @@ void process_builtins_and_divide_externals(t_main *main)
 
 void process_externals(t_main *main)
 {
-	char *command; 
-
-	command = main->job->pipe->redir->command;
-
-	printf("%s", command);
+	printf("worked in externals");
 }
 
 //int echo(t_main *main)
