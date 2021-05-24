@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/23 09:23:35 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/22 17:54:05 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	parser_command(t_main *main, t_parser *parser)
 	parser->cur_c = c;
 	main->job->pipe->redir->command = parser->line;
 //	printf("%s\n", parser->line);
-	parser->line = NULL;
+    parser->line= NULL;
 }
 
 void	parser_start(t_main *main, t_parser *parser)
