@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                        :+:      :+:    :+:   */
+/*   start.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/21 13:52:50 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/23 18:40:10 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,18 @@ static void	copy_env(t_main *main, char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	main->my_env = (char **)malloc(sizeof(char *) * (i + 1));
+	main->my_env = (char **)malloc(sizeof(char *) * (i + 1));// добавление 1 не помогло
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
-	i++;
-	while (--i)
+	main->my_env[i] = NULL;
+	while (--i >= 0)
 	{
 		main->my_env[i] = ft_strdup(env[i]);
 		if (!main->my_env[i])
 			exit_with_error(main, ERROR_MALLOC);
 	}
 }
+
 static void	init_shell(t_main *main, char **env)
 {
 	t_job	*job;
@@ -45,7 +46,9 @@ static void	init_shell(t_main *main, char **env)
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
 	main->exit = 0;
-    main->job->pipe->redir->flags = ft_strdup("-n");
+	main->job->pipe->redir->flags = ft_strdup(""); // раскомментить если нет флага и будут аргументы
+    // main->job->pipe->redir->flags = ft_strdup("-n"); // раскомментить если будет флаг -n и нет аргументов пока так работает на 23 мая
+	//если закомментить то -n идет как аргумент и распечатывается как аргумент
 	copy_env(main, env);
 }
 
