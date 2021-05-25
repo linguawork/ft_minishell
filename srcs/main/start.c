@@ -58,7 +58,7 @@ int	main(int ac, char **av, char **env)
 
 	init_shell(&main, env);
 //	tests();
-	if (!main.exit)
+	while (!main.exit)// в условии работает а в цикле перестает работать echo, pwd странно работает
 	{
 		write(1, "minishell: ", 11);
 		parser(&main);

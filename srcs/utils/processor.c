@@ -205,7 +205,7 @@ void	*arrays_free(char **s)
 	return (NULL);
 }
 
-void reconstruct(t_main *main)
+void put_quotes_in_str(t_main *main)
 {
 	char **splitstr;
 	char *str;
@@ -229,7 +229,7 @@ void reconstruct(t_main *main)
 	arrays_free(splitstr);
 }
 
-void withzero(t_main *main)
+void put_quotes_in_no_str(t_main *main)
 {
 	// char **splitstr;
 	char *str;
@@ -264,16 +264,16 @@ void check_equal_sign_add_quotes(t_main *main)
 		while (args[i][j] != '\0')
 		{
 			if (args[i][j] == '=' && args[i][j+1] != 0)
-				reconstruct(main);
+				put_quotes_in_str(main);
 			else if (args[i][j] == '=' && args[i][j + 1] == 0)
-				withzero(main);
+				put_quotes_in_no_str(main);
 			++j;
 		}
 		++i;
 	}
 }
 
-void reconstruct2(t_main *main)
+void change_value(t_main *main)
 {
 	char **splitstr;
 	char **splitenvir;
@@ -293,25 +293,25 @@ void reconstruct2(t_main *main)
 	splitstr = ft_split(*args,'=');// можно в одинарных (это инт и он символ)
 	// strcpy(s, splitstr[0]); // пока сделаем без маллока
 	// strcat(s, "=");
-	len = ft_strlen(splitstr[0]);// для сравнения в strncmp
+	len = ft_strlen(splitstr[0]);// длина имени для сравнения в strncmp
 	len2 = ft_strlen(splitstr[1]);// длина хвоста аргумента
 	while(envir[i])
 	{
 		// printf("%s ||| %s\n", );
 		// if (strncmp(envir[i], splitstr[0], 4) == 0)
 		// 	printf("OKEY\n");
-		if (flag == 0 && ft_strncmp(envir[i], splitstr[0], len) == 0) // сравнение без знака равно
+		if (flag == 0 && ft_strncmp(envir[i], splitstr[0], len) == 0) // сравнение аргумента до знака равно но без знака равно
 		{
 			printf("inside\n");
 			splitenvir = ft_split(envir[i], '=');
 			free((void *)envir[i]); //переназначение типа (так как free требует  void*)
-			envir[i] = (char *)malloc(sizeof(char*)*(len +1 + len2 + 1));
-			strcpy((char *)envir[i], splitenvir[0]);
-			strcat((char *)envir[i], "=");
-			strcat((char *)envir[i], splitstr[1]);
-			printf("%s\n", envir[i]);
-			arrays_free(splitstr);
-			flag = 1;
+			envir[i] = (char *)malloc(sizeof(char*)*(len +1 + len2 + 1)); // выделение памяти под длину имени и хвостоа
+			strcpy((char *)envir[i], splitenvir[0]);// копия имени в выделенную память
+			strcat((char *)envir[i], "="); // приклеивание =
+			strcat((char *)envir[i], splitstr[1]); // приклеивание хвоста
+			printf("%s\n", envir[i]);// проверка заполенения выделенной памяти
+			arrays_free(splitstr);// освобождение отработанной строки
+			flag = 1;// флаг чтобы не заходил больше одного раза
 		}
 		// printf("WTF\n%s\n", envir[i]);
 		// while(envir[i])
@@ -324,7 +324,7 @@ void reconstruct2(t_main *main)
 	// arrays_free(splitstr);
 }
 
-void check_duplicates(t_main *main)
+void check_duplicate_name(t_main *main)
 {
 	int i;
 	int j;
@@ -341,7 +341,7 @@ void check_duplicates(t_main *main)
 		{
 			if ((args[i][j] == '=' && args[i][j+1] != 0) || \
 			(args[i][j] == '=' && args[i][j + 1] == 0))
-				reconstruct2(main);
+				change_value(main);
 			++j;
 		}
 		++i;
@@ -370,12 +370,12 @@ void divider(t_main *main)
 	char **args;
 
 	args = main->job->pipe->redir->args;
-	len = char_count(*args); // lenght до знака равно
-	name = ft_substr(*args, 0, len);
-	value = ft_strdup(ft_strchr(*args, ('='+1)));
-	len2 = ft_strlen(value);
+	len = char_count(*args); // длина имени до знака равно
+	name = ft_substr(*args, 0, len);// отрубаю до знака равно имя
+	value = ft_strdup(ft_strchr(*args, ('='+1)));//отрубаю после знака равно строку значения
+	len2 = ft_strlen(value);// замер длина строки значения
 
-	s = (char *)malloc(sizeof(char *)*(len+1 + len2+1+3));
+	s = (char *)malloc(sizeof(char *)*(len+1 + len2+1+3)); // выделение памяти для новой строки
 	s[0] = 0;
 
 	
@@ -408,18 +408,33 @@ int export(t_main *main)
 	if (command && !args)
 	{
 		double_for_sort_algo(main, len);
-		while(envir[i])
-		{
-			envir[i] = ft_strjoin(prefix, envir[i]);
-			printf("%s\n", envir[i]);
-			i++;
-		}
+        if(ft_strncmp(envir[i], "declare -x", 10) == 0 && envir[i] != NULL)
+        {
+            while (envir[i])
+            {
+                printf("%s\n", envir[i]);
+                i++;
+            }
+        }
+        else
+        {
+            while(envir[i])
+            {
+        //            while(ft_strncmp(envir[i], "declare -x", 10) == 0)
+        //                i++;
+                envir[i] = ft_strjoin(prefix, envir[i]);
+                printf("%s\n", envir[i]);
+        //            if(envir[i] == NULL)
+        //                return(1);
+                i++;
+            }
+        }
 	}
 	if (command && args)// условие != NULL дает сегу
 	{
 
 		// divider(args);
-		check_duplicates(main);
+		check_duplicate_name(main);
 		check_equal_sign_add_quotes(main);
         i = 0;
 		while ( i >= 0 && args[i]) // в цикле реалок еще на один аргумент с каждым новым аргументом
@@ -437,14 +452,14 @@ int export(t_main *main)
 		}
 
 
-		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов
-        i = 0;
-		while(envir[i])
-		{
-			envir[i] = ft_strjoin(prefix, envir[i]);
-			printf("%s\n", envir[i]);
-			i++;
-		}
+//		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов
+//        i = 0;
+//		while(envir[i])
+//		{
+//			envir[i] = ft_strjoin(prefix, envir[i]);
+//			printf("%s\n", envir[i]);
+//			i++;
+//		}
 //		printf("inside");
 	}
 	return(0);
