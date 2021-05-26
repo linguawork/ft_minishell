@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   start.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
 /*   Updated: 2021/05/23 18:40:10 by areggie          ###   ########.fr       */
@@ -19,7 +19,7 @@ void	copy_env(t_main *main, char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	main->my_env = (char **)malloc(sizeof(char *) * (i + 1));// добавление 1 не помогло
+	main->my_env = (char **)malloc(sizeof(char *) * (i));// добавление 1 не помогло
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
 	main->my_env[i] = NULL;

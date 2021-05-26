@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/30 15:01:51 by meunostu          #+#    #+#             */
-/*   Updated: 2021/04/27 03:04:38 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/26 09:12:23 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	while (s2 && *s2)
 		*cat_s++ = *s2++;
 	*cat_s = '\0';
-//	free(start_s1);
+	free(start_s1);
 	return (start_cat_s);
 }

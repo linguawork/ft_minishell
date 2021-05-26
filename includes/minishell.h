@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/22 17:54:05 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/26 09:12:41 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
-# include "libft.h"
 # include <string.h>
+# include "libft.h"
 
 # define NO_VALID_ENV_VAR ".,-'?/$"
 # define NO_VALID_COMMAND_SIMBOLS ":\"'$"
