@@ -93,10 +93,11 @@ char	*pars_env_variables(t_main *main, t_parser *parser);
 /*
 ** EXECUTION BUILTINS
 */
-int pwd(t_main *main);
-int	ft_strcmp(const char *s1, const char *s2);
-void process_externals(t_main *main);
-void process_builtins_and_divide_externals(t_main *main);
+int     pwd(t_main *main);
+int     ft_strcmp(const char *s1, const char *s2);
+void    process_externals(t_main *main);
+void    process_builtins_and_divide_externals(t_main *main);
+void	copy_env(t_main *main, char **env);
 
 
 #endif //MINISHELL_H

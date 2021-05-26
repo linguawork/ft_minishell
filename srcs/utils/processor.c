@@ -28,7 +28,7 @@ int echo(t_main *main) // работает с костылем флага в ini
 	    if (command && flags && !(args))
         {
             if (command && ft_strncmp(flags, "-n", 2) == 0)
-                return(1);
+                return (1);
         }
         if (command && !*flags && args)
         {
@@ -408,6 +408,8 @@ int export(t_main *main)
 	if (command && !args)
 	{
 		double_for_sort_algo(main, len);
+        len= how_many_lines(envir);//  Длина у меня уже увеличилась на один в функции realloc
+        printf("export--->%d\n", len); // проверка длины после
         if(ft_strncmp(envir[i], "declare -x", 10) == 0 && envir[i] != NULL)
         {
             while (envir[i])
@@ -440,16 +442,17 @@ int export(t_main *main)
 		while ( i >= 0 && args[i]) // в цикле реалок еще на один аргумент с каждым новым аргументом
 		{
 			len= how_many_lines(envir);
-			printf("%d\n", len); // проверка длины до
+			printf("export+arg in->%d\n", len); // проверка длины до
 			envir = ( char **)realloc(envir,(sizeof(char*)*(len + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
 			// printf("test%s\n", args[i]);
 			envir[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива
             envir[len + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
 //			len = len + 1; //  Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлять
 			i++; // переход к следующему аргументу
-//			len= how_many_lines(envir);//  Длина у меня уже увеличилась на один в функции realloc
-//			printf("--->%d\n", len); // проверка длины после
+			len= how_many_lines(envir);//  Длина у меня уже увеличилась на один в функции realloc
+			printf("export+arg out--->%d\n", len); // проверка длины после
 		}
+        copy_env(main, envir);
 
 
 //		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов

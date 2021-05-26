@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static void	copy_env(t_main *main, char **env)
+void	copy_env(t_main *main, char **env)
 {
 	int i;
 
