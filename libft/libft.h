@@ -6,7 +6,7 @@
 /*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/06 16:31:31 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/26 09:12:23 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/26 09:20:57 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,5 @@ int			ft_putstr(char *str);
 int			get_next_line(int fd, char **line);
 void		mem_free(char **str);
 int			my_malloc(char **dest, int size);
-int         ft_strcmp(const char *s1, const char *s2);
 
 #endif
