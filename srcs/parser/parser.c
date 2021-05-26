@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/22 07:40:43 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/26 12:02:07 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,36 +63,30 @@ void	pars(t_main *main, t_parser *parser)
 	}
 }
 
-void	parser_args(t_main *main, t_parser *parser)
+void	parser_flags(t_main *main, t_parser *parser)
 {
 	int		c;
-	parser->pars_args = 1;
-	while (get_next_char(&c) == 1 && c != ' ')
-	{
-		if (c == '$')
-			pars_env_variables(main, parser);
-		else
-			pars_contract(main, parser);
-		printf("%c", c);
-	}
-	main->job->pipe->redir->command = parser->line;
-//	printf("%s\n", parser->line);
+
+	parser->pars_flags = 1;
+	add_char(&parser->line, parser->cur_c);
+	if (!get_next_char(parser, &c) || c == ' ' || c == '\n')
+		return ;
+	add_char(&parser->line, c);
+	while (get_next_char(parser, &c) == 1 && c != ' ' && c != '\n')
+		add_char(&parser->line, c);
+	main->job->pipe->redir->flags = parser->line;
+	parser->line = NULL;
 }
 
 void	parser_args_for_split(t_main *main, t_parser *parser)
 {
 	int		c;
-	int readed;
 
-	readed = get_next_char(&c);
-	while (readed == 1 && c != '\n')
-	{
+	if (parser->cur_c != ' ' && parser->cur_c != '-')
+		add_char(&parser->line, parser->cur_c);
+	while (get_next_char(parser, &c) && c != '\n')
 		add_char(&parser->line, c);
-		readed = get_next_char(&c);
-	}
 	main->job->pipe->redir->args = ft_split(parser->line, ' ');
-//	while (main->job->pipe->redir->args != NULL)
-//		printf("\n%s", *(main->job->pipe->redir->args)++);
 }
 
 void	parser_command(t_main *main, t_parser *parser)
@@ -100,28 +94,34 @@ void	parser_command(t_main *main, t_parser *parser)
 	int		c;
 
 	parser->pars_command = 1;
-	while (get_next_char(&c) && c != ' ' && c != '\n')
+	while (get_next_char(parser, &c) && c != ' ' && c != '\n')
 	{
-		parser->cur_c = c;
 		if (c == '$')
 			pars_env_variables(main, parser);
 		else
 			pars_contract(main, parser);
-		printf("%c", c);
 	}
-	parser->cur_c = c;
 	main->job->pipe->redir->command = parser->line;
-//	mem_free(&parser->line);
-//	printf("%s\n", parser->line);
+	parser->line = NULL;
 }
 
 void	parser_start(t_main *main, t_parser *parser)
 {
+	int c;
 	parser_command(main, parser);
+	if (parser->cur_c == '\n')
+		return ;
+	if (get_next_char(parser, &c) && c == '-')
+		parser_flags(main, parser);
+	if (parser->cur_c == '\n')
+		return ;
 	parser_args_for_split(main, parser);
 
-//	pars(main, parser);
-	main->exit = 0;
+//	printf("command: %s\n", main->job->pipe->redir->command);
+//	printf("flags: %s\n", main->job->pipe->redir->flags);
+//	while (main->job->pipe->redir->args)
+//		printf("\n%s", *main->job->pipe->redir->args++);
+
 }
 
 void	init_parser(t_parser *parser)
@@ -138,7 +138,7 @@ void	parser(t_main *main)
 
 	init_parser(&parser);
 	parser_start(main, &parser);
-	main->exit = 0;
+	parser.line = NULL;
 //	get_next_line(0, &parser.line);
 ////	printf("%s\n", parser.line);
 //	if (ft_strnstr(parser.line, "exit", 4))

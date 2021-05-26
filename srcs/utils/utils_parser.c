@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 08:32:49 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/22 07:40:39 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/26 10:20:51 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	add_char(char **str, int c)
 	return (1);
 }
 
-int	get_next_char(int *c)
+int	get_next_char(t_parser *parser,int *c)
 {
 	char	*buf;
 	int		readed;
@@ -48,6 +48,7 @@ int	get_next_char(int *c)
 	else if (readed < 0)
 		return (-1);
 	*c = *buf;
+	parser->cur_c = *buf;
 	mem_free(&buf);
 	return (1);
 }

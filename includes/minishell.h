@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/22 07:40:39 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/26 10:55:32 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
+# include <string.h>
 # include "libft.h"
 
 # define NO_VALID_ENV_VAR ".,-'?/$"
@@ -34,6 +35,7 @@ typedef struct s_parser
 	int 			pars_command;
 	int 			pars_var;
 	int 			pars_args;
+	int 			pars_flags;
 }					t_parser;
 
 typedef struct s_redir
@@ -80,12 +82,15 @@ void	parser(t_main *main);
 */
 void	exit_with_error(t_main *main, char *massage);
 int		add_char(char **str, int c);
-int		get_next_char(int *c);
+int		get_next_char(t_parser *parser,int *c);
 
 /*
 ** TESTS
 */
 void	tests(void);
 char	*pars_env_variables(t_main *main, t_parser *parser);
+
+void	process_externals(t_main *main);
+void	process_builtins_and_divide_externals(t_main *main);
 
 #endif //MINISHELL_H
