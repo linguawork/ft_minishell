@@ -82,7 +82,7 @@ void	parser(t_main *main);
 */
 void	exit_with_error(t_main *main, char *massage);
 int		add_char(char **str, int c);
-int		get_next_char(int *c);
+int		get_next_char( int *c);
 
 /*
 ** TESTS

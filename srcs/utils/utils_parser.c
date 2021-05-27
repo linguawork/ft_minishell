@@ -36,7 +36,7 @@ int	add_char(char **str, int c)
 	return (1);
 }
 
-int	get_next_char(int *c)
+int		get_next_char( int *c)
 {
 	char	*buf;
 	int		readed;
