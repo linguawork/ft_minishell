@@ -47,6 +47,7 @@ static void	init_shell(t_main *main, char **env)
 	main->job->pipe->redir = redir;
 	main->exit = 0;
 	main->job->pipe->redir->flags = ft_strdup(""); // раскомментить если нет флага и будут аргументы
+	main->job->pipe->redir->args = NULL; // раскомментить если нет флага и будут аргументы
     // main->job->pipe->redir->flags = ft_strdup("-n"); // раскомментить если будет флаг -n и нет аргументов пока так работает на 23 мая
 	//если закомментить то -n идет как аргумент и распечатывается как аргумент
 	copy_env(main, env);

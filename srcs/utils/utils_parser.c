@@ -36,7 +36,7 @@ int	add_char(char **str, int c)
 	return (1);
 }
 
-int		get_next_char( int *c)
+int		get_next_char( t_parser *parser, int *c)
 {
 	char	*buf;
 	int		readed;
@@ -48,6 +48,7 @@ int		get_next_char( int *c)
 	else if (readed < 0)
 		return (-1);
 	*c = *buf;
+	parser->cur_c = *buf;
 	mem_free(&buf);
 	return (1);
 }

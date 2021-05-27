@@ -22,7 +22,7 @@ int echo(t_main *main) // работает с костылем флага в ini
 	flags = main->job->pipe->redir->flags;
 	if (command != '\0')
 	{
-	    if (command && !*flags && !args)// при подаче просто команды echo без аргументов не заходит
+	    if (command && !flags && !args)// при подаче просто команды echo без аргументов не заходит
 		// если я пишу в условии !args тогда заходит, но нам нужно разыменование как во флагах
             fputc('\n', stdout);
 	    if (command && flags && !(args))
@@ -30,16 +30,22 @@ int echo(t_main *main) // работает с костылем флага в ini
             if (command && ft_strncmp(flags, "-n", 2) == 0)
                 return (1);
         }
-        if (command && !*flags && args)
+        if (command && !flags && args)
         {
             if (command && args)
             {
-                fputs(*args++, stdout);
-                while (*args)
+//                fputs(*args, stdout);
+//                printf("here");
+                write(1, *args, ft_strlen(*args));
+                while (*++args)
                 {
-                    fputc(' ', stdout);
-                    fputs(*args++, stdout);
+                    write(1, " ", 1);
+                    write(1, *args, ft_strlen(*args));
+
+//                    fputc(' ', stdout);
+//                    fputs(*args, stdout);
                 }
+                write(1, "\n", 1);
             }
         }
 	}
