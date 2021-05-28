@@ -8,7 +8,7 @@ TESTS_DIR = ./srcs/tests/
 
 MAIN_FILES = start.c
 PARS_FILES = parser.c
-UTILS_FILES = utils.c utils_parser.c
+UTILS_FILES = utils.c processor.c utils_parser.c
 TESTS_FILES = tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))
@@ -20,6 +20,7 @@ SRC_FILES = $(MAIN) $(PARS) $(UTILS) $(TESTS)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 FLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g #-fsanitize=address
+
 CC= gcc $(FLAGS)
 
 all:$(NAME) $?
@@ -30,6 +31,7 @@ all:$(NAME) $?
 $(NAME): $(OBJ_FILES)
 	$(MAKE) -C $(LIBFT_PATH)
 	$(CC) $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME)
+
 
 clean:
 	$(MAKE) clean -C $(LIBFT_PATH)
