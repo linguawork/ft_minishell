@@ -148,30 +148,30 @@ int exit_command(t_main *main)
 	exit(1);
 }
 
-int check_equal_sign_for_env(t_main *main)
-{
-    int i;
-    int j;
-    char **env;
-
-    env = main->my_env;
-    i = 0;
-    while(env[i] != NULL)
-    {
-        j = 0;
-        while (env[i][j] != '\0')
-        {
-            if (env[i][j] == '=')
-            {
-                return (1);
-                break;
-            }
-            j++;
-        }
-        i++;
-    }
-    return(0);
-}
+//int check_equal_sign_for_env(t_main *main)
+//{
+//    int i;
+//    int j;
+//    char **env;
+//
+//    env = main->my_env;
+//    i = 0;
+//    while(env[i] != NULL)
+//    {
+//        j = 0;
+//        while (env[i][j] != '\0')
+//        {
+//            if (env[i][j] == '=')
+//            {
+//                return (1);
+//                break;
+//            }
+//            j++;
+//        }
+//        i++;
+//    }
+//    return(0);
+//}
 
 int env(t_main *main)
 {
@@ -219,13 +219,8 @@ int env(t_main *main)
 	return(0);
 }
 
-void	double_for_sort_algo(t_main *main, int size)
+void	double_for_sort_algo(char **envir, int size)
 {
-    char **args;
-	char **envir;
-
-	args = main->job->pipe->redir->args;
-	envir = main->my_env;
 	char *tmp;
 	int i;
 	int j;
@@ -447,6 +442,22 @@ void divider(t_main *main)
 	*args = s;
 	free(s);
 }
+char** env_recorder(t_main *main)
+{
+    char **e;
+    int length;
+
+    length = how_many_lines((char **) main->my_env);
+    e = (char **) malloc(sizeof(char *) * (length));
+
+    int i = 0;
+    while (main->my_env[i]) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
+    {
+        e[i] = main->my_env[i];// лучше записывать через индекс
+        i++;
+    }
+    return(e);
+}
 
 int export(t_main *main)
 {
@@ -457,42 +468,42 @@ int export(t_main *main)
 	char *prefix;
 	int len;
     int i;
-    int j;
+//    int j;
 
-	envir = main->my_env;
+//	envir = main->my_env;
+    envir = env_recorder(main);
     command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
 	prefix = "declare -x ";
-	len = how_many_lines(envir);
+//	len = how_many_lines(envir);
 
 	i = 0;
 
 	if (command && !args)
 	{
-
         len= how_many_lines(envir);//  Длина у меня уже увеличилась на один в функции realloc
         printf("export--->%d\n", len); // проверка длины после
-        double_for_sort_algo(main, len);
-        if(ft_strncmp(envir[i], "declare -x", 10) == 0 && envir[i] != NULL)
-        {
+//        double_for_sort_algo(main, len);
+//        if(ft_strncmp(envir[i], "declare -x", 10) == 0 && envir[i] != NULL)
+//        {
 //            double_for_sort_algo(main, len);
-            j = 0;
-            while (envir[i])
-            {
-                if(envir[i][j+11] == 'd') // первая ячейка с нулевого элемента
-                {
-                    // printf("here");
-                    // break ;
-                    i++;
-                    if(envir[i] == NULL)
-                        return(1);
-                }
-                printf("%s\n", envir[i]);
-                i++;
-            }
-        }
-        else
-        {
+//            j = 0;
+//            while (envir[i])
+//            {
+//                if(envir[i][j+11] == 'd') // первая ячейка с нулевого элемента
+//                {
+//                    // printf("here");
+//                    // break ;
+//                    i++;
+//                    if(envir[i] == NULL)
+//                        return(1);
+//                }
+//                printf("%s\n", envir[i]);
+//                i++;
+//            }
+//        }
+//        else
+//        {
 //            double_for_sort_algo(main, len);
             while( envir[i] != NULL)
             {
@@ -518,7 +529,7 @@ int export(t_main *main)
                        return(1);
                 i++;
             }
-        }
+            double_for_sort_algo(envir, len);
 	}
 	if (command && args)// условие != NULL дает сегу
 	{
@@ -546,7 +557,7 @@ int export(t_main *main)
 //			printf("export+arg out--->%d\n", len); // проверка длины посл
 		}
 		copy_env(main, envir);
-        double_for_sort_algo(main, len);
+        double_for_sort_algo(envir, len);
 
 
 //		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов
@@ -558,6 +569,7 @@ int export(t_main *main)
 //			i++;
 //		}
 //		printf("inside");
+        arrays_free(envir);
 	}
 	return(0);
 }
