@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/26 12:02:07 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/28 12:02:10 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,11 @@ void	parser_flags(t_main *main, t_parser *parser)
 	parser->pars_flags = 1;
 	add_char(&parser->line, parser->cur_c);
 	if (!get_next_char(parser, &c) || c == ' ' || c == '\n')
-		return ;
+    {
+        main->job->pipe->redir->args = malloc(sizeof(char *) * 1);
+        *main->job->pipe->redir->args = parser->line;
+        return ;
+    }
 	add_char(&parser->line, c);
 	while (get_next_char(parser, &c) == 1 && c != ' ' && c != '\n')
 		add_char(&parser->line, c);
@@ -136,6 +140,9 @@ void	parser(t_main *main)
 {
 	t_parser	parser;
 
+    main->job->pipe->redir->command = NULL;
+    main->job->pipe->redir->flags = NULL;
+    main->job->pipe->redir->args = NULL;
 	init_parser(&parser);
 	parser_start(main, &parser);
 	parser.line = NULL;

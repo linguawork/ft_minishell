@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/26 10:55:32 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/05/28 12:02:10 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void	parser(t_main *main);
 */
 void	exit_with_error(t_main *main, char *massage);
 int		add_char(char **str, int c);
-int		get_next_char(t_parser *parser,int *c);
+int		get_next_char(t_parser *parser, int *c);
 
 /*
 ** TESTS
@@ -90,7 +90,14 @@ int		get_next_char(t_parser *parser,int *c);
 void	tests(void);
 char	*pars_env_variables(t_main *main, t_parser *parser);
 
-void	process_externals(t_main *main);
-void	process_builtins_and_divide_externals(t_main *main);
+/*
+** EXECUTION BUILTINS
+*/
+int     pwd(t_main *main);
+int     ft_strcmp(const char *s1, const char *s2);
+void    process_externals(t_main *main);
+void    process_builtins_and_divide_externals(t_main *main);
+void	copy_env(t_main *main, char **env);
+
 
 #endif //MINISHELL_H
