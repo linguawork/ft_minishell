@@ -11,6 +11,20 @@ int count_args(char **args)
     return(i);
 }
 
+int how_many_lines(char **a)
+{
+    int i;
+    char **env;
+
+    i = 0;
+    env = a;
+    while(env[i])
+    {
+        i++;
+    }
+    return(i);
+}
+
 int echo(t_main *main) // работает с костылем флага в init shell
 {
 	char *command;
@@ -134,23 +148,71 @@ int exit_command(t_main *main)
 	exit(1);
 }
 
+int check_equal_sign_for_env(t_main *main)
+{
+    int i;
+    int j;
+    char **env;
+
+    env = main->my_env;
+    i = 0;
+    while(env[i] != NULL)
+    {
+        j = 0;
+        while (env[i][j] != '\0')
+        {
+            if (env[i][j] == '=')
+            {
+                return (1);
+                break;
+            }
+            j++;
+        }
+        i++;
+    }
+    return(0);
+}
+
 int env(t_main *main)
 {
 	char *command;
 	// char **args;// комманда env по сабджекту подается без аргументов и флагов
 	char **envir;
+	int len;
+//	int flag;
+	int i;
+	int j;
 
 	command = main->job->pipe->redir->command;
 	// args = main->job->pipe->redir->args;
 	envir = main->my_env;
 
+    len= how_many_lines(envir);//  Длина у меня уже увеличилась на один в функции realloc
+    printf("export--->%d\n", len); // проверка длины после
+//    flag = check_equal_sign_for_env(main);
 	//if ((command && !args))// комманда env по сабджекту подается без аргументов и флагов
 	if (command)
 	{
-		while(*envir)
+	    j = 0;
+	    i = 0;
+		while(envir[i])
 		{
-			printf("%s\n", *envir);
-			envir++;
+//		    if (flag == 1)
+
+//            while (envir[i][j] != '\0')
+//            {
+//                if (ft_strchr("=", envir[i][j]))
+//                {
+//                    printf("--->%s\n", envir[i]);
+//                    i++;
+//                }
+////                if (!(ft_strchr("=", envir[i][j])))
+////                    i++;
+//                j++;
+//            }
+            if (ft_strchr(envir[i], '='))
+                printf("%s\n", envir[i]);
+            i++;
 		}
 
 	}
@@ -185,20 +247,6 @@ void	double_for_sort_algo(t_main *main, int size)
 			j++;
 		}
 	}
-}
-
-int how_many_lines(char **a)
-{
-	int i;
-	char **env;
-
-	i = 0;
-	env = a;
-	while(env[i])
-	{
-		i++;
-	}
-	return(i);
 }
 
 void	*arrays_free(char **s)
@@ -282,6 +330,8 @@ void check_equal_sign_add_quotes(t_main *main)
 		++i;
 	}
 }
+
+
 
 void change_value(t_main *main)
 {
@@ -446,22 +496,23 @@ int export(t_main *main)
 //            double_for_sort_algo(main, len);
             while( envir[i] != NULL)
             {
-                j = 0;
-                while(ft_strncmp(envir[i], "declare -x", 10) == 0) // здесь точное количество элементов счет с 1 не с 0
-                {
-
-                    if(envir[i][j+11] == 'd') // первая ячейка с нулевого элемента
-					{
-						// printf("here");
-                        // break ;
-						i++;
-						if(envir[i] == NULL)
-                    		return(1);
-					}
-					printf("%s\n", envir[i]);
-                    i++;
-                }
-                envir[i] = ft_strjoin(prefix, envir[i]);
+//                j = 0;
+//                while(ft_strncmp(envir[i], "declare -x", 10) == 0) // здесь точное количество элементов счет с 1 не с 0
+//                {
+//
+//                    if(envir[i][j+11] == 'd') // первая ячейка с нулевого элемента
+//					{
+//						// printf("here");
+//                        // break ;
+//						i++;
+//						if(envir[i] == NULL)
+//                    		return(1);
+//					}
+//					printf("%s\n", envir[i]);
+//                    i++;
+//                }
+//                envir[i] = ft_strjoin(prefix, envir[i]);
+                printf("%s", prefix);
                 printf("%s\n", envir[i]);
                	if(envir[i] == NULL)
                        return(1);
@@ -486,8 +537,10 @@ int export(t_main *main)
 			// printf("test%s\n", args[i]);
 			envir[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
             envir[len + 1] = NULL; // сместили указатель на ноль по индексу длины рядов массива
-            envir[len] = ft_strjoin(prefix, envir[len]);// так как новый добавленный в конце аргумент не имеет префикса я его добавляю в конец и перезаписываю
-			len = len + 1; //  Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлять
+//            printf("%s", prefix);
+//            printf("%s\n", envir[i]);
+//            envir[len] = ft_strjoin(prefix, envir[len]);// так как новый добавленный в конце аргумент не имеет префикса я его добавляю в конец и перезаписываю
+			len++; //  Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлять
 			i++; // переход к следующему аргументу
 //			len= how_many_lines(envir);//  Длина у меня уже увеличилась на один в функции realloc
 //			printf("export+arg out--->%d\n", len); // проверка длины посл
