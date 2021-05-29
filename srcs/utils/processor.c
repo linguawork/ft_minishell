@@ -79,17 +79,19 @@ int cd(t_main *main)
 	command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
 	flags = main->job->pipe->redir->flags;
+//
 
 	if (args)
 	{
 		// printf("testing args\n");
 		p = *args;
-		// printf("%s", args[0]);
+		 printf("%s", args[0]);
 		chdir(p);
 		// printf("%s\n", p);
 		// pwd (main); //проверка для отработки cd
 	}
-	else
+//	else
+	if(!args)
 	{
 		p = getenv("HOME");
 		// printf("no args"); //проверка отработки условия
@@ -103,11 +105,11 @@ int cd(t_main *main)
 		// 	pwd (command, flags); //проверка для отработки cd
 		// }
 	}
-	// if (chdir(p) < 0) // это условие я отключил на период пока не запускаем в цикле потом можно включить
-	// {
-	// 	perror(p);
-	// 	return(1);
-	// }
+	 if (chdir(p) < 0) // это условие я отключил на период пока не запускаем в цикле потом можно включить
+	 {
+	 	perror(p);
+	 	return(1);
+	 }
 	return(0);
 }
 
@@ -560,6 +562,7 @@ int export(t_main *main)
 		}
 		copy_env(main, envir);
         double_for_sort_algo(envir, len);
+		// sleep(100);
 
 
 //		double_for_sort_algo(main, len);// сортировка с новой длиной после добавления всех элементов
