@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/05/23 18:40:10 by areggie          ###   ########.fr       */
+/*   Updated: 2021/06/07 19:31:36 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	init_shell(t_main *main, char **env)
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
 	main->exit = 0;
-	main->job->pipe->redir->flags = ft_strdup(""); // раскомментить если нет флага и будут аргументы
+	main->job->pipe->redir->flags = NULL; // раскомментить если нет флага и будут аргументы // Эта строчка течет я записал NULL  а было strdup("")
 	main->job->pipe->redir->args = NULL; // раскомментить если нет флага и будут аргументы
     // main->job->pipe->redir->flags = ft_strdup("-n"); // раскомментить если будет флаг -n и нет аргументов пока так работает на 23 мая
 	//если закомментить то -n идет как аргумент и распечатывается как аргумент
