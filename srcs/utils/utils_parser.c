@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 08:32:49 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/12 17:32:59 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/14 12:26:59 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ int	add_char(char **str, int c)
 		return (0);
 	if (*str)
 		ft_memcpy(res, *str, len);
-	res[len] = c;
+	res[len++] = c;
+	res[len] = '\0';
 	mem_free(str);
 	*str = res;
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/12 17:32:59 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/12 17:52:00 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,3 +24,14 @@ void	exit_with_error(t_main *main, char *massage)
 	printf("Error: %s\n", massage);
 	exit(-1);
 }
+
+void	arr_free(char ***str)
+{
+	while (*str && **str)
+	{
+		free(**str);
+		**str = NULL;
+		(**str)++;
+	}
+}
+
