@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/10 22:24:50 by areggie          ###   ########.fr       */
+/*   Updated: 2021/06/14 13:25:14 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdio.h>
-# include "libft.h"
 # include <string.h>
 # include <errno.h>
+# include "libft.h"
 
 # define NO_VALID_ENV_VAR ".,-'?/$"
 # define NO_VALID_COMMAND_SIMBOLS ":\"'$"
@@ -33,10 +33,13 @@ typedef struct s_parser
 {
 	char			*line;
 	int 			cur_c;
+	char			*variable;
+	char			*variable_value;
 	int 			pars_command;
 	int 			pars_var;
 	int 			pars_args;
 	int 			pars_flags;
+	int 			args_i;
 }					t_parser;
 
 typedef struct s_redir
@@ -84,12 +87,13 @@ void	parser(t_main *main);
 void	exit_with_error(t_main *main, char *massage);
 int		add_char(char **str, int c);
 int		get_next_char(t_parser *parser, int *c);
+void	arr_free(char ***str);
 
 /*
 ** TESTS
 */
 void	tests(void);
-char	*pars_env_variables(t_main *main, t_parser *parser);
+void	pars_env_variable(t_parser *parser);
 
 /*
 ** EXECUTION BUILTINS

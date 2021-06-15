@@ -9,7 +9,7 @@ TESTS_DIR = ./srcs/tests/
 MAIN_FILES = start.c
 PARS_FILES = parser.c
 UTILS_FILES = utils.c processor.c utils_parser.c utils_processor.c
-TESTS_FILES = tests_parser.c
+TESTS_FILES = #tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))
 PARS = $(addprefix $(PARS_DIR), $(PARS_FILES))
@@ -19,7 +19,8 @@ TESTS = $(addprefix $(TESTS_DIR), $(TESTS_FILES))
 SRC_FILES = $(MAIN) $(PARS) $(UTILS) $(TESTS)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
-FLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g
+FLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g #-fsanitize=address
+
 CC= gcc $(FLAGS)
 
 all:$(NAME) $?
