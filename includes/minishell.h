@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/14 13:25:14 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/16 10:54:04 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,13 @@
 # include <string.h>
 # include "libft.h"
 
-# define NO_VALID_ENV_VAR ".,-'?/$"
-# define NO_VALID_COMMAND_SIMBOLS ":\"'$"
+# define NO_VALID_ENV_VAR ".,-'/"
+# define NO_VALID_COMMAND_SIMBOLS ":\"'"
 
 /*
 ** Errors
 */
-# define ERROR_MALLOC "malloc"
+# define ERROR_MALLOC "error malloc"
 # define ERROR_COMMAND "command not found"
 
 typedef struct s_parser
