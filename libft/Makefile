@@ -38,7 +38,8 @@ SRC = ft_memcpy.c\
     get_next_line.c\
     mem_free.c\
     my_malloc.c\
-    ft_strcmp.c
+    ft_strcmp.c\
+    ft_itoa.c
 
 OBJS = $(SRC:.c=.o)
 FLAGS = -Wall -Wextra -Werror
