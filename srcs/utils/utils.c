@@ -29,7 +29,7 @@ void	arr_free(char ***str)
 {
 	while (*str && **str)
 	{
-		free(**str);
+		mem_free(*str);
 		**str = NULL;
 		(**str)++;
 	}

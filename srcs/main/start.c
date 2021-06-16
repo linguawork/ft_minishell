@@ -55,7 +55,8 @@ static void	init_shell(t_main *main, char **env)
 void	end_session(t_main *main)
 {
 	mem_free(&main->job->pipe->redir->command);
-	arr_free(&main->job->pipe->redir->args);
+	main->job->pipe->redir->args = NULL;// TODO LEAK
+//	arr_free(&main->job->pipe->redir->args);
 }
 
 int	main(int ac, char **av, char **env)
