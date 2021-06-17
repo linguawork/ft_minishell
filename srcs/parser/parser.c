@@ -15,8 +15,8 @@
 t_pipe *pipe_next_address(t_main *main)
 {
 	struct t_job *job;
-	struct t_pipe *pipe;
-	struct t_redir *redir;
+//	struct t_pipe *pipe;
+//	struct t_redir *redir;
 
 	if (!main->job->pipe_next->redir->command)
 		return (main->job->pipe_next);
@@ -123,15 +123,15 @@ void	append_command_to_main(t_main *main, t_parser *parser)
 	parser->pars_command = 1;
 }
 
-void	print_params(t_main *main)
-{
-	int i;
-
-	i = 0;
-	printf("command: %s", main->job->pipe->redir->command);
-	while (main->job->pipe->redir->args && *main->job->pipe->redir->args)
-		printf("\nargv[%d]: %s", i++, *main->job->pipe->redir->args++);
-}
+//void	print_params(t_main *main)
+//{
+//	int i;
+//
+//	i = 0;
+//	printf("command: %s", main->job->pipe->redir->command);
+//	while (main->job->pipe->redir->args && *main->job->pipe->redir->args)
+//		printf("\nargv[%d]: %s", i++, *main->job->pipe->redir->args++);
+//}
 
 void	check_simbols_and_append_line(t_main *main, t_parser *parser)
 {
@@ -176,7 +176,7 @@ void	parser_go(t_main *main, t_parser *parser)
 			check_simbols_and_append_line(main, parser);
 	}
 	append_arg_to_main(main, parser);
- 	print_params(main);
+// 	print_params(main);
 }
 
 void	init_parser(t_parser *parser)
