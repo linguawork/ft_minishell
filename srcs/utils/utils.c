@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/12 17:52:00 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/17 10:57:15 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,8 @@ void	arr_free(char ***str)
 {
 	while (*str && **str)
 	{
-		free(**str);
+		mem_free(*str);
 		**str = NULL;
 		(**str)++;
 	}
 }
-
