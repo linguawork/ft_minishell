@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/16 10:54:04 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/17 08:33:04 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 t_pipe *pipe_next_address(t_main *main)
 {
 	struct t_job *job;
-//	struct t_pipe *pipe;
-//	struct t_redir *redir;
+	struct t_pipe *pipe;
+	struct t_redir *redir;
 
 	if (!main->job->pipe_next->redir->command)
 		return (main->job->pipe_next);
@@ -172,7 +172,7 @@ void	parser_start(t_main *main, t_parser *parser)
 	parser_command(main, parser);
 	if (parser->cur_c != '\n')
 		parser_args(main, parser);
-// 	print_params(main);
+ 	print_params(main);
 }
 
 void	init_parser(t_parser *parser)
