@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/12 10:56:10 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/17 08:47:47 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,26 @@
 # include <string.h>
 # include "libft.h"
 
-# define NO_VALID_ENV_VAR ".,-'?/$"
-# define NO_VALID_COMMAND_SIMBOLS ":\"'$"
+# define NO_VALID_ENV_VAR ".,-'/"
+# define NO_VALID_COMMAND_SIMBOLS ":\"'"
 
 /*
 ** Errors
 */
-# define ERROR_MALLOC "malloc"
+# define ERROR_MALLOC "error malloc"
 # define ERROR_COMMAND "command not found"
 
 typedef struct s_parser
 {
 	char			*line;
 	int 			cur_c;
+	char			*variable;
+	char			*variable_value;
 	int 			pars_command;
 	int 			pars_var;
 	int 			pars_args;
 	int 			pars_flags;
+	int 			args_i;
 }					t_parser;
 
 typedef struct s_redir
@@ -83,12 +86,13 @@ void	parser(t_main *main);
 void	exit_with_error(t_main *main, char *massage);
 int		add_char(char **str, int c);
 int		get_next_char(t_parser *parser, int *c);
+void	arr_free(char ***str);
 
 /*
 ** TESTS
 */
 void	tests(void);
-char	*pars_env_variables(t_main *main, t_parser *parser);
+void	pars_env_variable(t_parser *parser);
 
 /*
 ** EXECUTION BUILTINS
