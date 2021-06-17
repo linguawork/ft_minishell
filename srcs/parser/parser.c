@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/16 10:54:04 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/17 10:44:08 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 t_pipe *pipe_next_address(t_main *main)
 {
 	struct t_job *job;
-//	struct t_pipe *pipe;
-//	struct t_redir *redir;
+	struct t_pipe *pipe;
+	struct t_redir *redir;
 
 	if (!main->job->pipe_next->redir->command)
 		return (main->job->pipe_next);
@@ -76,7 +76,7 @@ void	add_value_in_line(t_parser *parser)
 	mem_free(&parser->variable);
 }
 
-void	pars_env_and_add_to_pars_line(t_parser *parser, t_main *main)
+void	pars_env_and_append_line(t_parser *parser, t_main *main)
 {
 	int		c;
 
@@ -102,59 +102,25 @@ void	copy_matrix(char ***dst, char **src, int len)
 		*dst[i] = src[i];
 }
 
-void	append_arg(char ***dst, t_parser *parser)
+void	append_arg_to_main(t_main *main, t_parser *parser)
 {
 	char **src;
 	char **tmp;
 
-	src = *dst;
+	src = main->job->pipe->redir->args;
 	tmp = (char **)malloc(sizeof(char *) * (parser->args_i + 2));
 	copy_matrix(&tmp, src, parser->args_i);
 	tmp[parser->args_i++] = parser->line;
 	tmp[parser->args_i] = NULL;
-	*dst = tmp;
+	main->job->pipe->redir->args = tmp;
 	parser->line = NULL;
 }
 
-void	parser_args(t_main *main, t_parser *parser)
+void	append_command_to_main(t_main *main, t_parser *parser)
 {
-	int		c;
-
-	parser->pars_args = 1;
-	while (get_next_char(parser, &c) && c != '\n')
-	{
-		if (c == '$')
-			pars_env_and_add_to_pars_line(parser, main);
-		else if (c == ' ')
-			append_arg(&main->job->pipe->redir->args, parser);
-		else
-			add_char(&parser->line, c);
-	}
-	append_arg(&main->job->pipe->redir->args, parser);
-}
-
-void	pars_contract(t_main *main, t_parser *parser)
-{
-	if (ft_strchr(NO_VALID_COMMAND_SIMBOLS, parser->cur_c))
-		exit_with_error(main, ERROR_COMMAND);
-	add_char(&parser->line, parser->cur_c);
-
-}
-
-void	parser_command(t_main *main, t_parser *parser)
-{
-	int		c;
-
-	parser->pars_command = 1;
-	while (get_next_char(parser, &c) && c != ' ' && c != '\n')
-	{
-		if (c == '$')
-			pars_env_and_add_to_pars_line(parser, main);
-		else
-			add_char(&parser->line, c);
-	}
 	main->job->pipe->redir->command = parser->line;
 	parser->line = NULL;
+	parser->pars_command = 1;
 }
 
 void	print_params(t_main *main)
@@ -162,17 +128,55 @@ void	print_params(t_main *main)
 	int i;
 
 	i = 0;
-	printf("\ncommand: %s", main->job->pipe->redir->command);
-	while (*main->job->pipe->redir->args)
+	printf("command: %s", main->job->pipe->redir->command);
+	while (main->job->pipe->redir->args && *main->job->pipe->redir->args)
 		printf("\nargv[%d]: %s", i++, *main->job->pipe->redir->args++);
 }
 
-void	parser_start(t_main *main, t_parser *parser)
+void	check_simbols_and_append_line(t_main *main, t_parser *parser)
 {
-	parser_command(main, parser);
-	if (parser->cur_c != '\n')
-		parser_args(main, parser);
-// 	print_params(main);
+	int c;
+
+	c = parser->cur_c;
+	if ((!parser->pars_command && !ft_strchr(NO_VALID_COMMAND_SIMBOLS, c)) ||
+		(parser->pars_command && !ft_strchr(NO_VALID_ENV_VAR, c)))
+			add_char(&parser->line, c);
+	else
+	{
+		if (!parser->pars_command)
+		{
+			parser->pars_command = 1;
+			append_command_to_main(main, parser);
+			add_char(&parser->line, c);
+		}
+		else
+		{
+			append_arg_to_main(main, parser);
+			add_char(&parser->line, c);
+		}
+	}
+}
+
+void	parser_go(t_main *main, t_parser *parser)
+{
+	int		c;
+
+	while (get_next_char(parser, &c) && c != '\n')
+	{
+		if (c == '$')
+			pars_env_and_append_line(parser, main);
+		else if (c == ' ')
+		{
+			if (!parser->pars_command)
+				append_command_to_main(main, parser);
+			else
+				append_arg_to_main(main, parser);
+		}
+		else
+			check_simbols_and_append_line(main, parser);
+	}
+	append_arg_to_main(main, parser);
+ 	print_params(main);
 }
 
 void	init_parser(t_parser *parser)
@@ -197,7 +201,7 @@ void	parser(t_main *main)
 	t_parser	parser;
 
 	init_parser(&parser);
-	parser_start(main, &parser);
+	parser_go(main, &parser);
 	end_session_pars(&parser);
 //	TODO add static to functions
 }
