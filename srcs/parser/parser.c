@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/17 10:44:08 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/18 17:46:45 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,13 +107,16 @@ void	pars_env_and_append_line(t_parser *parser, t_main *main)
 	}
 }
 
-void	copy_matrix(char ***dst, char **src, int len)
+char 	**ft_arrdup(char **src, int len)
 {
 	int i;
+	char **dst;
 
-	i = -1;
-	while (src && src[++i] && len--)
-		*dst[i] = src[i];
+	dst = (char **)malloc(sizeof(char *) * (len + 2));
+	i = 0;
+	while (src && *src)
+		dst[i++] = *src++;
+	return (dst);
 }
 
 void	append_arg_to_main(t_main *main, t_parser *parser)
@@ -122,10 +125,10 @@ void	append_arg_to_main(t_main *main, t_parser *parser)
 	char **tmp;
 
 	src = main->job->pipe->redir->args;
-	tmp = (char **)malloc(sizeof(char *) * (parser->args_i + 2));
-	copy_matrix(&tmp, src, parser->args_i);
-	tmp[parser->args_i++] = parser->line;
-	tmp[parser->args_i] = NULL;
+	tmp = ft_arrdup(src, parser->args_len);
+//	arr_free(&src);
+	tmp[parser->args_len++] = parser->line;
+	tmp[parser->args_len] = NULL;
 	main->job->pipe->redir->args = tmp;
 	parser->line = NULL;
 }
@@ -143,8 +146,8 @@ void	print_params(t_main *main)
 
 	i = 0;
 	printf("command: %s", main->job->pipe->redir->command);
-	while (main->job->pipe->redir->args && *main->job->pipe->redir->args)
-		printf("\nargv[%d]: %s", i++, *main->job->pipe->redir->args++);
+	while (main->job->pipe->redir->args && main->job->pipe->redir->args[++i])
+		printf("\nargv[%d]: %s", i, main->job->pipe->redir->args[i]);
 }
 
 void	check_simbols_and_append_line(t_main *main, t_parser *parser)
@@ -220,7 +223,7 @@ void	init_parser(t_parser *parser)
 	parser->pars_args = 0;
 	parser->pars_flags = 0;
 	parser->pars_var = 0;
-	parser->args_i = 0;
+	parser->args_len = 0;
 	parser->variable = NULL;
 	parser->variable_value = NULL;
 }

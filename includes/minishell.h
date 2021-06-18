@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/17 08:50:23 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/18 16:39:15 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef struct s_parser
 	int 			pars_var;
 	int 			pars_args;
 	int 			pars_flags;
-	int 			args_i;
+	int 			args_len;
 }					t_parser;
 
 typedef struct s_redir
