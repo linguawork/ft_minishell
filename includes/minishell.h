@@ -19,8 +19,10 @@
 # include <string.h>
 # include "libft.h"
 
-# define NO_VALID_ENV_VAR ".,-'/"
+# define NO_VALID_SIMBOLS ""
+# define NO_VALID_ENV_VAR "\"'/.,-"
 # define NO_VALID_COMMAND_SIMBOLS ":\"'"
+# define NO_VALID_DOBLE_QUOTE "!"
 
 /*
 ** Errors
@@ -66,6 +68,7 @@ typedef struct s_job
 typedef struct s_main
 {
 	t_job			*job;
+	t_job			*job_next;
 	char			**my_env;
 	int				exit;
 }					t_main;

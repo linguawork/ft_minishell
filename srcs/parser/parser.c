@@ -12,19 +12,33 @@
 
 #include "minishell.h"
 
-t_pipe *pipe_next_address(t_main *main)
+void	init_struct_job_next(t_main *main)
 {
-	struct t_job *job;
-	struct t_pipe *pipe;
-	struct t_redir *redir;
+	t_job	*job;
+	t_pipe	*pipe;
+	t_redir	*redir;
 
+	job = (t_job *)malloc(sizeof(t_job));
+	pipe = (t_pipe *)malloc(sizeof(t_pipe));
+	redir = (t_redir *)malloc(sizeof(t_redir));
+
+	redir->redir_to = 0;
+	main->job = job;
+	main->job_next->pipe = pipe;
+	main->job_next->pipe->redir = redir;
+	main->job_next->pipe->redir->command = NULL;
+	main->job_next->pipe->redir->flags = NULL;
+	main->job_next->pipe->redir->args = NULL;
+}
+
+t_pipe *get_pipe_next_addr(t_main *main)
+{
 	if (!main->job->pipe_next->redir->command)
 		return (main->job->pipe_next);
 	else
 	{
-		job = (struct t_job *)malloc(sizeof(t_job));
-		main->job->job_next = job;
-		return (main->job->pipe);
+		init_struct_job_next(main);
+		return (main->job_next->pipe);
 	}
 }
 
@@ -139,7 +153,7 @@ void	check_simbols_and_append_line(t_main *main, t_parser *parser)
 
 	c = parser->cur_c;
 	if ((!parser->pars_command && !ft_strchr(NO_VALID_COMMAND_SIMBOLS, c)) ||
-		(parser->pars_command && !ft_strchr(NO_VALID_ENV_VAR, c)))
+		(parser->pars_command && !ft_strchr(NO_VALID_SIMBOLS, c)))
 			add_char(&parser->line, c);
 	else
 	{
@@ -157,12 +171,32 @@ void	check_simbols_and_append_line(t_main *main, t_parser *parser)
 	}
 }
 
+void	pars_double_quote(t_parser *parser)
+{
+	int		c;
+
+	while (get_next_char(parser, &c) && c != '"' && c != '\n')
+		add_char(&parser->variable, c);
+}
+
+void	pars_quote(t_parser *parser)
+{
+	int		c;
+
+	while (get_next_char(parser, &c) && c != '\'' && c != '\n')
+		add_char(&parser->variable, c);
+}
+
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
 
 	while (get_next_char(parser, &c) && c != '\n')
 	{
+		if (c == '"')
+			pars_quote(parser);
+		if (c == '\'')
+			pars_double_quote(parser);
 		if (c == '$')
 			pars_env_and_append_line(parser, main);
 		else if (c == ' ')

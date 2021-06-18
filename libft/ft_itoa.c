@@ -3,68 +3,66 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/05 09:43:33 by meunostu          #+#    #+#             */
-/*   Updated: 2020/11/05 09:43:35 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/16 18:15:10 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 20:33:25 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	char	*ft_reverse(char *str, int len)
+void	*ft_mem_alloc(char	*str, size_t arr_length)
 {
-	int		i;
-	char	c;
-
-	i = 0;
-	c = 0;
-	while (len >= i)
-	{
-		c = str[i];
-		str[i] = str[len];
-		str[len] = c;
-		i++;
-		len--;
-	}
-	return (str);
+	str = (char *)malloc(sizeof(char) * (arr_length + 1));
+	if (!str)
+		return (NULL);
+	else
+		return (str);
 }
 
-static	int		counter(int n)
+static int	itlen(int n)
 {
-	int len;
+	int		len;
 
-	len = 1;
-	while (n /= 10)
+	len = 0;
+	if (n < 0)
 		len++;
+	if (n == 0)
+		len = 1;
+	while (n)
+	{
+		len++;
+		n = n / 10;
+	}
 	return (len);
 }
 
-char			*ft_itoa(int n)
+char	*ft_itoa(int n)
 {
-	int				n2;
-	int				len;
-	char			*str;
-	unsigned int	nbr;
+	char	*str;
+	int		len;
 
-	len = counter(n);
-	nbr = (n < 0) ? (unsigned int)n * -1 : n;
-	n2 = (n < 0) ? 1 : 0;
-	len = (n < 0) ? len + 1 : len;
-	str = (char *)malloc(len + 1);
-	len = 0;
-	if (str == NULL)
-		return (str);
-	if (n == 0)
-		str[len++] = '0';
-	while (nbr)
-	{
-		str[len++] = nbr % 10 + '0';
-		nbr /= 10;
-	}
-	if (n2)
-		str[len++] = '-';
+	str = NULL;
+	len = itlen(n);
+	str = ft_mem_alloc(str, len);
 	str[len] = '\0';
-	str = ft_reverse(str, len - 1);
+	if (n == 0)
+		str[0] = '0';
+	if (n < 0)
+	{
+		str[0] = '-';
+		if (n == -2147483648)
+		{
+			str[len-- - 1] = '8';
+			n = n / 10;
+		}
+		n = -n;
+	}
+	while (n != 0 && len >= 0)
+	{
+		str[len-- - 1] = n % 10 + 48;
+		n = n / 10;
+	}
 	return (str);
 }

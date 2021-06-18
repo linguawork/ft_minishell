@@ -20,7 +20,7 @@ int echo(t_main *main) // работает с костылем флага в ini
 	command = main->job->pipe->redir->command;
     args = main->job->pipe->redir->args;
 	flags = main->job->pipe->redir->flags;
-	if (command != '\0')
+	if (*command != '\0')
 	{
 	    if (command && !flags && !args)// при подаче просто команды echo без аргументов не заходит
 		// если я пишу в условии !args тогда заходит, но нам нужно разыменование как во флагах

@@ -31,7 +31,7 @@ void	copy_env(t_main *main, char **env)
 	}
 }
 
-static void	init_shell(t_main *main, char **env)
+void	init_struct(t_main *main)
 {
 	t_job	*job;
 	t_pipe	*pipe;
@@ -49,7 +49,6 @@ static void	init_shell(t_main *main, char **env)
 	main->job->pipe->redir->command = NULL;
 	main->job->pipe->redir->flags = NULL;
 	main->job->pipe->redir->args = NULL;
-	copy_env(main, env);
 }
 
 void	end_session(t_main *main)
@@ -62,7 +61,8 @@ int	main(int ac, char **av, char **env)
 {
 	t_main	main;
 
-	init_shell(&main, env);
+	init_struct(&main);
+	copy_env(&main, env);
 //	tests();
 	while (1)
 	{
