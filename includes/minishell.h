@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/16 10:54:04 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/18 16:39:15 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,10 @@
 # include "libft.h"
 # include <dirent.h>
 
-# define NO_VALID_ENV_VAR ".,-'/"
+# define NO_VALID_SIMBOLS ""
+# define NO_VALID_ENV_VAR "\"'/.,-"
 # define NO_VALID_COMMAND_SIMBOLS ":\"'"
+# define NO_VALID_DOBLE_QUOTE "!"
 
 /*
 ** Errors
@@ -40,7 +42,7 @@ typedef struct s_parser
 	int 			pars_var;
 	int 			pars_args;
 	int 			pars_flags;
-	int 			args_i;
+	int 			args_len;
 }					t_parser;
 
 typedef struct s_redir
@@ -68,6 +70,7 @@ typedef struct s_job
 typedef struct s_main
 {
 	t_job			*job;
+	t_job			*job_next;
 	char			**my_env;
 	int				exit;
 }					t_main;

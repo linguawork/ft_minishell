@@ -19,7 +19,7 @@ TESTS = $(addprefix $(TESTS_DIR), $(TESTS_FILES))
 SRC_FILES = $(MAIN) $(PARS) $(UTILS) $(TESTS)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
-FLAGS = -Wall -Wextra -Werror -Iincludes -Ilibft -g #-fsanitize=address
+FLAGS = -Iincludes -Ilibft -g #-fsanitize=address -Wall -Wextra -Werror
 
 CC= gcc $(FLAGS)
 

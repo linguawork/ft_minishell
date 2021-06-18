@@ -33,7 +33,7 @@ int echo(t_main *main)
 	command = main->job->pipe->redir->command;
     args = main->job->pipe->redir->args;
 	flags = main->job->pipe->redir->flags;
-	if (command != '\0')
+	if (*command != '\0')
 	{
 	    if (command && !flags && !args)
             ft_putchar_fd('\n', 1);
