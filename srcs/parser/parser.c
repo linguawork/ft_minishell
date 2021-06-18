@@ -212,8 +212,11 @@ void	parser_go(t_main *main, t_parser *parser)
 		else
 			check_simbols_and_append_line(main, parser);
 	}
-	append_arg_to_main(main, parser);
- 	print_params(main);
+	if (!parser->pars_command)
+        append_command_to_main(main, parser);
+	else
+	    append_arg_to_main(main, parser);
+// 	print_params(main);
 }
 
 void	init_parser(t_parser *parser)
