@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/18 16:27:49 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/18 19:21:29 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,7 @@ void	init_struct(t_main *main)
 void	end_session(t_main *main)
 {
 	mem_free(&main->job->pipe->redir->command);
-	main->job->pipe->redir->args = NULL;// TODO LEAK
-//	arr_free(&main->job->pipe->redir->args);
+	arr_free(&main->job->pipe->redir->args);
 }
 
 int	main(int ac, char **av, char **env)
