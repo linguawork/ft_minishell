@@ -126,11 +126,11 @@ void	append_arg_to_main(t_main *main, t_parser *parser)
 
 	src = main->job->pipe->redir->args;
 	tmp = ft_arrdup(src, parser->args_len);
-//	arr_free(&src);
 	tmp[parser->args_len++] = parser->line;
 	tmp[parser->args_len] = NULL;
 	main->job->pipe->redir->args = tmp;
 	parser->line = NULL;
+	free(src);
 }
 
 void	append_command_to_main(t_main *main, t_parser *parser)

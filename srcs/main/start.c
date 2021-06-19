@@ -54,8 +54,7 @@ void	init_struct(t_main *main)
 void	end_session(t_main *main)
 {
 	mem_free(&main->job->pipe->redir->command);
-	main->job->pipe->redir->args = NULL;// TODO LEAK
-//	arr_free(&main->job->pipe->redir->args);
+	arr_free(&main->job->pipe->redir->args);
 }
 
 int	main(int ac, char **av, char **env)
