@@ -112,7 +112,7 @@ char 	**ft_arrdup(char **src, int len)
 	int i;
 	char **dst;
 
-	dst = (char **)malloc(sizeof(char *) * (len + 2));
+	dst = ft_calloc(len + 2, sizeof(char *));
 	i = 0;
 	while (src && *src)
 		dst[i++] = *src++;
@@ -179,7 +179,7 @@ void	pars_double_quote(t_parser *parser)
 	int		c;
 
 	while (get_next_char(parser, &c) && c != '"' && c != '\n')
-		add_char(&parser->variable, c);
+		add_char(&parser->line, c);
 }
 
 void	pars_quote(t_parser *parser)
@@ -187,7 +187,7 @@ void	pars_quote(t_parser *parser)
 	int		c;
 
 	while (get_next_char(parser, &c) && c != '\'' && c != '\n')
-		add_char(&parser->variable, c);
+		add_char(&parser->line, c);
 }
 
 void	parser_go(t_main *main, t_parser *parser)
@@ -197,10 +197,10 @@ void	parser_go(t_main *main, t_parser *parser)
 	while (get_next_char(parser, &c) && c != '\n')
 	{
 		if (c == '"')
-			pars_quote(parser);
-		if (c == '\'')
 			pars_double_quote(parser);
-		if (c == '$')
+		else if (c == '\'')
+			pars_quote(parser);
+		else if (c == '$')
 			pars_env_and_append_line(parser, main);
 		else if (c == ' ')
 		{
