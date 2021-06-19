@@ -194,7 +194,7 @@ void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
 
-	while (get_next_char(parser, &c) && c != '\n')
+	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
 	{
 		if (c == '"')
 			pars_double_quote(parser);

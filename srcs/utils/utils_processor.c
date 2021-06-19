@@ -31,7 +31,7 @@ void	copy_env2(t_main *main, char **env)
 	while (--i >= 0)
 	{
 		main->my_env[i] = ft_strdup(env[i]);
-		free(env[i]); // освобождение в цикле чтобы убрать утечки
+//		free(env[i]); // освобождение в цикле чтобы убрать утечки
 		if (!main->my_env[i])
 			exit_with_error(main, ERROR_MALLOC);
 	}

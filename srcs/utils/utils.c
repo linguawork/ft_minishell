@@ -25,11 +25,16 @@ void	exit_with_error(t_main *main, char *massage)
 	exit(-1);
 }
 
-void	arr_free(char ***arr)
+void	arr_free(char **arr)
 {
-	while (*arr && **arr)
+    int i;
+
+    i = 0;
+	while (arr && arr[i])
 	{
-		mem_free(*arr);
-		**arr++ = NULL;
+		mem_free(arr + i);
+		arr[i] = NULL;
+		i++;
 	}
+    arr = NULL;
 }

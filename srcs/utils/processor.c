@@ -342,7 +342,7 @@ char** env_recorder(t_main *main)
     char **e;
     int length;
 
-    length = how_many_lines((char **) main->my_env);
+    length = how_many_lines(main->my_env);
     e = (char **) malloc(sizeof(char *) * (length + 1));
 
     int i = 0;
