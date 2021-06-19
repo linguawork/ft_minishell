@@ -19,7 +19,7 @@ void	copy_env(t_main *main, char **env)
 	i = 0;
 	while (env[i])
 		i++;
-	main->my_env = (char **)malloc(sizeof(char *) * (i));// добавление 1 не помогло
+	main->my_env = ft_calloc(i, sizeof(char *));
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
 	main->my_env[i] = NULL;
@@ -54,8 +54,7 @@ void	init_struct(t_main *main)
 void	end_session(t_main *main)
 {
 	mem_free(&main->job->pipe->redir->command);
-	main->job->pipe->redir->args = NULL;// TODO LEAK
-//	arr_free(&main->job->pipe->redir->args);
+	arr_free(&main->job->pipe->redir->args);
 }
 
 int	main(int ac, char **av, char **env)
