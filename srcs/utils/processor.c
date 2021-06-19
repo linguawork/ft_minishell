@@ -28,60 +28,43 @@ int echo(t_main *main)
 {
 	char *command;
 	char **args;
-	char *flags;
 
 	command = main->job->pipe->redir->command;
     args = main->job->pipe->redir->args;
-	flags = main->job->pipe->redir->flags;
-	if (*command != '\0')
+	if (command != '\0')
 	{
-	    if (command && !flags && !args)
+	    if (command && !args)
             ft_putchar_fd('\n', 1);
-	    if (command && flags && !(args))
-        {
-            if (command && ft_strcmp(flags, "-n") == 0)
-                return(0);
-			else
-            {
-                write(1, flags, ft_strlen(flags));
-                write(1, "\n", 1);
-            }
-        }
-        if (command && !flags && args)
-        {
-			ft_putstr_fd(*args, 1);
-			while (*++args)// skip 1 and then go into cycle
-			{
-				if (command && ft_strcmp(*args, "\"\"") == 0)
-					ft_putchar_fd('\n', 1);
-				ft_putchar_fd(' ', 1);
-				ft_putstr_fd(*args, 1);
-			}
-			ft_putchar_fd('\n', 1);
 
-        }
-		if (command && flags && args)
+		if (command && args)
         {
-			while (*args != NULL && (ft_strcmp(flags, "-n") == 0) && (ft_strcmp(*args, "-n") == 0))
+			while (*args != NULL && (ft_strcmp(*args, "-n") == 0))
 				args++;	
 			if (*args == NULL)
 				return(0);
-			if (command && ft_strcmp(flags, "-n") == 0)
+			if (command && !(ft_strcmp(*args, "-n") == 0))
 			{
-				write(1, *args, ft_strlen(*args));
-				while (*++args != NULL)
+				if (*(args - 1) != NULL && ft_strcmp(*(args - 1), "-n") == 0 && !(ft_strcmp(*args, "-n") == 0))
 				{
-					ft_putchar_fd(' ', 1);
 					write(1, *args, ft_strlen(*args));
+					while (*++args != NULL)
+					{
+						ft_putchar_fd(' ', 1);
+						write(1, *args, ft_strlen(*args));				
+					}
+				}	
+				if (*(args - 1) == NULL && !(ft_strcmp(*args, "-n") == 0))
+				{
+					while (*args != NULL)
+					{
+						ft_putstr_fd(*args, 1);
+						ft_putchar_fd(' ', 1);
+						args++;				
+					}
+					ft_putchar_fd('\n', 1);
 				}
             }
-			else 
-			{
-				write(1, flags, ft_strlen(flags));
-				write(1, " ", 1);
-				write(1, *args, ft_strlen(*args));
-				write(1, "\n", 1);
-			}
+			
         }
 	}
 	return(0);
@@ -124,33 +107,41 @@ int cd(t_main *main)
 {
 	char *command;// функция отрабатывает, но прога завершается и просходит возврат директорию программы
 	char **args;
-	const char *p;
+	char *p;
+	// int errnum;
 
 	command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
-	if (command && args)
-	{
-		p = *args;
-		chdir(p);
-	}
+
 	if (command && !args)
 	{
 		// p = getenv("HOME");// при удалении HOME в рабочей копии getenv брал копию HOME из оригинала env
 		p = ft_getenv(main, "HOME");
 		if (p == NULL)
-			ft_putstr_fd("cd: HOME not set\n", 1);
-		else
 		{
-			if (chdir(p) < 0)// это условие даже при корректной отработки почему-то выдовало -1
-			// if (!(p = ft_strchr(getenv("HOME"), ('='+1))))// костыль не сработал
-			// if(!(p = "=/Users/areggie")) //этот костыль работает
-			{
-				//$? =1
-				perror(p);
-				return(1);
-			}
-			else
-				chdir(p);
+			ft_putstr_fd("minishell: cd: HOME not set\n", 1);
+			main->exit = 1; //$? должен вызвать minishell: 1: command not found ()
+		}
+		else
+			chdir(p);
+	}
+	if (command && args)
+	{
+		p = *args;
+		chdir(p);		
+		if (chdir(p) < 0)// if the directory was not found chdir returns -1
+		{
+			// errnum = errno;
+			// main->exit = 1;
+			// p = strerror(errnum);
+			// printf("%s\n", p);
+
+			ft_putstr_fd("minishell: cd: ", 1);
+			ft_putstr_fd(p, 1);
+			ft_putstr_fd(": No such file or directory", 1);
+			main->exit = 1; // последующая команда $? должна показать значение в структуре main->exit 
+			// здесь программа не должна выходить, но выходит по условию в main функции
+
 		}
 	}
 	return(0);
@@ -159,15 +150,13 @@ int cd(t_main *main)
 int pwd(t_main *main)
 {
 	char *command;
-	char *flags;
 	char buffer[1024];
 
-	//$? = 0;
+	//$? = 0; это у нас инициализовано в init_shell там main->exit = 0
 	command = main->job->pipe->redir->command;
-	flags = main->job->pipe->redir->flags;
 	if (getcwd(buffer, 1024) == NULL)
 	{
-		//$? = 1;
+		main->exit = 1;
 		printf("Could not get current working directory\n");
 	}
 	printf("%s\n", buffer);
@@ -179,99 +168,75 @@ void	process_valid_args( char **s)
 	char	*str;
 	int		i;
 	
-
 	str = *s;
 	i = 0;
 	while (str[i] != '\0' )
 	{	
-		// if (!(str[i] >= '0' && str[i] <= '9'))
-		// if (!(str[i] >= '0' && str[i] <= '9') && !(str[i+1] >= '0' && str[i+1] <= '9') \
-		// && str[i+1] != '\0')
-		// if(ft_isdigit(str[i]))
-
-		// if(ft_isdigit(str[i]) && ft_isdigit(str[i+1]) && str[i+1] != '\0')
-		// 	i++;
-		// if(!ft_isdigit(str[i]) ||
-		// (ft_isdigit(str[i]) && !ft_isdigit(str[i+1]) && str[i+1] != '\0'))
-		// if (str[i]== '-')
-		// {
-		// 	ft_putstr_fd("exit\nminishell: exit: ", 1);
-		// 	ft_putstr_fd(str, 1);
-		// 	ft_putstr_fd(": numeric argument required", 1);
-		// 	exit((unsigned char) -1);// пришлось кастануть чтобы выдать 255
-		// }
 		if(!ft_isdigit(str[i]) && ft_isascii(str[i]) )
 		{
 			ft_putstr_fd("exit\nminishell: exit: ", 1);
 			ft_putstr_fd(str, 1);
 			ft_putstr_fd(": numeric argument required", 1);
-			exit((unsigned char) -1);// пришлось кастануть чтобы выдать 255
-		}
-
-		i++;
-	}
-}
-
-void	process_valid_flags( char *s) // от флагов в парсере лучше отказаться и парсить все в аргументы
-{
-	char	*str;
-	int		i;
-	
-
-	str = s;
-	i = 0;
-	while (str[i] != '\0' )
-	{	
-		// if (!(str[i] >= '0' && str[i] <= '9'))
-		// if (!(str[i] >= '0' && str[i] <= '9') && !(str[i+1] >= '0' && str[i+1] <= '9') \
-		// && str[i+1] != '\0')
-		// if(ft_isdigit(str[i]))
-
-		if(!ft_isdigit(str[i]) && ft_isascii(str[i]) )
-		{
-			ft_putstr_fd("exit\nminishell: exit: ", 1);
-			ft_putstr_fd(str, 1);
-			ft_putstr_fd(": numeric argument required", 1);
-			exit((unsigned char) -1);// пришлось кастануть чтобы выдать 255
+			exit((unsigned char) -1);//кастануть чтобы выдать 255
 		}
 		i++;
 	}
 }
+
+//int	process_valid_cmd(t_main *main, char *s) // от флагов в парсере лучше отказаться и парсить все в аргументы
+//{
+//	char	*str;
+//	int		i;
+//
+//
+//	str = s;
+//	i = 0;
+//	while (str[i] != '\0' )
+//	{
+//		if(!ft_isdigit(str[i]) && ft_isascii(str[i]) )
+//		{
+//			main->exit = 127;// для команды пишем код возврата вручную // программа не завершается
+//			break ;
+//		}
+//		i++;
+//	}
+//}
 
 int exit_command(t_main *main)
 {
-	char *flags;
 	char *cmd;
 	char ** args;
+	int i;
 
-	flags = main->job->pipe->redir->flags;
 	args = main->job->pipe->redir->args;
     cmd = main->job->pipe->redir->command;
-	
-	if ((cmd && args) || (cmd && flags))
-	{
-		if (flags)
-			process_valid_flags(flags);
-		if (args)
-			process_valid_args(args); // проверка на цифры в аргументе с выводом ошибки //и сохранением в структуру чтобы можно было вызвать через $?
-		ft_putstr_fd("exit\n", 1);
-		exit(ft_atoi(*args));// выход только с цифрами в аргументе (аргумент можно записать в main->exit) они будут выводится через $?
-		// если подавать в аргумент цифру >256 то система дает остаток от деления на 256
-	}		
-	else
+	i = 0;
+	if (cmd && !args)
 	{
 		ft_putstr_fd("exit\n", 1);
 		exit(EXIT_SUCCESS); // выход с кодом 0
 	}
-	// ft_putnbr_fd (main->exit, 1);
-	// ft_putchar_fd ('\n', 1);
-
-	// cmd = NULL; // чтобы не выводил по команде exit содержание command
-	// process_char(flags);// флаги лучше убрать и работать с аргументами
-
-	// if (flags != NULL )
-	// 	exit(1); //minishell->dollar
-	
+	if (cmd && args[i] && !args[i+1]) // если один аргумент
+	{
+		if ((*args[0] == '-' && ft_strncmp(*args,"--", 2) != 0 && ft_strncmp(*args,"-+", 2) != 0)||
+		(*args[0] == '+' && ft_strncmp(*args,"++", 2) != 0 && ft_strncmp(*args,"+-", 2) != 0))
+		{
+			ft_putstr_fd("exit\n", 1);
+			exit((unsigned char) ft_atoi(*args));// кастануть чтобы выдать 255
+		}
+		else
+			process_valid_args(args); // проверка на цифры в аргументе с выводом ошибки //и сохранением в структуру чтобы можно было вызвать через $?
+		ft_putstr_fd("exit\n", 1);
+		exit(ft_atoi(*args));// выход только с цифрами в аргументе (аргумент можно записать в main->exit) они будут выводится через $?
+	 	// если подавать в аргумент цифру >256 то система дает остаток от деления на 256
+	}	
+	if ((cmd && args[i] && args[i+1])) // если много аргументов
+	{
+			process_valid_args(args);
+			ft_putstr_fd("exit\n", 1);
+			ft_putstr_fd("minishell: exit: too many arguments\n", 1);
+			exit(main->exit = 1);
+	}
 	// sleep(1000);// for test leaks
 	return(0);
 }
@@ -664,6 +629,196 @@ int unset(t_main *main)
 	return(0);
 }
 
+int process_ready_exe(t_main *main)
+{
+	char *command; 
+	char **args;
+	char **envir;
+	int fork_res;
+	int res;
+
+	command = main->job->pipe->redir->command;
+	args = main->job->pipe->redir->args;
+	envir = main->my_env;
+
+	fork_res = fork();
+	if (fork_res == 0)//  d proc
+	{
+		res = execve(command, args, envir);
+		if (res == -1)// if no execution then we go out from d process
+			exit(1);
+	}
+	if (fork_res > 0)
+		wait(NULL); // waiting for the daughter to finish
+	// printf("%d\n", (execve(exe2, args, envir)));
+	return(0);
+}
+
+int process_exe(t_main *main)
+{
+	char *command; 
+	// char **args;
+	char **envir;
+	char **binar;
+	char *path;
+	char *exe;
+	char *exe2;
+	int i;
+	int fork_res;
+	// int res;
+	int status;
+	DIR *folder;
+    struct dirent *entry;
+	status = 0;
+
+	command = main->job->pipe->redir->command;
+	char **argv;
+	envir = main->my_env;
+	i = 0;
+
+	// process_folder(main, command); // на обработке у Мишы
+	path = ft_getenv(main, "PATH"); // получаем PATH без равно
+	if(!path)
+		return 0;
+	binar = ft_split(path, ':');// записали path в двумерный массив
+	while (binar[i] != NULL)
+	{
+		// printf ("%s\n", binar[i]);
+		folder = opendir(binar[i]);
+		if(folder == NULL)
+		{
+			// printf ("->%s\n", binar[i]);
+			// perror("Unable to read directory");
+			// return(1);
+			i++; // пропуск пустой ячейки
+		}
+		else
+		{
+			printf ("--->%s\n", binar[i]);
+			puts("Directory is opened!");
+			while((entry = readdir(folder))) // readdir читает по одной папке и возвращает запись в структуру
+			{
+				// printf("File %d: %s\n", files, entry->d_name);
+				if (ft_strcmp(entry->d_name, command) == 0)
+				{
+					argv = cmd_args_to_argv_recorder(main); // запись в массив
+					exe = ft_strjoin(binar[i], "/");
+					exe2 = ft_strjoin(exe, command);
+					// i = 0;
+					// while(argv[i] != NULL)
+					// {
+					// 	ft_putstr_fd(argv[i], 1);
+					// 	ft_putchar_fd('\n', 1);
+					// 	i++;
+					// }
+					fork_res = fork();
+					if (fork_res == 0)// daughter
+						execve(exe2, argv, envir);
+					if (fork_res > 0)
+					{
+						waitpid(fork_res, &status, 0); // waiting for the daughter to finish
+						main->exit = WEXITSTATUS(status); // кладем в exit 1 (если статус 256)
+					}
+					// status = 0;
+					ft_putstr_fd("status number is ", 1);
+					ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
+					write(1, "\n", 1);
+					ft_putstr_fd("main_>exit is ", 1);
+					ft_putnbr_fd (main->exit, 1);
+					write(1, "\n", 1);
+					ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
+					ft_putnbr_fd (fork_res, 1);// ID родителя
+					write(1, "\n", 1);
+					// i = 0;
+					// while(argv[i] != NULL)
+					// {
+					// 	ft_putstr_fd(argv[i], 1);
+					// 	ft_putchar_fd(' ', 1);
+					// 	i++;
+					// }
+					// printf("%s", *args);
+					// ft_putnbr_fd(res, 1);
+					closedir(folder); // закрываем сразу после исполнения еxecve
+					puts("Directory is closed!");
+					return(1);
+				}	
+			}
+			closedir(folder); // закрываем сразу если не нашли и переходим к след бинарнику
+			puts("Directory is closed!");
+		}
+		i++; // переход к следующему бинарнику
+	}
+    return(0);
+}
+
+	// while (binar[i] != NULL)
+	// {
+	// 	exe = ft_strjoin(binar[i], "/");
+	// 	exe2 = ft_strjoin(exe, command);
+	// 	// printf("exe2-->%s\n", exe2);
+	// 	fork_res = fork();
+	// 	if (fork_res == 0)// daughter
+	// 	{
+	// 		res = execve(exe2, args, envir);		
+	// 		// if (res == -1)// if no execution then we go out from d process
+	// 		// {
+	// 		// 	printf("Error execve\n");
+	// 		// 	free(exe2);
+	// 		// 	main->exit = 1; // из дочки этот код идет в статус как 256
+	// 		// }
+	// 		// else
+	// 		// 	main->exit = 0;
+	// 	}
+
+	// 	// printf("%d\n", (execve(exe2, args, envir)));
+	// 	// res = execve(exe2, args, envir); //перезапись res и присвоение -1 (это код сработает только если не будет отработан бинарник
+	// 	// и результат будет использован ниже в process_valid_cmd
+	// 	free(exe);
+	// 	free(exe2);
+	// 	i++;
+	// }
+	// if (fork_res > 0)
+	// {
+	// 	waitpid(fork_res, &status, 0); // waiting for the daughter to finish
+	// 	main->exit = WEXITSTATUS(status); // кладем в exit 1 (если статус 256)
+	// 	// status = 0;
+	// 	// ft_putstr_fd("status number is\n", 1);
+	// 	// ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
+	// 	// write(1, "\n", 1);
+	// 	// ft_putnbr_fd (status, 1);// code 256 = 1
+	// 	// printf ("main_>exit is\n");
+	// 	// ft_putnbr_fd (main->exit, 1);
+	// 	// write(1, "\n", 1);
+	// 	// printf("parent id is\n");
+	// 	// ft_putnbr_fd (fork_res, 1);// ID дочки
+	// 	// write(1, "\n", 1);
+	// }
+	// // printf("%d\n", (execve(exe2, args, envir)));
+	// // fork_res = fork();
+	// // if (fork_res == 0)//  d proc
+	// // if (status == 1 || status == 256) // если команда не сработала в бинарниках status = 1 or 256
+	// if (main->exit == 1) // если команда не сработала в бинарниках status = 1 or 256
+	// {
+	// 	// fork_res = fork();
+	// 	// if (fork_res == 0)
+//			process_valid_cmd(main, command);// проверка на несущетсвующую команду
+	// 	// if (fork_res > 0)
+	// 	// {
+	// 	// waitpid(fork_res, &status, 0); // waiting for the daughter to finish
+	// 	// main->exit = WEXITSTATUS(status);
+	// 	ft_putnbr_fd (status, 1);// code 256 = 1
+	// 	ft_putnbr_fd (main->exit, 1);// code 256 = 1
+	// 	// ft_putstr_fd("minishell: ", 1);
+	// 	// ft_putstr_fd(command, 1);
+	// 	// ft_putstr_fd(": command not found", 1);
+	// 	// }
+	// }
+	// // ft_putnbr_fd (main->exit, 1); на выходе код 127
+
+	// arrays_free(binar);
+	// return(0);
+// }
+
 void process_builtins_and_divide_externals(t_main *main)
 {
 	char *command;
@@ -684,61 +839,11 @@ void process_builtins_and_divide_externals(t_main *main)
 	else if(ft_strncmp(command, "exit", 4) == 0)
 		exit_command(main);
 	else
-		process_exe(main);
-}
-
-int process_exe(t_main *main)
-{
-	char *command; 
-	char **args;
-	char **envir;
-	char **binar;
-	char *path;
-	char *exe;
-	char *exe2;
-	int i;
-	int fork_res;
-	int res;
-
-	command = main->job->pipe->redir->command;
-	args = main->job->pipe->redir->args;
-	envir = main->my_env;
-	i = 0;
-
-	path = ft_getenv(main, "PATH"); // получаем PATH без равно
-	if(!path)
-		return 0;
-	binar = ft_split(path, ':');// записали path в двумерный массив
-	// while (binar[i] != NULL)
-	// {
-	// 	printf ("%s\n", binar[i]);
-	// 	i++;
-	// }
-	// i = 0; 
-	// ls command note: https://scriptingosx.com/2017/08/terminal-primer-part-4-commands/
-	// ls ~/Desktop сработало // с 
-	while (binar[i] != NULL)
 	{
-		exe = ft_strjoin(binar[i], "/");
-		exe2 = ft_strjoin(exe, command);
-		// printf("exe2-->%s\n", exe2);
-		fork_res = fork();
-		if (fork_res == 0)//  d proc
-		{
-			res = execve(exe2, args, envir);
-			free(exe2);
-			if (res == -1)// if no execution then we go out from d process
-				exit(1);
-		}
-		if (fork_res > 0)
-		{
-			wait(NULL); // waiting for the daughter to finish
-		}
-		// printf("%d\n", (execve(exe2, args, envir)));
-		free(exe);
-		free(exe2);
-		i++;
+		// process_folder(main, command);// обработка на этапе парсера
+		process_ready_exe(main); // если подается готовая команда то она здесь выполнится
+		process_exe(main);
 	}
-	arrays_free(binar);
-	return(0);
 }
+
+

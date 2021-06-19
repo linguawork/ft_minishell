@@ -116,7 +116,7 @@ int		char_count(const char *str);
 void	*ft_new_memory_alloc(void *p, size_t length);
 int		process_exe(t_main *main);
 int		how_many_lines(char **a);
-char	*ft_itoa(int n);
+char**	cmd_args_to_argv_recorder(t_main *main);
 
 
 #endif //MINISHELL_H
