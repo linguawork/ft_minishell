@@ -64,7 +64,7 @@ typedef struct s_job
 {
 	t_pipe			*pipe;
 	t_pipe			*pipe_next;
-	struct t_job	*job_next;
+	struct s_job	*job_next;
 }					t_job;
 
 typedef struct s_main

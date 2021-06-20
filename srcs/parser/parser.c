@@ -31,14 +31,14 @@ void	init_struct_job_next(t_main *main)
 	main->job_next->pipe->redir->args = NULL;
 }
 
-t_pipe *get_pipe_next_addr(t_main *main)
+t_job *get_next_pipe_addr(t_main *main)
 {
 	if (!main->job->pipe_next->redir->command)
-		return (main->job->pipe_next);
+		return (main->job);
 	else
 	{
 		init_struct_job_next(main);
-		return (main->job_next->pipe);
+		return (main->job_next);
 	}
 }
 
@@ -120,23 +120,30 @@ char 	**ft_arrdup(char **src, int len)
 	return (dst);
 }
 
-void	append_arg_to_main(t_main *main, t_parser *parser)
+void	append_arg_to_main(t_job *job, t_parser *parser)
 {
 	char **src;
 	char **tmp;
 
-	src = main->job->pipe->redir->args;
+	if (!job->pipe->redir->command)
+		src = job->pipe->redir->args;
+	else
+		src = job->pipe_next->redir->args;
 	tmp = ft_arrdup(src, parser->args_len);
 	tmp[parser->args_len++] = parser->line;
 	tmp[parser->args_len] = NULL;
-	main->job->pipe->redir->args = tmp;
-	parser->line = NULL;
 	free(src);
+	src = tmp;
+	parser->line = NULL;
+//	job->pipe->redir->args = tmp;
 }
 
-void	append_command_to_main(t_main *main, t_parser *parser)
+void	append_command_to_main(t_job *job, t_parser *parser)
 {
-	main->job->pipe->redir->command = parser->line;
+	if (!job->pipe->redir->command)
+		job->pipe->redir->command = parser->line;
+	else
+		job->pipe_next->redir->command = parser->line;
 	parser->line = NULL;
 	parser->pars_command = 1;
 }
@@ -194,7 +201,9 @@ void	pars_quote(t_parser *parser)
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
+	t_job *job;
 
+	job = main->job;
 	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
 	{
 		if (c == '"')
@@ -203,20 +212,22 @@ void	parser_go(t_main *main, t_parser *parser)
 			pars_quote(parser);
 		else if (c == '$')
 			pars_env_and_append_line(parser, main);
+		if (c == '|')
+			job = get_next_pipe_addr(main);
 		else if (c == ' ')
 		{
 			if (!parser->pars_command)
-				append_command_to_main(main, parser);
+				append_command_to_main(job, parser);
 			else
-				append_arg_to_main(main, parser);
+				append_arg_to_main(job, parser);
 		}
 		else
 			check_simbols_and_append_line(main, parser);
 	}
 	if (!parser->pars_command)
-		append_command_to_main(main, parser);
+		append_command_to_main(job, parser);
 	else
-		append_arg_to_main(main, parser);
+		append_arg_to_main(job, parser);
 // 	print_params(main);
 }
 

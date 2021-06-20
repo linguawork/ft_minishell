@@ -18,7 +18,10 @@ void	copy_env(t_main *main, char **env)
 	int len;
 
 	i = -1;
-	len = how_many_lines(env);
+	len = 0;;
+//	len = how_many_lines(env);
+	while(env[len] != NULL)
+		len++;
 	main->my_env = ft_calloc(len + 1, sizeof(char *));
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
