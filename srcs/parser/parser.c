@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/18 19:21:29 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/20 11:28:40 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ t_pipe *get_pipe_next_addr(t_main *main)
 	}
 }
 
-void	pars_env_variable(t_parser *parser)
+char 	*pars_env_variable(t_parser *parser)
 {
 	int		c;
 
@@ -56,6 +56,7 @@ void	pars_env_variable(t_parser *parser)
 			c = '$';
 		//TODO Double dollar
 	}
+	return (parser->variable);
 }
 
 char	*get_env_value(char **my_env, char	*name_variable)
