@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/18 16:39:15 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/20 11:16:02 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void	arr_free(char **str);
 ** TESTS
 */
 void	tests(void);
-void	pars_env_variable(t_parser *parser);
+char 	*pars_env_variable(t_parser *parser);
 
 /*
 ** EXECUTION BUILTINS
