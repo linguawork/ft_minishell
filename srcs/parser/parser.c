@@ -112,7 +112,7 @@ char 	**ft_arrdup(char **src, int len)
 	int i;
 	char **dst;
 
-	dst = (char **)malloc(sizeof(char *) * (len + 2));
+	dst = ft_calloc(len + 2, sizeof(char *));
 	i = 0;
 	while (src && *src)
 		dst[i++] = *src++;
@@ -126,11 +126,11 @@ void	append_arg_to_main(t_main *main, t_parser *parser)
 
 	src = main->job->pipe->redir->args;
 	tmp = ft_arrdup(src, parser->args_len);
-//	arr_free(&src);
 	tmp[parser->args_len++] = parser->line;
 	tmp[parser->args_len] = NULL;
 	main->job->pipe->redir->args = tmp;
 	parser->line = NULL;
+	free(src);
 }
 
 void	append_command_to_main(t_main *main, t_parser *parser)
@@ -179,7 +179,7 @@ void	pars_double_quote(t_parser *parser)
 	int		c;
 
 	while (get_next_char(parser, &c) && c != '"' && c != '\n')
-		add_char(&parser->variable, c);
+		add_char(&parser->line, c);
 }
 
 void	pars_quote(t_parser *parser)
@@ -187,20 +187,20 @@ void	pars_quote(t_parser *parser)
 	int		c;
 
 	while (get_next_char(parser, &c) && c != '\'' && c != '\n')
-		add_char(&parser->variable, c);
+		add_char(&parser->line, c);
 }
 
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
 
-	while (get_next_char(parser, &c) && c != '\n')
+	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
 	{
 		if (c == '"')
-			pars_quote(parser);
-		if (c == '\'')
 			pars_double_quote(parser);
-		if (c == '$')
+		else if (c == '\'')
+			pars_quote(parser);
+		else if (c == '$')
 			pars_env_and_append_line(parser, main);
 		else if (c == ' ')
 		{
