@@ -42,7 +42,7 @@ void	init_struct(t_main *main)
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
 	main->exit = 0;
-	redir->redir_to = 0;
+//	redir->redir_to = 0;
 	main->job = job;
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
@@ -54,7 +54,7 @@ void	init_struct(t_main *main)
 void	end_session(t_main *main)
 {
 	free(main->job->pipe->redir->command);
-	free(main->job->pipe->redir->args);// just free to avoid double freeing
+    arrays_free(main->job->pipe->redir->args);// just free to avoid double freeing
 	main->job->pipe->redir->args = NULL;
 }
 

@@ -22,7 +22,7 @@ void	init_struct_job_next(t_main *main)
 	pipe = (t_pipe *)malloc(sizeof(t_pipe));
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
-	redir->redir_to = 0;
+//	redir->redir_to = 0;
 	main->job = job;
 	main->job_next->pipe = pipe;
 	main->job_next->pipe->redir = redir;
@@ -214,7 +214,7 @@ void	parser_go(t_main *main, t_parser *parser)
 	}
 	if (!parser->pars_command)
         append_command_to_main(main, parser);
-	else
+	else if (parser->line)
 	    append_arg_to_main(main, parser);
 // 	print_params(main);
 }

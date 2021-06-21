@@ -26,11 +26,11 @@ CC= gcc $(FLAGS)
 all:$(NAME) $?
 
 %.o: %.c includes/minishell.h
-	$(CC) -fsanitize=address -c $< -o $@
+	$(CC)  -c $< -o $@
 
 $(NAME): $(OBJ_FILES)
 	$(MAKE) -C $(LIBFT_PATH)
-	$(CC) -fsanitize=address $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME)
+	$(CC)  $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME)
 
 clean:
 	$(MAKE) clean -C $(LIBFT_PATH)

@@ -50,14 +50,15 @@ typedef struct s_redir
 	char			*command;
 	char			*flags;
 	char			**args;
-	int 			redir_to;
 	char			*error;
+    char 		    *redir_file;
+    int             redir_type;
+    struct s_redir	*redir_next;
 }					t_redir;
 
 typedef struct s_pipe
 {
 	t_redir			*redir;
-	t_redir			*redir_next;
 }					t_pipe;
 
 typedef struct s_job
