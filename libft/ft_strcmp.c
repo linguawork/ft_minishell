@@ -23,8 +23,8 @@ int	ft_strcmp(const char *s1, const char *s2)
 	line2 = (unsigned char *)s2;
 	i = 0;
 
-//    while ((s1 != NULL || line1[i] != '\0') && (s2 == NULL || line1[i] == '\0'))
-//        return(0);
+    while ((s1 != NULL || line1[i] != '\0') && (s2 == NULL || line1[i] == '\0'))
+        return(0);
 
     while (line1[i] == line2[i] && line1[i] != '\0' && line2[i] != '\0')
         i++;
