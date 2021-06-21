@@ -71,7 +71,6 @@ typedef struct s_job
 typedef struct s_main
 {
 	t_job			*job;
-	t_job			*job_next;
 	char			**my_env;
 	int				exit;
 }					t_main;

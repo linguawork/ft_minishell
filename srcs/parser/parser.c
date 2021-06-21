@@ -12,26 +12,26 @@
 
 #include "minishell.h"
 
-void	init_struct_job_next(t_main *main)
+void	init_struct_job_next(t_job *job)
 {
-	t_job	*job;
+	t_job	*job_next;
 	t_pipe	*pipe;
 	t_redir	*redir;
 
-	job = (t_job *)malloc(sizeof(t_job));
+	job_next = (t_job *)malloc(sizeof(t_job));
 	pipe = (t_pipe *)malloc(sizeof(t_pipe));
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
 	redir->redir_to = 0;
-	main->job_next = job;
-	main->job_next->pipe = pipe;
-	main->job_next->pipe->redir = redir;
-	main->job_next->pipe->redir->command = NULL;
-	main->job_next->pipe->redir->flags = NULL;
-	main->job_next->pipe->redir->args = NULL;
+	job->job_next = job_next;
+	job->job_next->pipe = pipe;
+	job->job_next->pipe->redir = redir;
+	job->job_next->pipe->redir->command = NULL;
+	job->job_next->pipe->redir->flags = NULL;
+	job->job_next->pipe->redir->args = NULL;
 }
 
-void	init_struct_pipe_next(t_main *main, int job_next)
+void	init_struct_pipe_next(t_job *job, int job_next)
 {
 	t_pipe	*pipe;
 	t_redir	*redir;
@@ -42,20 +42,20 @@ void	init_struct_pipe_next(t_main *main, int job_next)
 	if (job_next)
 	{
 		redir->redir_to = 0;
-		main->job_next->pipe_next = pipe;
-		main->job_next->pipe_next->redir = redir;
-		main->job_next->pipe_next->redir->command = NULL;
-		main->job_next->pipe_next->redir->flags = NULL;
-		main->job_next->pipe_next->redir->args = NULL;
+		job->job_next->pipe_next = pipe;
+		job->job_next->pipe_next->redir = redir;
+		job->job_next->pipe_next->redir->command = NULL;
+		job->job_next->pipe_next->redir->flags = NULL;
+		job->job_next->pipe_next->redir->args = NULL;
 	}
 	else
 	{
 		redir->redir_to = 0;
-		main->job->pipe_next = pipe;
-		main->job->pipe_next->redir = redir;
-		main->job->pipe_next->redir->command = NULL;
-		main->job->pipe_next->redir->flags = NULL;
-		main->job->pipe_next->redir->args = NULL;
+		job->pipe_next = pipe;
+		job->pipe_next->redir = redir;
+		job->pipe_next->redir->command = NULL;
+		job->pipe_next->redir->flags = NULL;
+		job->pipe_next->redir->args = NULL;
 	}
 }
 
@@ -67,19 +67,19 @@ void	zero_parser(t_parser *parser)
 	parser->args_len = 0;
 }
 
-t_job	*get_next_pipe_addr(t_main *main, t_parser *parser)
+t_job	*get_next_pipe_addr(t_job *job, t_parser *parser)
 {
 	zero_parser(parser);
-	if (!main->job->pipe_next)
+	if (!job->pipe_next)
 	{
-		init_struct_pipe_next(main, 0);
-		return (main->job);
+		init_struct_pipe_next(job, 0);
+		return (job);
 	}
 	else
 	{
 		parser->pipe_exist = 0;
-		init_struct_job_next(main);
-		return (main->job_next);
+		init_struct_job_next(job);
+		return (job->job_next);
 	}
 }
 
@@ -258,7 +258,7 @@ void	parser_go(t_main *main, t_parser *parser)
 		else if (c == '$')
 			pars_env_and_append_line(parser, main);
 		if (c == '|')
-			job = get_next_pipe_addr(main, parser);
+			job = get_next_pipe_addr(job, parser);
 		else if (c == ' ')
 		{
 			if (!parser->pars_command)
