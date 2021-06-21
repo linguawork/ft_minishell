@@ -227,12 +227,16 @@ void	check_simbols_and_append_line(t_job *job, t_parser *parser)
 	}
 }
 
-void	pars_double_quote(t_parser *parser)
+void	pars_double_quote(t_parser *parser, t_main *main)
 {
 	int		c;
 
-	while (get_next_char(parser, &c) && c != '"' && c != '\n')
+	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '"' && c != '\n')
+	{
+		if (c == '$')
+			pars_env_and_append_line(parser, main);
 		add_char(&parser->line, c);
+	}
 }
 
 void	pars_quote(t_parser *parser)
@@ -252,7 +256,7 @@ void	parser_go(t_main *main, t_parser *parser)
 	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
 	{
 		if (c == '"')
-			pars_double_quote(parser);
+			pars_double_quote(parser, main);
 		else if (c == '\'')
 			pars_quote(parser);
 		else if (c == '$')
