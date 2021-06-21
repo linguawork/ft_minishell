@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/20 11:28:40 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/20 18:50:17 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_parser
 	char			*variable;
 	char			*variable_value;
 	int 			pars_command;
+	int 			pipe_exist;
 	int 			pars_var;
 	int 			pars_args;
 	int 			pars_flags;

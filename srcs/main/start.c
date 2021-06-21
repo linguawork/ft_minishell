@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/20 11:28:40 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/21 13:43:51 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	init_struct(t_main *main)
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
 	main->exit = 0;
+	job->pipe_next = NULL;
 	redir->redir_to = 0;
 	main->job = job;
 	main->job->pipe = pipe;
