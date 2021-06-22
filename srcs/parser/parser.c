@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/18 19:21:29 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	init_struct_job_next(t_main *main)
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
 	redir->redir_to = 0;
-	main->job = job;
+	main->job_next = job;
 	main->job_next->pipe = pipe;
 	main->job_next->pipe->redir = redir;
 	main->job_next->pipe->redir->command = NULL;
@@ -31,18 +31,59 @@ void	init_struct_job_next(t_main *main)
 	main->job_next->pipe->redir->args = NULL;
 }
 
-t_pipe *get_pipe_next_addr(t_main *main)
+void	init_struct_pipe_next(t_main *main, int job_next)
 {
-	if (!main->job->pipe_next->redir->command)
-		return (main->job->pipe_next);
+	t_pipe	*pipe;
+	t_redir	*redir;
+
+	pipe = (t_pipe *)malloc(sizeof(t_pipe));
+	redir = (t_redir *)malloc(sizeof(t_redir));
+
+	if (job_next)
+	{
+		redir->redir_to = 0;
+		main->job_next->pipe_next = pipe;
+		main->job_next->pipe_next->redir = redir;
+		main->job_next->pipe_next->redir->command = NULL;
+		main->job_next->pipe_next->redir->flags = NULL;
+		main->job_next->pipe_next->redir->args = NULL;
+	}
 	else
 	{
-		init_struct_job_next(main);
-		return (main->job_next->pipe);
+		redir->redir_to = 0;
+		main->job->pipe_next = pipe;
+		main->job->pipe_next->redir = redir;
+		main->job->pipe_next->redir->command = NULL;
+		main->job->pipe_next->redir->flags = NULL;
+		main->job->pipe_next->redir->args = NULL;
 	}
 }
 
-void	pars_env_variable(t_parser *parser)
+void	zero_parser(t_parser *parser)
+{
+	parser->pipe_exist = 1;
+	parser->pars_command = 0;
+	parser->pars_args = 0;
+	parser->args_len = 0;
+}
+
+t_job	*get_next_pipe_addr(t_main *main, t_parser *parser)
+{
+	zero_parser(parser);
+	if (!main->job->pipe_next)
+	{
+		init_struct_pipe_next(main, 0);
+		return (main->job);
+	}
+	else
+	{
+		parser->pipe_exist = 0;
+		init_struct_job_next(main);
+		return (main->job_next);
+	}
+}
+
+char 	*pars_env_variable(t_parser *parser)
 {
 	int		c;
 
@@ -56,6 +97,7 @@ void	pars_env_variable(t_parser *parser)
 			c = '$';
 		//TODO Double dollar
 	}
+	return (parser->variable);
 }
 
 char	*get_env_value(char **my_env, char	*name_variable)
@@ -119,25 +161,36 @@ char 	**ft_arrdup(char **src, int len)
 	return (dst);
 }
 
-void	append_arg_to_main(t_main *main, t_parser *parser)
+void	append_arg_to_main(t_job *job, t_parser *parser)
 {
 	char **src;
 	char **tmp;
 
-	src = main->job->pipe->redir->args;
+	if (parser->pipe_exist != 1)
+		src = job->pipe->redir->args;
+	else
+		src = job->pipe_next->redir->args;
 	tmp = ft_arrdup(src, parser->args_len);
 	tmp[parser->args_len++] = parser->line;
 	tmp[parser->args_len] = NULL;
-	main->job->pipe->redir->args = tmp;
-	parser->line = NULL;
 	free(src);
+	if (parser->pipe_exist != 1)
+		job->pipe->redir->args = tmp;
+	else
+		job->pipe_next->redir->args = tmp;
+	parser->line = NULL;
+//	job->pipe->redir->args = tmp;
 }
 
-void	append_command_to_main(t_main *main, t_parser *parser)
+void	append_command_to_main(t_job *job, t_parser *parser)
 {
-	main->job->pipe->redir->command = parser->line;
+	if (!job->pipe->redir->command)
+		job->pipe->redir->command = parser->line;
+	else
+		job->pipe_next->redir->command = parser->line;
+	if (parser->line)
+		parser->pars_command = 1;
 	parser->line = NULL;
-	parser->pars_command = 1;
 }
 
 void	print_params(t_main *main)
@@ -150,7 +203,7 @@ void	print_params(t_main *main)
 		printf("\nargv[%d]: %s", i, main->job->pipe->redir->args[i]);
 }
 
-void	check_simbols_and_append_line(t_main *main, t_parser *parser)
+void	check_simbols_and_append_line(t_job *job, t_parser *parser)
 {
 	int c;
 
@@ -163,12 +216,12 @@ void	check_simbols_and_append_line(t_main *main, t_parser *parser)
 		if (!parser->pars_command)
 		{
 			parser->pars_command = 1;
-			append_command_to_main(main, parser);
+			append_command_to_main(job, parser);
 			add_char(&parser->line, c);
 		}
 		else
 		{
-			append_arg_to_main(main, parser);
+			append_arg_to_main(job, parser);
 			add_char(&parser->line, c);
 		}
 	}
@@ -193,7 +246,9 @@ void	pars_quote(t_parser *parser)
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
+	t_job *job;
 
+	job = main->job;
 	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
 	{
 		if (c == '"')
@@ -202,20 +257,22 @@ void	parser_go(t_main *main, t_parser *parser)
 			pars_quote(parser);
 		else if (c == '$')
 			pars_env_and_append_line(parser, main);
+		if (c == '|')
+			job = get_next_pipe_addr(main, parser);
 		else if (c == ' ')
 		{
 			if (!parser->pars_command)
-				append_command_to_main(main, parser);
+				append_command_to_main(job, parser);
 			else
-				append_arg_to_main(main, parser);
+				append_arg_to_main(job, parser);
 		}
 		else
-			check_simbols_and_append_line(main, parser);
+			check_simbols_and_append_line(job, parser);
 	}
 	if (!parser->pars_command)
-		append_command_to_main(main, parser);
+		append_command_to_main(job, parser);
 	else
-		append_arg_to_main(main, parser);
+		append_arg_to_main(job, parser);
 // 	print_params(main);
 }
 
@@ -227,6 +284,7 @@ void	init_parser(t_parser *parser)
 	parser->pars_flags = 0;
 	parser->pars_var = 0;
 	parser->args_len = 0;
+	parser->pipe_exist = 0;
 	parser->variable = NULL;
 	parser->variable_value = NULL;
 }

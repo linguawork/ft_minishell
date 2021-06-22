@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/18 16:27:49 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ void	copy_env(t_main *main, char **env)
 	int len;
 
 	i = -1;
-	len = how_many_lines(env);
+	len = 0;;
+//	len = how_many_lines(env);
+	while(env[len] != NULL)
+		len++;
 	main->my_env = ft_calloc(len + 1, sizeof(char *));
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
@@ -42,6 +45,7 @@ void	init_struct(t_main *main)
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
 	main->exit = 0;
+	job->pipe_next = NULL;
 	redir->redir_to = 0;
 	main->job = job;
 	main->job->pipe = pipe;

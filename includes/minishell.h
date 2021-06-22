@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/18 16:39:15 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ typedef struct s_parser
 	char			*variable;
 	char			*variable_value;
 	int 			pars_command;
+	int 			pipe_exist;
 	int 			pars_var;
 	int 			pars_args;
 	int 			pars_flags;
@@ -64,7 +65,7 @@ typedef struct s_job
 {
 	t_pipe			*pipe;
 	t_pipe			*pipe_next;
-	struct t_job	*job_next;
+	struct s_job	*job_next;
 }					t_job;
 
 typedef struct s_main
@@ -97,7 +98,7 @@ void	arr_free(char **str);
 ** TESTS
 */
 void	tests(void);
-void	pars_env_variable(t_parser *parser);
+char 	*pars_env_variable(t_parser *parser);
 
 /*
 ** EXECUTION BUILTINS
