@@ -295,7 +295,7 @@ void	*arrays_free(char **s)
 	int	i;
 
 	i = 0;
-	while (s && s[i])
+	while (s[i])
 	{
 		free(s[i]);
 		i++;
@@ -348,7 +348,7 @@ char** env_recorder(t_main *main)
     int i = 0;
     while (main->my_env[i] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
     {
-        e[i] = ft_strdup(main->my_env[i]);// лучше записывать через индекс
+        e[i] = main->my_env[i];// лучше записывать через индекс
         i++;
     }
 	e[i]=NULL;
@@ -364,11 +364,9 @@ char** env_recorder2(char **envir, int len)
     int i = 0;
     while (envir[i] && i != len) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
     {
-        e[i] = ft_strdup(envir[i]);// лучше записывать через индекс
-//        free(envir[i]);
+        e[i] = envir[i];// лучше записывать через индекс
         i++;
     }
-    arrays_free(envir);
 //    e[len] = envir[i++];
 //    e[len+1]=NULL;
     return(e);
@@ -393,7 +391,7 @@ char** env_recorder2(char **envir, int len)
 //            // a_name = ft_substr(*args, 0, len); // отрезать до равно получается арг без равно
 //            ft_strlcpy(a_name, *args, len + 1);
 //            if (ft_strcmp(a_name, *en) != 0) // полное несоответствие строк до знака = и освобождение указателя
-//                en++;// может быть continue
+//                continue;
 //            if(ft_strcmp(a_name, *en) == 0) // сравнение без знаков равно
 //            {
 //                free(*en);
@@ -414,7 +412,7 @@ char** env_recorder2(char **envir, int len)
 //            {
 //                // free(e_name);
 //                // free(a_name);
-//                en++;// может быть continue
+//                continue;
 //            }
 //            if (ft_strcmp(a_name, e_name) == 0) // полное соответствие строк до знака =
 //            {
@@ -439,7 +437,7 @@ char** env_recorder2(char **envir, int len)
 //
 //            if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
 //                // free(e_name);
-//                en++;// может быть continue
+//                continue;
 //            if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
 //            {
 //                // free(e_name);
@@ -451,7 +449,8 @@ char** env_recorder2(char **envir, int len)
 //
 //    return(0);
 //}
-//
+
+
 int check_doubles(char **args, char **en)
 {
 	char *a_name;
@@ -507,13 +506,29 @@ int check_doubles(char **args, char **en)
 			len= char_count(*en); // переопределение и замер до равно
 			e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
 			// e_name = read_name(*en);
-			if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
+			if (strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
 				free(e_name);
-			if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
+			if(strcmp(*args, e_name) == 0)// сравнение без знаков равно
 			{
 				free(e_name);
 				return(1);
 			}
+//        else if(!(ft_strchr(*args, '=')) && (ft_strchr(*en, '=')))
+//        {
+//            len= char_count(*en); // переопределение и замер до равно
+//            // e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
+//            ft_strlcpy(e_name, *en, len + 1);
+//            // e_name = read_name(*en);
+//
+//            if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
+//                // free(e_name);
+////                en++;// может быть
+//                continue;
+//            if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
+//            {
+//                // free(e_name);
+//                return(1);
+//            }
 		}
 		en++;
 	}
@@ -537,8 +552,9 @@ void check_args(char **a)
 	{
 		ft_putstr_fd ("minishell: export: `", 1);
 		ft_putstr_fd (*a, 1);
-		ft_putstr_fd ("': not a valid identifier", 1);
-		ft_putchar_fd ('\n', 1);
+//		ft_putstr_fd ("': not a valid identifier", 1); // sega
+        printf("': not a valid identifier\n");
+//		ft_putchar_fd ('\n', 1);
 	}	
 }
 
@@ -580,8 +596,7 @@ int export(t_main *main)
 					return(1);
 			i++;
 		}
-		arrays_free(envir);// убирает только основной массив подмассивы не трогаем иначе теряются указатели на подстроки
-	    envir = NULL;
+		free(envir);// убирает только основной массив подмассивы не трогаем иначе теряются указатели на подстроки
 	}
 	else
 	{
@@ -592,24 +607,25 @@ int export(t_main *main)
 			len = how_many_lines(envir);
 			// sleep(5);
 			// printf("here\n");
-			while (*args != NULL)// в цикле реалок еще на один аргумент с каждым новым аргументом
+			while (args[i] != NULL)// в цикле реалок еще на один аргумент с каждым новым аргументом
 			{
-				check_args(args);// проверка на допустимые символы
-				flag = checker(args, envir);
+			    if (i > 0)
+                    envir = env_recorder(main);
+				check_args(&args[i]);// проверка на допустимые символы
+				flag = checker(&args[i], envir);
 				if (flag != 1)
 				{
 //				    envir = ft_new_memory_alloc(envir,len + 2); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
                     e = env_recorder2(envir,len); //перезапись на лен +2
-				    e[len] = *args;// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
+				    e[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
 				    e[len + 1] = NULL; //сместили указатель на ноль по индексу длины рядов массива
 				    len++; //Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлят
+
 				}
                 copy_env2(main, e);
-//                arrays_free(envir);// TODO free 1
-//                arrays_free(e);// TODO free 2
-                envir = NULL;
+                free(envir);
 				flag = 0;
-				args++; //переход к следующему аргументу
+				i++; //переход к следующему аргументу
 			}
 //		copy_env2(main, e);
 //        free(envir);

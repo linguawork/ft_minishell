@@ -214,8 +214,8 @@ void	parser_go(t_main *main, t_parser *parser)
 	}
 	if (!parser->pars_command)
         append_command_to_main(main, parser);
-	else if (parser->line)
-	    append_arg_to_main(main, parser);
+    else if (parser->line)
+        append_arg_to_main(main, parser);
 // 	print_params(main);
 }
 
