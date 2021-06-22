@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:23:17 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 10:56:05 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <dirent.h>
 
 # define NO_VALID_SIMBOLS ""
-# define NO_VALID_ENV_VAR "\"'/.,-"
+# define NO_VALID_ENV_VAR "\"'/.,-/= $\'<>\\`\0?*"
 # define NO_VALID_COMMAND_SIMBOLS ":\"'"
 # define NO_VALID_DOBLE_QUOTE "!"
 
@@ -42,7 +42,6 @@ typedef struct s_parser
 	int 			pipe_exist;
 	int 			pars_var;
 	int 			pars_args;
-	int 			pars_flags;
 	int 			args_len;
 }					t_parser;
 
@@ -51,14 +50,15 @@ typedef struct s_redir
 	char			*command;
 	char			*flags;
 	char			**args;
-	int 			redir_to;
 	char			*error;
+	char			*redir_file;
+	int				redir_type;
+	struct s_redir	*redir_next;
 }					t_redir;
 
 typedef struct s_pipe
 {
 	t_redir			*redir;
-	t_redir			*redir_next;
 }					t_pipe;
 
 typedef struct s_job
@@ -71,7 +71,6 @@ typedef struct s_job
 typedef struct s_main
 {
 	t_job			*job;
-	t_job			*job_next;
 	char			**my_env;
 	int				exit;
 }					t_main;
@@ -114,10 +113,11 @@ void	overwrite_args(t_main *main, char **a);
 int		check_string_to_eraze(t_main *main, char **args, char **en);
 int		check_string_to_eraze2(t_main *main, char **args, char **en);
 int		char_count(const char *str);
-void	*ft_new_memory_alloc(void *p, size_t length);
+char    **ft_new_memory_alloc(void *p, size_t length);
 int		process_exe(t_main *main);
 int		how_many_lines(char **a);
 char**	cmd_args_to_argv_recorder(t_main *main);
+void	*arrays_free(char **s);
 
 
 #endif //MINISHELL_H
