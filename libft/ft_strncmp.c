@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/05 18:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:25:39 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/11 20:22:18 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 22:31:39 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,22 @@
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	while (n--)
+	unsigned char	*line1;
+	unsigned char	*line2;
+	size_t			i;
+
+	line1 = (unsigned char *)s1;
+	line2 = (unsigned char *)s2;
+	i = 0;
+	if (!(n))
+		return (0);
+	while (i < n && line1[i] != '\0' && line2[i] != '\0')
 	{
-		if (*s1 != *s2++)
-			return (*(unsigned char *)s1 - *(unsigned char *)--s2);
-		if (*s1++ == '\0')
-			break ;
+		if (line1[i] - line2[i] != 0)
+			return (line1[i] - line2[i]);
+		i++;
 	}
+	if (line1[i] == '\0' || line2[i] == '\0')
+		return (line1[i] - line2[i]);
 	return (0);
 }

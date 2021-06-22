@@ -295,7 +295,7 @@ void	*arrays_free(char **s)
 	int	i;
 
 	i = 0;
-	while (s[i])
+	while (s && s[i])
 	{
 		free(s[i]);
 		i++;
@@ -348,13 +348,110 @@ char** env_recorder(t_main *main)
     int i = 0;
     while (main->my_env[i] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
     {
-        e[i] = main->my_env[i];// лучше записывать через индекс
+        e[i] = ft_strdup(main->my_env[i]);// лучше записывать через индекс
         i++;
     }
 	e[i]=NULL;
     return(e);
 }
 
+char** env_recorder2(char **envir, int len)
+{
+    char **e;
+
+    e = (char **) malloc(sizeof(char *) * (len + 2));
+
+    int i = 0;
+    while (envir[i] && i != len) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
+    {
+        e[i] = ft_strdup(envir[i]);// лучше записывать через индекс
+//        free(envir[i]);
+        i++;
+    }
+    arrays_free(envir);
+//    e[len] = envir[i++];
+//    e[len+1]=NULL;
+    return(e);
+}
+
+//int check_doubles(char **args, char **en)
+//{
+//    char *a_name;
+//    int len;
+//    char *e_name;
+//    int len2;
+//
+//    a_name = NULL;
+//    e_name = NULL;
+//    while (*en != NULL)
+//    {
+//        if(ft_strcmp(*args, *en) == 0)
+//            return(1);
+//        else if((ft_strchr(*args, '=')) && !(ft_strchr(*en, '=')))
+//        {
+//            len= char_count(*args); // замер до равно
+//            // a_name = ft_substr(*args, 0, len); // отрезать до равно получается арг без равно
+//            ft_strlcpy(a_name, *args, len + 1);
+//            if (ft_strcmp(a_name, *en) != 0) // полное несоответствие строк до знака = и освобождение указателя
+//                en++;// может быть continue
+//            if(ft_strcmp(a_name, *en) == 0) // сравнение без знаков равно
+//            {
+//                free(*en);
+//                *en =ft_strdup(*args);
+//                // free(a_name); на стеке
+//                return(1);
+//            }
+//        }
+//        else if((ft_strchr(*args, '=')) && (ft_strchr(*en, '='))) // если и арг и env со знаком =
+//        {
+//            len= char_count(*args);
+//            len2 = char_count(*en);
+//            // a_name = ft_substr(*args, 0, len); // получ арг до знака равно
+//            ft_strlcpy(a_name, *args, len + 1);
+//            // e_name = ft_substr(*en, 0, len2); // получ env до знака равно
+//            ft_strlcpy(e_name, *en, len2 + 1);
+//            if (ft_strcmp(a_name, e_name) != 0) // полное соответствие строк до знака =
+//            {
+//                // free(e_name);
+//                // free(a_name);
+//                en++;// может быть continue
+//            }
+//            if (ft_strcmp(a_name, e_name) == 0) // полное соответствие строк до знака =
+//            {
+//                free(*en);
+//                *en =ft_strdup(*args);// перезапись
+//                // free(a_name);
+//                // free(e_name);
+//                return(1);
+//            }
+//        }
+//        else if(!(ft_strchr(*args, '=')) && !(ft_strchr(*en, '=')))
+//        {
+//            if(ft_strcmp(*args, *en) == 0) // полное соответствие строк без знака =
+//                return(1);
+//        }
+//        else if(!(ft_strchr(*args, '=')) && (ft_strchr(*en, '=')))
+//        {
+//            len= char_count(*en); // переопределение и замер до равно
+//            // e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
+//            ft_strlcpy(e_name, *en, len + 1);
+//            // e_name = read_name(*en);
+//
+//            if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
+//                // free(e_name);
+//                en++;// может быть continue
+//            if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
+//            {
+//                // free(e_name);
+//                return(1);
+//            }
+//        }
+//        en++;
+//    }
+//
+//    return(0);
+//}
+//
 int check_doubles(char **args, char **en)
 {
 	char *a_name;
@@ -413,7 +510,7 @@ int check_doubles(char **args, char **en)
 			if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
 				free(e_name);
 			if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
-			{ 
+			{
 				free(e_name);
 				return(1);
 			}
@@ -483,11 +580,13 @@ int export(t_main *main)
 					return(1);
 			i++;
 		}
-		free(envir);// убирает только основной массив подмассивы не трогаем иначе теряются указатели на подстроки
+		arrays_free(envir);// убирает только основной массив подмассивы не трогаем иначе теряются указатели на подстроки
+	    envir = NULL;
 	}
 	else
 	{
-			
+
+            char **e;
 			flag = 0;
 			i = 0;// первый аргумент нулевой
 			len = how_many_lines(envir);
@@ -499,17 +598,23 @@ int export(t_main *main)
 				flag = checker(args, envir);
 				if (flag != 1)
 				{
-				envir = (char **)ft_new_memory_alloc(envir,(sizeof(char*)*(len + 2))); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
-				envir[len] = *args;// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
-				envir[len + 1] = NULL; //сместили указатель на ноль по индексу длины рядов массива
-				len++; //Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлят
+//				    envir = ft_new_memory_alloc(envir,len + 2); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
+                    e = env_recorder2(envir,len); //перезапись на лен +2
+				    e[len] = *args;// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
+				    e[len + 1] = NULL; //сместили указатель на ноль по индексу длины рядов массива
+				    len++; //Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлят
 				}
+                copy_env2(main, e);
+//                arrays_free(envir);// TODO free 1
+//                arrays_free(e);// TODO free 2
+                envir = NULL;
 				flag = 0;
 				args++; //переход к следующему аргументу
 			}
-		copy_env2(main, envir);
+//		copy_env2(main, e);
+//        free(envir);
+//        free(e);
 	}
-	// free(envir);
 	// arrays_free(envir);
 	// sleep(1000);// for test leaks
 	return(0);
