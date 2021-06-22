@@ -18,10 +18,7 @@ void	copy_env(t_main *main, char **env)
 	int len;
 
 	i = -1;
-	len = 0;;
-//	len = how_many_lines(env);
-	while(env[len] != NULL)
-		len++;
+	len = how_many_lines(env);
 	main->my_env = ft_calloc(len + 1, sizeof(char *));
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
@@ -46,7 +43,7 @@ void	init_struct(t_main *main)
 
 	main->exit = 0;
 	job->pipe_next = NULL;
-	redir->redir_to = 0;
+//	redir->redir_to = 0;
 	main->job = job;
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
@@ -57,8 +54,8 @@ void	init_struct(t_main *main)
 
 void	end_session(t_main *main)
 {
-	mem_free(&main->job->pipe->redir->command);
-	arr_free(main->job->pipe->redir->args);
+	free(main->job->pipe->redir->command);
+    arrays_free(main->job->pipe->redir->args);// just free to avoid double freeing
 	main->job->pipe->redir->args = NULL;
 }
 

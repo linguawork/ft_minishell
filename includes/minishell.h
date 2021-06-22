@@ -51,14 +51,15 @@ typedef struct s_redir
 	char			*command;
 	char			*flags;
 	char			**args;
-	int 			redir_to;
 	char			*error;
+    char 		    *redir_file;
+    int             redir_type;
+    struct s_redir	*redir_next;
 }					t_redir;
 
 typedef struct s_pipe
 {
 	t_redir			*redir;
-	t_redir			*redir_next;
 }					t_pipe;
 
 typedef struct s_job
@@ -114,10 +115,11 @@ void	overwrite_args(t_main *main, char **a);
 int		check_string_to_eraze(t_main *main, char **args, char **en);
 int		check_string_to_eraze2(t_main *main, char **args, char **en);
 int		char_count(const char *str);
-void	*ft_new_memory_alloc(void *p, size_t length);
+char**	ft_new_memory_alloc(void *p, size_t length);
 int		process_exe(t_main *main);
 int		how_many_lines(char **a);
 char**	cmd_args_to_argv_recorder(t_main *main);
+void	*arrays_free(char **s);
 
 
 #endif //MINISHELL_H
