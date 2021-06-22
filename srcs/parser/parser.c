@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:02 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 12:23:32 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@ void	init_struct_job_next(t_job *job)
 	pipe = (t_pipe *)malloc(sizeof(t_pipe));
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
+	job_next->job_next = NULL;
 	redir->redir_file = NULL;
 	redir->redir_type = 0;
 	job->job_next = job_next;
 	job->job_next->pipe = pipe;
 	job->job_next->pipe->redir = redir;
 	job->job_next->pipe->redir->command = NULL;
-	job->job_next->pipe->redir->flags = NULL;
 	job->job_next->pipe->redir->args = NULL;
 }
 
@@ -47,7 +47,6 @@ void	init_struct_pipe_next(t_job *job, int job_next)
 		job->job_next->pipe_next = pipe;
 		job->job_next->pipe_next->redir = redir;
 		job->job_next->pipe_next->redir->command = NULL;
-		job->job_next->pipe_next->redir->flags = NULL;
 		job->job_next->pipe_next->redir->args = NULL;
 	}
 	else
@@ -57,7 +56,6 @@ void	init_struct_pipe_next(t_job *job, int job_next)
 		job->pipe_next = pipe;
 		job->pipe_next->redir = redir;
 		job->pipe_next->redir->command = NULL;
-		job->pipe_next->redir->flags = NULL;
 		job->pipe_next->redir->args = NULL;
 	}
 }
@@ -249,6 +247,48 @@ void	pars_quote(t_parser *parser)
 		add_char(&parser->line, c);
 }
 
+t_pipe	*get_current_pipe(t_job *job)
+{
+	if (job->pipe_next)
+		return (job->pipe_next);
+	else
+		return (job->pipe);
+}
+
+char *get_redir_file(t_job *job)
+{
+	job->pipe_next->redir->error = 0;
+	return ("");
+}
+
+t_job	*redirects(t_job *job, t_parser *parser)
+{
+	int		c;
+	int		redir_type;
+	char	*redir_file;
+	t_pipe	*pipe;
+
+	redir_type = 0;
+	if (parser->cur_c == '>')
+		redir_type = 1;
+	else if (parser->cur_c == '<')
+		redir_type = 2;
+	else
+	{
+		get_next_char(parser, &c);
+		if (c == '>')
+			redir_type = 3;
+		else if (c == '<')
+			redir_type = 4;
+	}
+	pipe = get_current_pipe(job);
+	redir_file = get_redir_file(job);
+	pipe->redir->redir_type = redir_type;
+	pipe->redir->redir_file = redir_file;
+	return (job);
+}
+
+
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
@@ -263,8 +303,10 @@ void	parser_go(t_main *main, t_parser *parser)
 			pars_quote(parser);
 		else if (c == '$')
 			pars_env_and_append_line(parser, main);
-		if (c == '|')
+		else if (c == '|')
 			job = get_next_pipe_addr(job, parser);
+		else if (c == '>' || c == '<')
+			job = redirects(job, parser);
 		else if (c == ' ')
 		{
 			if (!parser->pars_command && parser->line)

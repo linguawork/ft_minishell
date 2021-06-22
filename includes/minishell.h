@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:56:05 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 12:00:02 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,16 @@ typedef struct s_parser
 typedef struct s_redir
 {
 	char			*command;
-	char			*flags;
 	char			**args;
 	char			*error;
 	char			*redir_file;
 	int				redir_type;
-	struct s_redir	*redir_next;
 }					t_redir;
 
 typedef struct s_pipe
 {
 	t_redir			*redir;
+	struct s_redir	*redir_next;
 }					t_pipe;
 
 typedef struct s_job

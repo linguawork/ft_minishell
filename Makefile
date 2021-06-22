@@ -8,7 +8,7 @@ TESTS_DIR = ./srcs/tests/
 
 MAIN_FILES = start.c
 PARS_FILES = parser.c
-UTILS_FILES = utils.c utils_parser.c processor.c
+UTILS_FILES = utils.c utils_parser.c processor.c utils_processor.c
 TESTS_FILES = #tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))
