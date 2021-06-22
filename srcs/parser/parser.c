@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/21 14:06:16 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 10:25:39 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ void	init_struct_job_next(t_main *main)
 	pipe = (t_pipe *)malloc(sizeof(t_pipe));
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
-	redir->redir_to = 0;
+//	redir->redir_to = 0;
+	main->job = job;
 	main->job_next = job;
 	main->job_next->pipe = pipe;
 	main->job_next->pipe->redir = redir;
@@ -41,7 +42,7 @@ void	init_struct_pipe_next(t_main *main, int job_next)
 
 	if (job_next)
 	{
-		redir->redir_to = 0;
+//		redir->redir_to = 0;
 		main->job_next->pipe_next = pipe;
 		main->job_next->pipe_next->redir = redir;
 		main->job_next->pipe_next->redir->command = NULL;
@@ -50,7 +51,7 @@ void	init_struct_pipe_next(t_main *main, int job_next)
 	}
 	else
 	{
-		redir->redir_to = 0;
+//		redir->redir_to = 0;
 		main->job->pipe_next = pipe;
 		main->job->pipe_next->redir = redir;
 		main->job->pipe_next->redir->command = NULL;
