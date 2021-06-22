@@ -622,7 +622,8 @@ int export(t_main *main)
 				    len++; //Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлят
 
 				}
-                copy_env2(main, e);
+                if (flag != 1)
+                    copy_env2(main, e);
                 free(envir);
 				flag = 0;
 				i++; //переход к следующему аргументу
