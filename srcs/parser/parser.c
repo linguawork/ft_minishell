@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 12:23:32 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/23 11:05:22 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,13 +203,13 @@ void	print_params(t_main *main)
 		printf("\nargv[%d]: %s", i, main->job->pipe->redir->args[i]);
 }
 
-void	check_simbols_and_append_line(t_job *job, t_parser *parser)
+void	check_symbols_and_append_line(t_job *job, t_parser *parser)
 {
 	int c;
 
 	c = parser->cur_c;
-	if ((!parser->pars_command && !ft_strchr(NO_VALID_COMMAND_SIMBOLS, c)) ||
-		(parser->pars_command && !ft_strchr(NO_VALID_SIMBOLS, c)))
+	if ((!parser->pars_command && !ft_strchr(NO_VALID_COMMAND_SYMBOLS, c)) ||
+		(parser->pars_command && !ft_strchr(NO_VALID_SYMBOLS, c)))
 			add_char(&parser->line, c);
 	else
 	{
@@ -255,10 +255,13 @@ t_pipe	*get_current_pipe(t_job *job)
 		return (job->pipe);
 }
 
-char *get_redir_file(t_job *job)
+char *get_redir_file(t_parser *parser)
 {
-	job->pipe_next->redir->error = 0;
-	return ("");
+	int		c;
+
+	while (get_next_char(parser, &c) && c != ' ' && c != '\n')
+		add_char(&parser->line, c);
+	return (parser->line);
 }
 
 t_job	*redirects(t_job *job, t_parser *parser)
@@ -268,6 +271,8 @@ t_job	*redirects(t_job *job, t_parser *parser)
 	char	*redir_file;
 	t_pipe	*pipe;
 
+	if (!parser->pars_command && parser->line)
+		append_command_to_main(job, parser);
 	redir_type = 0;
 	if (parser->cur_c == '>')
 		redir_type = 1;
@@ -282,7 +287,7 @@ t_job	*redirects(t_job *job, t_parser *parser)
 			redir_type = 4;
 	}
 	pipe = get_current_pipe(job);
-	redir_file = get_redir_file(job);
+	redir_file = get_redir_file(parser);
 	pipe->redir->redir_type = redir_type;
 	pipe->redir->redir_file = redir_file;
 	return (job);
@@ -315,7 +320,7 @@ void	parser_go(t_main *main, t_parser *parser)
 				append_arg_to_main(job, parser);
 		}
 		else
-			check_simbols_and_append_line(job, parser);
+			check_symbols_and_append_line(job, parser);
 	}
 	if (!parser->pars_command && parser->line)
 		append_command_to_main(job, parser);

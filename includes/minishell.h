@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 12:00:02 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/23 11:50:43 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 # include "libft.h"
 # include <dirent.h>
 
-# define NO_VALID_SIMBOLS ""
+# define NO_VALID_SYMBOLS ""
 # define NO_VALID_ENV_VAR "\"'/.,-/= $\'<>\\`\0?*"
-# define NO_VALID_COMMAND_SIMBOLS ":\"'"
+# define NO_VALID_COMMAND_SYMBOLS ":\"'"
 # define NO_VALID_DOBLE_QUOTE "!"
 
 /*
