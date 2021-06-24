@@ -75,6 +75,7 @@ typedef struct s_main
 	char			**my_env;
 	int				exit;
 	int             sub;
+	int             flag2;
 }					t_main;
 
 /*
@@ -115,11 +116,12 @@ void	overwrite_args(t_main *main, char **a);
 int		check_string_to_eraze(t_main *main, char **args, char **en);
 int		check_string_to_eraze2(t_main *main, char **args, char **en);
 int		char_count(const char *str);
-char**	ft_new_memory_alloc(char **p, size_t length);
 int		process_exe(t_main *main);
 int		how_many_lines(char **a);
 char**	cmd_args_to_argv_recorder(t_main *main);
 void	*arrays_free(char **s);
+char    *ft_getenv(t_main *main, char *name);
+int     cd(t_main *main);
 
 
 #endif //MINISHELL_H

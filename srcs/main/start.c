@@ -42,6 +42,7 @@ void	init_struct(t_main *main)
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
 	main->sub = 0;// for args sub in export
+	main->flag2 = 0;// for check_valid_args
 	main->exit = 0;
 //	redir->redir_to = 0;
 	main->job = job;
