@@ -6,11 +6,62 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/23 11:05:22 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/24 10:46:51 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+char 	**ft_arrdup(char **src, int len)
+{
+	int i;
+	char **dst;
+
+	dst = ft_calloc(len + 2, sizeof(char *));
+	i = 0;
+	while (src && *src)
+		dst[i++] = *src++;
+	return (dst);
+}
+
+void	append_arg_to_main(t_job *job, t_parser *parser)
+{
+	char **src;
+	char **tmp;
+
+	if (parser->pipe_exist != 1)
+		src = job->pipe->redir->args;
+	else
+		src = job->pipe_next->redir->args;
+	tmp = ft_arrdup(src, parser->args_len);
+	tmp[parser->args_len++] = parser->line;
+	tmp[parser->args_len] = NULL;
+	free(src);
+	if (parser->pipe_exist != 1)
+		job->pipe->redir->args = tmp;
+	else
+		job->pipe_next->redir->args = tmp;
+	parser->line = NULL;
+}
+
+void	append_command_to_main(t_job *job, t_parser *parser)
+{
+	if (!job->pipe->redir->command)
+		job->pipe->redir->command = parser->line;
+	else
+		job->pipe_next->redir->command = parser->line;
+	if (parser->line)
+		parser->pars_command = 1;
+	parser->line = NULL;
+}
+
+void	write_pars_line(t_job *job, t_parser *parser)
+{
+	if (!parser->pars_command && parser->line && *parser->line)
+		append_command_to_main(job, parser);
+	else if (parser->line && *parser->line)
+		append_arg_to_main(job, parser);
+}
 
 void	init_struct_job_next(t_job *job)
 {
@@ -70,6 +121,7 @@ void	zero_parser(t_parser *parser)
 
 t_job	*get_next_pipe_addr(t_job *job, t_parser *parser)
 {
+	write_pars_line(job, parser);
 	zero_parser(parser);
 	if (!job->pipe_next)
 	{
@@ -92,7 +144,7 @@ char 	*pars_env_variable(t_parser *parser)
 	add_char(&parser->variable, parser->cur_c);
 	while (get_next_char(parser, &c) && c != ' ' && c != '\n')
 	{
-		if (!ft_strchr(NO_VALID_ENV_VAR, c))
+		if (ft_isalnum(c) && c == '_')
 			add_char(&parser->variable, c);
 		else if (c == '$')
 			c = '$';
@@ -148,49 +200,6 @@ void	pars_env_and_append_line(t_parser *parser, t_main *main)
 		parser->variable_value = get_env_value(main->my_env, parser->variable);
 		add_value_in_line(parser);
 	}
-}
-
-char 	**ft_arrdup(char **src, int len)
-{
-	int i;
-	char **dst;
-
-	dst = ft_calloc(len + 2, sizeof(char *));
-	i = 0;
-	while (src && *src)
-		dst[i++] = *src++;
-	return (dst);
-}
-
-void	append_arg_to_main(t_job *job, t_parser *parser)
-{
-	char **src;
-	char **tmp;
-
-	if (parser->pipe_exist != 1)
-		src = job->pipe->redir->args;
-	else
-		src = job->pipe_next->redir->args;
-	tmp = ft_arrdup(src, parser->args_len);
-	tmp[parser->args_len++] = parser->line;
-	tmp[parser->args_len] = NULL;
-	free(src);
-	if (parser->pipe_exist != 1)
-		job->pipe->redir->args = tmp;
-	else
-		job->pipe_next->redir->args = tmp;
-	parser->line = NULL;
-}
-
-void	append_command_to_main(t_job *job, t_parser *parser)
-{
-	if (!job->pipe->redir->command)
-		job->pipe->redir->command = parser->line;
-	else
-		job->pipe_next->redir->command = parser->line;
-	if (parser->line)
-		parser->pars_command = 1;
-	parser->line = NULL;
 }
 
 void	print_params(t_main *main)
@@ -271,8 +280,7 @@ t_job	*redirects(t_job *job, t_parser *parser)
 	char	*redir_file;
 	t_pipe	*pipe;
 
-	if (!parser->pars_command && parser->line)
-		append_command_to_main(job, parser);
+	write_pars_line(job, parser);
 	redir_type = 0;
 	if (parser->cur_c == '>')
 		redir_type = 1;
@@ -293,14 +301,14 @@ t_job	*redirects(t_job *job, t_parser *parser)
 	return (job);
 }
 
-
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
 	t_job	*job;
 
 	job = main->job;
-	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
+	while (parser->cur_c != '\n' && get_next_char(parser, &c) &&
+	ft_isprint(c) && c != '\n')
 	{
 		if (c == '"')
 			pars_double_quote(parser, main);
@@ -313,19 +321,11 @@ void	parser_go(t_main *main, t_parser *parser)
 		else if (c == '>' || c == '<')
 			job = redirects(job, parser);
 		else if (c == ' ')
-		{
-			if (!parser->pars_command && parser->line)
-				append_command_to_main(job, parser);
-			else if (parser->line)
-				append_arg_to_main(job, parser);
-		}
+			write_pars_line(job, parser);
 		else
 			check_symbols_and_append_line(job, parser);
 	}
-	if (!parser->pars_command && parser->line)
-		append_command_to_main(job, parser);
-	else if (parser->line)
-		append_arg_to_main(job, parser);
+	write_pars_line(job, parser);
 // 	print_params(main);
 }
 
