@@ -28,9 +28,11 @@ int echo(t_main *main)
 {
 	char *command;
 	char **args;
+//	char **dup_args;
 
 	command = main->job->pipe->redir->command;
     args = main->job->pipe->redir->args;
+//    dup_args = args;
 	if (command != '\0')
 	{
 	    if (command && !args)
@@ -64,9 +66,16 @@ int echo(t_main *main)
 					ft_putchar_fd('\n', 1);
 				}
             }
-			
+
         }
 	}
+//	while(args)
+//	{
+//	    if (!args)
+//	        break;
+//        args--;
+//    }
+//    arrays_free(args);
 	return(0);
 }
 
@@ -372,6 +381,8 @@ char** env_recorder2(char **envir, int len)
     return(e);
 }
 
+
+// older version
 //int check_doubles(char **args, char **en)
 //{
 //    char *a_name;
@@ -379,8 +390,6 @@ char** env_recorder2(char **envir, int len)
 //    char *e_name;
 //    int len2;
 //
-//    a_name = NULL;
-//    e_name = NULL;
 //    while (*en != NULL)
 //    {
 //        if(ft_strcmp(*args, *en) == 0)
@@ -388,15 +397,14 @@ char** env_recorder2(char **envir, int len)
 //        else if((ft_strchr(*args, '=')) && !(ft_strchr(*en, '=')))
 //        {
 //            len= char_count(*args); // замер до равно
-//            // a_name = ft_substr(*args, 0, len); // отрезать до равно получается арг без равно
-//            ft_strlcpy(a_name, *args, len + 1);
-//            if (ft_strcmp(a_name, *en) != 0) // полное несоответствие строк до знака = и освобождение указателя
-//                continue;
+//            a_name = ft_substr(*args, 0, len); // отрезать до равно получается арг без равно
+//            if (ft_strcmp(a_name, a_name) != 0) // полное соответствие строк до знака =
+//                free(a_name);
 //            if(ft_strcmp(a_name, *en) == 0) // сравнение без знаков равно
 //            {
 //                free(*en);
 //                *en =ft_strdup(*args);
-//                // free(a_name); на стеке
+//                free(a_name);
 //                return(1);
 //            }
 //        }
@@ -404,22 +412,19 @@ char** env_recorder2(char **envir, int len)
 //        {
 //            len= char_count(*args);
 //            len2 = char_count(*en);
-//            // a_name = ft_substr(*args, 0, len); // получ арг до знака равно
-//            ft_strlcpy(a_name, *args, len + 1);
-//            // e_name = ft_substr(*en, 0, len2); // получ env до знака равно
-//            ft_strlcpy(e_name, *en, len2 + 1);
+//            a_name = ft_substr(*args, 0, len); // получ арг до знака равно
+//            e_name = ft_substr(*en, 0, len2); // получ env до знака равно
 //            if (ft_strcmp(a_name, e_name) != 0) // полное соответствие строк до знака =
 //            {
-//                // free(e_name);
-//                // free(a_name);
-//                continue;
+//                free(e_name);
+//                free(a_name);
 //            }
 //            if (ft_strcmp(a_name, e_name) == 0) // полное соответствие строк до знака =
 //            {
 //                free(*en);
 //                *en =ft_strdup(*args);// перезапись
-//                // free(a_name);
-//                // free(e_name);
+//                free(a_name);
+//                free(e_name);
 //                return(1);
 //            }
 //        }
@@ -431,16 +436,13 @@ char** env_recorder2(char **envir, int len)
 //        else if(!(ft_strchr(*args, '=')) && (ft_strchr(*en, '=')))
 //        {
 //            len= char_count(*en); // переопределение и замер до равно
-//            // e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
-//            ft_strlcpy(e_name, *en, len + 1);
+//            e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
 //            // e_name = read_name(*en);
-//
 //            if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
-//                // free(e_name);
-//                continue;
+//                free(e_name);
 //            if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
 //            {
-//                // free(e_name);
+//                free(e_name);
 //                return(1);
 //            }
 //        }
@@ -450,8 +452,8 @@ char** env_recorder2(char **envir, int len)
 //    return(0);
 //}
 
-
-int check_doubles(char **args, char **en)
+// recent version
+int check_doubles(t_main *main, char **args, char **en)
 {
 	char *a_name;
 	int len;
@@ -472,7 +474,9 @@ int check_doubles(char **args, char **en)
 			{
 				free(*en);
 				*en =ft_strdup(*args);
+                free(*args);// убрал утечку после исполнения команды
 				free(a_name);
+                main->sub = 1;
 				return(1);
 			}
 		}
@@ -491,8 +495,10 @@ int check_doubles(char **args, char **en)
 			{
 				free(*en);
 				*en =ft_strdup(*args);// перезапись
+				free(*args);// убрал утечку после исполнения команды
 				free(a_name);
 				free(e_name);
+				main->sub = 1;
 				return(1);
 			}
 		}
@@ -513,32 +519,15 @@ int check_doubles(char **args, char **en)
 				free(e_name);
 				return(1);
 			}
-//        else if(!(ft_strchr(*args, '=')) && (ft_strchr(*en, '=')))
-//        {
-//            len= char_count(*en); // переопределение и замер до равно
-//            // e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
-//            ft_strlcpy(e_name, *en, len + 1);
-//            // e_name = read_name(*en);
-//
-//            if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
-//                // free(e_name);
-////                en++;// может быть
-//                continue;
-//            if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
-//            {
-//                // free(e_name);
-//                return(1);
-//            }
 		}
 		en++;
 	}
-
 	return(0);
 }
 
-int checker (char **a, char **e)
+int checker (t_main *main, char **a, char **e)
 {
-	if (check_doubles(a, e) == 1)
+	if (check_doubles(main, a, e) == 1)
 		return(1);
 	else
 		return(0);
@@ -612,7 +601,7 @@ int export(t_main *main)
 			    if (i > 0)
                     envir = env_recorder(main);
 				check_args(&args[i]);// проверка на допустимые символы
-				flag = checker(&args[i], envir);
+				flag = checker(main, &args[i], envir);
 				if (flag != 1)
 				{
 //				    envir = ft_new_memory_alloc(envir,len + 2); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
@@ -622,6 +611,11 @@ int export(t_main *main)
 				    len++; //Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлят
 
 				}
+				if (flag == 1 && main->sub == 1)
+				{
+                    copy_env3(main, envir);
+                    main->sub = 0;
+                }
                 if (flag != 1)
                     copy_env2(main, e);
                 free(envir);
@@ -665,16 +659,11 @@ int check_string_to_eraze2(t_main *main, char **args, char **en)// провер�
 					en[i] = en[i+1]; // смещаем указатель на следующий для всех элемнтов после того как я зафришил
 					i++;
 				}
+                while(en[i])
+                    i--;// смещаем указатель на следующий для всех элемнтов после того как я зафриши
 				len = how_many_lines(en);
-				// printf("After____%d\n", len);
-				en = (char **)ft_new_memory_alloc(en,(sizeof(char*)*(len))); // просто лен так как уменьшили на один элемент
-				// while (*en != NULL)
-				// {
-				// 	printf("--->%s\n", *en);
-				// 	en++;
-				// }
 				copy_env2(main, en);
-				// free(en);
+				free(*args);
 				return(1);
 			}
 		}
@@ -683,16 +672,17 @@ int check_string_to_eraze2(t_main *main, char **args, char **en)// провер�
 	return(0);
 }
 
-int check_string_to_eraze(t_main *main, char **args, char **en)// проверка наличия переменных со знаком =
+int check_string_to_eraze(t_main *main, char **args, char **en)// проверка наличия переменных env со знаком =
 {
 	char *name;
 	int len;
 	int i;
+//	char **temp;
 
 	i = 0;
 	while (en[i] != NULL)
 	{
-		if(!(ft_strchr(*args, '=')) && (ft_strchr(en[i], '=')) )
+		if(!(ft_strchr(*args, '=')) && (ft_strchr(en[i], '=')) ) // аргумент без знака =
 		{
 			len= char_count(en[i]); // замер до равно (длина строки до =)
 			name = ft_substr(en[i], 0, len); // отрезать до равно получается en без равно
@@ -708,11 +698,15 @@ int check_string_to_eraze(t_main *main, char **args, char **en)// проверк
 					en[i] = en[i+1]; // смещаем указатель на следующий для всех элемнтов после того как я зафришил
 					i++;
 				}
+                while(en[i])
+                     i--;// смещаем указатель на следующий для всех элемнтов после того как я зафриши
 				len = how_many_lines(en);// переопределение лен (длина массива строк)
-				en = (char **)ft_new_memory_alloc(en,(sizeof(char*)*(len))); // просто лен так как уменьшили на один элемент
-				// len = how_many_lines(en);
+//				temp = ft_new_memory_alloc(en, len); // просто лен так как уменьшили на один элемент
+//				 len = how_many_lines(temp);
 				// printf("after-->%d", len);
 				copy_env2(main, en);
+                free (name);// зачистка утечки
+                free(*args);//зачистка утечки (после выполнения след команды после unset)
 				return(1);
 			}
 		}
@@ -722,6 +716,7 @@ int check_string_to_eraze(t_main *main, char **args, char **en)// проверк
 	}
 		// if (name)
 		// 	free(name);
+
 	return(0);
 }
 
@@ -734,10 +729,11 @@ int unset(t_main *main)
     command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
 	// envir = main->my_env;
-	envir = env_recorder(main);
+
 
 	while (command && args && *args != NULL)
 	{
+        envir = env_recorder(main);
 		checker2 (main, args, envir);
 		// if(checker2 (args, envir)== 1)
 		// 	copy_env3(main, envir);

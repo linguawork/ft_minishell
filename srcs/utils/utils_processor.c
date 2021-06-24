@@ -1,41 +1,43 @@
 #include "minishell.h"
 
-char    **ft_new_memory_alloc(void *p, size_t length)// не добавляет терминир ноль
+char    **ft_new_memory_alloc(char **p, size_t length)// не добавляет терминир ноль
 {
 	char	**result;
 
-	result = (char **)malloc(sizeof(char *) * length);// создаем новую строку с новым размером
+	result = (char **)malloc(length);// создаем новую строку с новым размером
 	if (!result)
 		return(NULL);
 	else
 	{
-		ft_memset(result, '\0', length);// заполнение нулями на всю длину
+//		ft_memset(result, '\0', length);// заполнение нулями на всю длину
+        result = ft_calloc(length, 1);
 		ft_memcpy(result, p, length);// копируем поданную строку в новую
 	}
 	free(p);
 	return (result);
 }
 
-//void	copy_env2(t_main *main, char **env)
-//{
-//	int i;
-//
-//	i = 0;
-//	while (env[i])
-//		i++;
-//	main->my_env = (char **)malloc(sizeof(char *) * (i + 1));// добавление + 1 довало утечку - убрал и утечек не было но стало сегаться
-//	// когда подаю аргументы в экспорт После того как снова прибавил +1 сега исчезла (сегу находил с помощью санитайзера)
-//	if (!main->my_env)
-//		exit_with_error(main, ERROR_MALLOC);
-//	main->my_env[i] = NULL;
-//	while (--i >= 0)
-//	{
-//		main->my_env[i] = ft_strdup(env[i]);
-//		free(env[i]); // освобождение в цикле чтобы убрать утечки
-//		if (!main->my_env[i])
-//			exit_with_error(main, ERROR_MALLOC);
-//	}
-//}
+void	copy_env3(t_main *main, char **env)
+{
+    int i;
+    int len;
+
+    i = -1;
+    len = how_many_lines(env);
+    free(main->my_env);
+    main->my_env = (char **)malloc(sizeof(char *) * (len + 1));// добавление + 1 довало утечку - убрал и утечек не было но стало сегаться
+    // когда подаю аргументы в экспорт После того как снова прибавил +1 сега исчезла (сегу находил с помощью санитайзера)
+    if (!main->my_env)
+        exit_with_error(main, ERROR_MALLOC);
+    while (++i < len)
+    {
+        main->my_env[i] = ft_strdup(env[i]);
+        free(env[i]); // освобождение в цикле чтобы убрать утечки
+        if (!main->my_env[i])
+            exit_with_error(main, ERROR_MALLOC);
+    }
+    main->my_env[i] = NULL;
+}
 
 void	copy_env2(t_main *main, char **env)
 {

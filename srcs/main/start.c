@@ -41,6 +41,7 @@ void	init_struct(t_main *main)
 	pipe = (t_pipe *)malloc(sizeof(t_pipe));
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
+	main->sub = 0;// for args sub in export
 	main->exit = 0;
 //	redir->redir_to = 0;
 	main->job = job;
