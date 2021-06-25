@@ -635,11 +635,7 @@ int unset(t_main *main)
 	{
         flag = check_args_unset(main, args);
         if(flag == 1)
-        {
-            ft_putstr_fd("found invalid args\n", 1);
             free(*args);
-        }
-
         if (flag != 1)
         {
             envir = env_recorder(main);
