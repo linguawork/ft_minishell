@@ -28,9 +28,11 @@ int echo(t_main *main)
 {
 	char *command;
 	char **args;
+//	char **dup_args;
 
 	command = main->job->pipe->redir->command;
     args = main->job->pipe->redir->args;
+//    dup_args = args;
 	if (command != '\0')
 	{
 	    if (command && !args)
@@ -64,88 +66,19 @@ int echo(t_main *main)
 					ft_putchar_fd('\n', 1);
 				}
             }
-			
+
         }
 	}
+//	while(args)
+//	{
+//	    if (!args)
+//	        break;
+//        args--;
+//    }
+//    arrays_free(args);
 	return(0);
 }
 
-char *ft_getenv(t_main *main, char *name)
-{
-	char **env;
-	int len;
-	int i;
-	char *name_or_value;
-
-	env = main->my_env;
-	i = 0;
-	while (env[i] != NULL)
-	{
-		if(ft_strchr(env[i], '=')) 
-		{
-			len= char_count(env[i]); // замер до равно (длина строки до =)
-			name_or_value = ft_substr(env[i], 0, len); // отрезать до равно получается en без равно
-			if(ft_strcmp(name_or_value, name) != 0)// освобождаем если не нашли
-					free(name_or_value);
-			if(ft_strcmp(name_or_value, name) == 0)// сравнение без знаков равно
-			{
-				free(name_or_value);
-				name_or_value = ft_strchr(env[i], '=')+1; // pointer marks the symbol in the string// all after =, including =str
-				// +1 убирает знак "=
-				// name_or_value = name_or_value + 1;
-				// ft_putstr_fd(name_or_value, 1);
-				// ft_putchar_fd('\n', 1);
-				return(name_or_value);
-			}
-		}
-		i++;
-	}
-	return(0);
-}
-
-int cd(t_main *main)
-{
-	char *command;// функция отрабатывает, но прога завершается и просходит возврат директорию программы
-	char **args;
-	char *p;
-	// int errnum;
-
-	command = main->job->pipe->redir->command;
-	args = main->job->pipe->redir->args;
-
-	if (command && !args)
-	{
-		// p = getenv("HOME");// при удалении HOME в рабочей копии getenv брал копию HOME из оригинала env
-		p = ft_getenv(main, "HOME");
-		if (p == NULL)
-		{
-			ft_putstr_fd("minishell: cd: HOME not set\n", 1);
-			main->exit = 1; //$? должен вызвать minishell: 1: command not found ()
-		}
-		else
-			chdir(p);
-	}
-	if (command && args)
-	{
-		p = *args;
-		chdir(p);		
-		if (chdir(p) < 0)// if the directory was not found chdir returns -1
-		{
-			// errnum = errno;
-			// main->exit = 1;
-			// p = strerror(errnum);
-			// printf("%s\n", p);
-
-			ft_putstr_fd("minishell: cd: ", 1);
-			ft_putstr_fd(p, 1);
-			ft_putstr_fd(": No such file or directory", 1);
-			main->exit = 1; // последующая команда $? должна показать значение в структуре main->exit 
-			// здесь программа не должна выходить, но выходит по условию в main функции
-
-		}
-	}
-	return(0);
-}
 
 int pwd(t_main *main)
 {
@@ -295,7 +228,7 @@ void	*arrays_free(char **s)
 	int	i;
 
 	i = 0;
-	while (s && s[i])
+	while (s[i])
 	{
 		free(s[i]);
 		i++;
@@ -348,7 +281,7 @@ char** env_recorder(t_main *main)
     int i = 0;
     while (main->my_env[i] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
     {
-        e[i] = ft_strdup(main->my_env[i]);// лучше записывать через индекс
+        e[i] = main->my_env[i];// лучше записывать через индекс
         i++;
     }
 	e[i]=NULL;
@@ -364,95 +297,17 @@ char** env_recorder2(char **envir, int len)
     int i = 0;
     while (envir[i] && i != len) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала
     {
-        e[i] = ft_strdup(envir[i]);// лучше записывать через индекс
-//        free(envir[i]);
+        e[i] = envir[i];// лучше записывать через индекс
         i++;
     }
-    arrays_free(envir);
 //    e[len] = envir[i++];
 //    e[len+1]=NULL;
     return(e);
 }
 
-//int check_doubles(char **args, char **en)
-//{
-//    char *a_name;
-//    int len;
-//    char *e_name;
-//    int len2;
-//
-//    a_name = NULL;
-//    e_name = NULL;
-//    while (*en != NULL)
-//    {
-//        if(ft_strcmp(*args, *en) == 0)
-//            return(1);
-//        else if((ft_strchr(*args, '=')) && !(ft_strchr(*en, '=')))
-//        {
-//            len= char_count(*args); // замер до равно
-//            // a_name = ft_substr(*args, 0, len); // отрезать до равно получается арг без равно
-//            ft_strlcpy(a_name, *args, len + 1);
-//            if (ft_strcmp(a_name, *en) != 0) // полное несоответствие строк до знака = и освобождение указателя
-//                en++;// может быть continue
-//            if(ft_strcmp(a_name, *en) == 0) // сравнение без знаков равно
-//            {
-//                free(*en);
-//                *en =ft_strdup(*args);
-//                // free(a_name); на стеке
-//                return(1);
-//            }
-//        }
-//        else if((ft_strchr(*args, '=')) && (ft_strchr(*en, '='))) // если и арг и env со знаком =
-//        {
-//            len= char_count(*args);
-//            len2 = char_count(*en);
-//            // a_name = ft_substr(*args, 0, len); // получ арг до знака равно
-//            ft_strlcpy(a_name, *args, len + 1);
-//            // e_name = ft_substr(*en, 0, len2); // получ env до знака равно
-//            ft_strlcpy(e_name, *en, len2 + 1);
-//            if (ft_strcmp(a_name, e_name) != 0) // полное соответствие строк до знака =
-//            {
-//                // free(e_name);
-//                // free(a_name);
-//                en++;// может быть continue
-//            }
-//            if (ft_strcmp(a_name, e_name) == 0) // полное соответствие строк до знака =
-//            {
-//                free(*en);
-//                *en =ft_strdup(*args);// перезапись
-//                // free(a_name);
-//                // free(e_name);
-//                return(1);
-//            }
-//        }
-//        else if(!(ft_strchr(*args, '=')) && !(ft_strchr(*en, '=')))
-//        {
-//            if(ft_strcmp(*args, *en) == 0) // полное соответствие строк без знака =
-//                return(1);
-//        }
-//        else if(!(ft_strchr(*args, '=')) && (ft_strchr(*en, '=')))
-//        {
-//            len= char_count(*en); // переопределение и замер до равно
-//            // e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
-//            ft_strlcpy(e_name, *en, len + 1);
-//            // e_name = read_name(*en);
-//
-//            if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
-//                // free(e_name);
-//                en++;// может быть continue
-//            if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
-//            {
-//                // free(e_name);
-//                return(1);
-//            }
-//        }
-//        en++;
-//    }
-//
-//    return(0);
-//}
-//
-int check_doubles(char **args, char **en)
+
+// recent version
+int check_doubles(t_main *main, char **args, char **en)
 {
 	char *a_name;
 	int len;
@@ -473,7 +328,9 @@ int check_doubles(char **args, char **en)
 			{
 				free(*en);
 				*en =ft_strdup(*args);
+                free(*args);// убрал утечку после исполнения команды
 				free(a_name);
+                main->sub = 1;
 				return(1);
 			}
 		}
@@ -492,8 +349,10 @@ int check_doubles(char **args, char **en)
 			{
 				free(*en);
 				*en =ft_strdup(*args);// перезапись
+				free(*args);// убрал утечку после исполнения команды
 				free(a_name);
 				free(e_name);
+				main->sub = 1;
 				return(1);
 			}
 		}
@@ -507,9 +366,9 @@ int check_doubles(char **args, char **en)
 			len= char_count(*en); // переопределение и замер до равно
 			e_name = ft_substr(*en, 0, len); // отрезать до равно получается en без равно
 			// e_name = read_name(*en);
-			if (ft_strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
+			if (strcmp(*args, e_name) != 0) // полное соответствие строк до знака =
 				free(e_name);
-			if(ft_strcmp(*args, e_name) == 0)// сравнение без знаков равно
+			if(strcmp(*args, e_name) == 0)// сравнение без знаков равно
 			{
 				free(e_name);
 				return(1);
@@ -517,29 +376,73 @@ int check_doubles(char **args, char **en)
 		}
 		en++;
 	}
-
 	return(0);
 }
 
-int checker (char **a, char **e)
+int checker (t_main *main, char **a, char **e)
 {
-	if (check_doubles(a, e) == 1)
+	if (check_doubles(main, a, e) == 1)
 		return(1);
 	else
 		return(0);
 }
 
-void check_args(char **a)
+int check_args_unset(t_main *main, char **a)
 {
+    char invalid_char_str[6] = {'=','-','+',',','.',':'};
+    int i;
+
 	if (ft_strchr (*a, '_')) // допустимый символ в аргументе
-		return;
-	if (!ft_isalpha(*a[0])) // если первый  символ не буква то сообщение об ошибке
-	{
-		ft_putstr_fd ("minishell: export: `", 1);
-		ft_putstr_fd (*a, 1);
-		ft_putstr_fd ("': not a valid identifier", 1);
-		ft_putchar_fd ('\n', 1);
-	}	
+		return(0);
+//	if (!ft_isalpha(*a[0])) // если первый  символ не буква то сообщение об ошибке
+//	{
+//		ft_putstr_fd ("minishell: ", 1);
+//        ft_putstr_fd (main->job->pipe->redir->command, 1);
+//        ft_putstr_fd (": `", 1);
+//		ft_putstr_fd (*a, 1);
+//        printf("': not a valid identifier\n");
+//	}
+	i = 0;
+    while(invalid_char_str[i])
+    {
+        if (!ft_isalpha(*a[0]) || (ft_strchr(*a, invalid_char_str[i]))) // если первый  символ не буква то сообщение об ошибке
+        {
+            ft_putstr_fd ("minishell: ", 1);
+            ft_putstr_fd (main->job->pipe->redir->command, 1);
+            ft_putstr_fd (": `", 1);
+            ft_putstr_fd (*a, 1);
+            ft_putstr_fd ("': not a valid identifier", 1); // sega
+            ft_putchar_fd ('\n', 1);
+            return(1);
+        }
+        i++;
+    }
+    return(0);
+}
+
+void check_args(t_main *main, char **a)
+{
+    char invalid_char_str[5] = {'-','+',',','.',':'};
+    int i;
+
+    if (ft_strchr (*a, '_')) // допустимый символ в аргументе
+        return;
+    i = 0;
+    while(invalid_char_str[i])
+    {
+        if (!ft_isalpha(*a[0]) || (ft_strchr(*a, invalid_char_str[i]))) // если первый  символ не буква то сообщение об ошибке
+        {
+            ft_putstr_fd ("minishell: ", 1);
+            ft_putstr_fd (main->job->pipe->redir->command, 1);
+            ft_putstr_fd (": `", 1);
+            ft_putstr_fd (*a, 1);
+            ft_putstr_fd ("': not a valid identifier", 1); // sega
+            ft_putchar_fd ('\n', 1);
+            main->flag2 = 1;
+            break;
+        }
+        i++;
+    }
 }
 
 int export(t_main *main)
@@ -580,8 +483,7 @@ int export(t_main *main)
 					return(1);
 			i++;
 		}
-		arrays_free(envir);// убирает только основной массив подмассивы не трогаем иначе теряются указатели на подстроки
-	    envir = NULL;
+		free(envir);// убирает только основной массив подмассивы не трогаем иначе теряются указатели на подстроки
 	}
 	else
 	{
@@ -592,24 +494,32 @@ int export(t_main *main)
 			len = how_many_lines(envir);
 			// sleep(5);
 			// printf("here\n");
-			while (*args != NULL)// в цикле реалок еще на один аргумент с каждым новым аргументом
+			while (args[i] != NULL)// в цикле реалок еще на один аргумент с каждым новым аргументом
 			{
-				check_args(args);// проверка на допустимые символы
-				flag = checker(args, envir);
-				if (flag != 1)
+			    if (i > 0)
+                    envir = env_recorder(main);
+				check_args(main, &args[i]);// проверка на допустимые символы
+				flag = checker(main, &args[i], envir);
+				if ((flag != 1) && (main->flag2 != 1))
 				{
 //				    envir = ft_new_memory_alloc(envir,len + 2); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
                     e = env_recorder2(envir,len); //перезапись на лен +2
-				    e[len] = *args;// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
+				    e[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
 				    e[len + 1] = NULL; //сместили указатель на ноль по индексу длины рядов массива
 				    len++; //Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлят
+
 				}
-                copy_env2(main, e);
-//                arrays_free(envir);// TODO free 1
-//                arrays_free(e);// TODO free 2
-                envir = NULL;
+				if (flag == 1 && main->sub == 1)
+				{
+                    copy_env3(main, envir);
+                    main->sub = 0;
+                }
+                if ((flag != 1) && (main->flag2 != 1))
+                    copy_env2(main, e);
+                free(envir);
 				flag = 0;
-				args++; //переход к следующему аргументу
+                main->flag2 = 0;
+				i++; //переход к следующему аргументу
 			}
 //		copy_env2(main, e);
 //        free(envir);
@@ -648,16 +558,11 @@ int check_string_to_eraze2(t_main *main, char **args, char **en)// провер�
 					en[i] = en[i+1]; // смещаем указатель на следующий для всех элемнтов после того как я зафришил
 					i++;
 				}
+                while(en[i])
+                    i--;// смещаем указатель на следующий для всех элемнтов после того как я зафриши
 				len = how_many_lines(en);
-				// printf("After____%d\n", len);
-				en = (char **)ft_new_memory_alloc(en,(sizeof(char*)*(len))); // просто лен так как уменьшили на один элемент
-				// while (*en != NULL)
-				// {
-				// 	printf("--->%s\n", *en);
-				// 	en++;
-				// }
 				copy_env2(main, en);
-				// free(en);
+				free(*args);
 				return(1);
 			}
 		}
@@ -666,16 +571,17 @@ int check_string_to_eraze2(t_main *main, char **args, char **en)// провер�
 	return(0);
 }
 
-int check_string_to_eraze(t_main *main, char **args, char **en)// проверка наличия переменных со знаком =
+int check_string_to_eraze(t_main *main, char **args, char **en)// проверка наличия переменных env со знаком =
 {
 	char *name;
 	int len;
 	int i;
+//	char **temp;
 
 	i = 0;
 	while (en[i] != NULL)
 	{
-		if(!(ft_strchr(*args, '=')) && (ft_strchr(en[i], '=')) )
+		if(!(ft_strchr(*args, '=')) && (ft_strchr(en[i], '=')) ) // аргумент без знака =
 		{
 			len= char_count(en[i]); // замер до равно (длина строки до =)
 			name = ft_substr(en[i], 0, len); // отрезать до равно получается en без равно
@@ -691,11 +597,15 @@ int check_string_to_eraze(t_main *main, char **args, char **en)// проверк
 					en[i] = en[i+1]; // смещаем указатель на следующий для всех элемнтов после того как я зафришил
 					i++;
 				}
+                while(en[i])
+                     i--;// смещаем указатель на следующий для всех элемнтов после того как я зафриши
 				len = how_many_lines(en);// переопределение лен (длина массива строк)
-				en = (char **)ft_new_memory_alloc(en,(sizeof(char*)*(len))); // просто лен так как уменьшили на один элемент
-				// len = how_many_lines(en);
+//				temp = ft_new_memory_alloc(en, len); // просто лен так как уменьшили на один элемент
+//				 len = how_many_lines(temp);
 				// printf("after-->%d", len);
 				copy_env2(main, en);
+                free (name);// зачистка утечки
+                free(*args);//зачистка утечки (после выполнения след команды после unset)
 				return(1);
 			}
 		}
@@ -705,6 +615,7 @@ int check_string_to_eraze(t_main *main, char **args, char **en)// проверк
 	}
 		// if (name)
 		// 	free(name);
+
 	return(0);
 }
 
@@ -713,15 +624,23 @@ int unset(t_main *main)
 	char *command;
 	char **args;
 	char **envir;
+	int flag;
 
     command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
 	// envir = main->my_env;
-	envir = env_recorder(main);
+
 
 	while (command && args && *args != NULL)
 	{
-		checker2 (main, args, envir);
+        flag = check_args_unset(main, args);
+        if(flag == 1)
+            free(*args);
+        if (flag != 1)
+        {
+            envir = env_recorder(main);
+            checker2 (main, args, envir);
+        }
 		// if(checker2 (args, envir)== 1)
 		// 	copy_env3(main, envir);
 		args++;
@@ -734,195 +653,79 @@ int unset(t_main *main)
 	return(0);
 }
 
-int process_ready_exe(t_main *main)
-{
-	char *command; 
-	char **args;
-	char **envir;
-	int fork_res;
-	int res;
+//int process_ready_exe(t_main *main)
+//{
+//	char *command;
+//	char **args;
+//	char **envir;
+//	char **binar;
+//	int fork_res;
+//	int res;
+//	int i;
+//    DIR *folder;
+//    struct dirent *entry;
+//    int status;
+//
+//	command = main->job->pipe->redir->command;
+//	args = main->job->pipe->redir->args;
+//	envir = main->my_env;
+//	i = 0;
+////    binar = ft_split(command, '/');
+//
+//    status = 0;
+//    while (binar[i] != NULL)
+//    {
+//        folder = opendir(binar[i]);
+//        if(folder == NULL)
+//            i++;
+//        else
+//        {
+//            while((entry = readdir(folder)))
+//            {
+//                if (ft_strcmp(entry->d_name, command) == 0)
+//                {
+//                    argv = cmd_args_to_argv_recorder(main);
+//                    fork_res = fork();
+//                    if (fork_res == 0)
+//                        execve(exe2, argv, envir);
+//                    if (fork_res > 0)
+//                    {
+//                        waitpid(fork_res, &status, 0);
+//                        main->exit = WEXITSTATUS(status);
+//                        free(exe);
+//                        free(exe2);
+//                    }
+////                    ft_putstr_fd("status number is ", 1);
+////                    ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
+////                    write(1, "\n", 1);
+////                    ft_putstr_fd("main_>exit is ", 1);
+////                    ft_putnbr_fd (main->exit, 1);
+////                    write(1, "\n", 1);
+////                    ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
+////                    ft_putnbr_fd (fork_res, 1);// ID родителя
+////                    write(1, "\n", 1);
+//                    closedir(folder);
+//                    arrays_free(binar);
+//                    return(1);// можно просто брейкать
+//                }
+//            }
+//            closedir(folder);
+//        }
+//        i++;
+//    }
+//	fork_res = fork();
+//	if (fork_res == 0)//  d proc
+//	{
+//		res = execve(command, args, envir);
+//		if (res == -1)// if no execution then we go out from d process
+//			exit(1);
+//	}
+//	if (fork_res > 0)
+//		wait(NULL); // waiting for the daughter to finish
+//	// printf("%d\n", (execve(exe2, args, envir)));
+//	return(0);
+//}
 
-	command = main->job->pipe->redir->command;
-	args = main->job->pipe->redir->args;
-	envir = main->my_env;
-
-	fork_res = fork();
-	if (fork_res == 0)//  d proc
-	{
-		res = execve(command, args, envir);
-		if (res == -1)// if no execution then we go out from d process
-			exit(1);
-	}
-	if (fork_res > 0)
-		wait(NULL); // waiting for the daughter to finish
-	// printf("%d\n", (execve(exe2, args, envir)));
-	return(0);
-}
-
-int process_exe(t_main *main)
-{
-	char *command; 
-	// char **args;
-	char **envir;
-	char **binar;
-	char *path;
-	char *exe;
-	char *exe2;
-	int i;
-	int fork_res;
-	// int res;
-	int status;
-	DIR *folder;
-    struct dirent *entry;
-	status = 0;
-
-	command = main->job->pipe->redir->command;
-	char **argv;
-	envir = main->my_env;
-	i = 0;
-
-	// process_folder(main, command); // на обработке у Мишы
-	path = ft_getenv(main, "PATH"); // получаем PATH без равно
-	if(!path)
-		return 0;
-	binar = ft_split(path, ':');// записали path в двумерный массив
-	while (binar[i] != NULL)
-	{
-		// printf ("%s\n", binar[i]);
-		folder = opendir(binar[i]);
-		if(folder == NULL)
-		{
-			// printf ("->%s\n", binar[i]);
-			// perror("Unable to read directory");
-			// return(1);
-			i++; // пропуск пустой ячейки
-		}
-		else
-		{
-			printf ("--->%s\n", binar[i]);
-			puts("Directory is opened!");
-			while((entry = readdir(folder))) // readdir читает по одной папке и возвращает запись в структуру
-			{
-				// printf("File %d: %s\n", files, entry->d_name);
-				if (ft_strcmp(entry->d_name, command) == 0)
-				{
-					argv = cmd_args_to_argv_recorder(main); // запись в массив
-					exe = ft_strjoin(binar[i], "/");
-					exe2 = ft_strjoin(exe, command);
-					// i = 0;
-					// while(argv[i] != NULL)
-					// {
-					// 	ft_putstr_fd(argv[i], 1);
-					// 	ft_putchar_fd('\n', 1);
-					// 	i++;
-					// }
-					fork_res = fork();
-					if (fork_res == 0)// daughter
-						execve(exe2, argv, envir);
-					if (fork_res > 0)
-					{
-						waitpid(fork_res, &status, 0); // waiting for the daughter to finish
-						main->exit = WEXITSTATUS(status); // кладем в exit 1 (если статус 256)
-					}
-					// status = 0;
-					ft_putstr_fd("status number is ", 1);
-					ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
-					write(1, "\n", 1);
-					ft_putstr_fd("main_>exit is ", 1);
-					ft_putnbr_fd (main->exit, 1);
-					write(1, "\n", 1);
-					ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
-					ft_putnbr_fd (fork_res, 1);// ID родителя
-					write(1, "\n", 1);
-					// i = 0;
-					// while(argv[i] != NULL)
-					// {
-					// 	ft_putstr_fd(argv[i], 1);
-					// 	ft_putchar_fd(' ', 1);
-					// 	i++;
-					// }
-					// printf("%s", *args);
-					// ft_putnbr_fd(res, 1);
-					closedir(folder); // закрываем сразу после исполнения еxecve
-					puts("Directory is closed!");
-					return(1);
-				}	
-			}
-			closedir(folder); // закрываем сразу если не нашли и переходим к след бинарнику
-			puts("Directory is closed!");
-		}
-		i++; // переход к следующему бинарнику
-	}
-    return(0);
-}
-
-	// while (binar[i] != NULL)
-	// {
-	// 	exe = ft_strjoin(binar[i], "/");
-	// 	exe2 = ft_strjoin(exe, command);
-	// 	// printf("exe2-->%s\n", exe2);
-	// 	fork_res = fork();
-	// 	if (fork_res == 0)// daughter
-	// 	{
-	// 		res = execve(exe2, args, envir);		
-	// 		// if (res == -1)// if no execution then we go out from d process
-	// 		// {
-	// 		// 	printf("Error execve\n");
-	// 		// 	free(exe2);
-	// 		// 	main->exit = 1; // из дочки этот код идет в статус как 256
-	// 		// }
-	// 		// else
-	// 		// 	main->exit = 0;
-	// 	}
-
-	// 	// printf("%d\n", (execve(exe2, args, envir)));
-	// 	// res = execve(exe2, args, envir); //перезапись res и присвоение -1 (это код сработает только если не будет отработан бинарник
-	// 	// и результат будет использован ниже в process_valid_cmd
-	// 	free(exe);
-	// 	free(exe2);
-	// 	i++;
-	// }
-	// if (fork_res > 0)
-	// {
-	// 	waitpid(fork_res, &status, 0); // waiting for the daughter to finish
-	// 	main->exit = WEXITSTATUS(status); // кладем в exit 1 (если статус 256)
-	// 	// status = 0;
-	// 	// ft_putstr_fd("status number is\n", 1);
-	// 	// ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
-	// 	// write(1, "\n", 1);
-	// 	// ft_putnbr_fd (status, 1);// code 256 = 1
-	// 	// printf ("main_>exit is\n");
-	// 	// ft_putnbr_fd (main->exit, 1);
-	// 	// write(1, "\n", 1);
-	// 	// printf("parent id is\n");
-	// 	// ft_putnbr_fd (fork_res, 1);// ID дочки
-	// 	// write(1, "\n", 1);
-	// }
-	// // printf("%d\n", (execve(exe2, args, envir)));
-	// // fork_res = fork();
-	// // if (fork_res == 0)//  d proc
-	// // if (status == 1 || status == 256) // если команда не сработала в бинарниках status = 1 or 256
-	// if (main->exit == 1) // если команда не сработала в бинарниках status = 1 or 256
-	// {
-	// 	// fork_res = fork();
-	// 	// if (fork_res == 0)
-//			process_valid_cmd(main, command);// проверка на несущетсвующую команду
-	// 	// if (fork_res > 0)
-	// 	// {
-	// 	// waitpid(fork_res, &status, 0); // waiting for the daughter to finish
-	// 	// main->exit = WEXITSTATUS(status);
-	// 	ft_putnbr_fd (status, 1);// code 256 = 1
-	// 	ft_putnbr_fd (main->exit, 1);// code 256 = 1
-	// 	// ft_putstr_fd("minishell: ", 1);
-	// 	// ft_putstr_fd(command, 1);
-	// 	// ft_putstr_fd(": command not found", 1);
-	// 	// }
-	// }
-	// // ft_putnbr_fd (main->exit, 1); на выходе код 127
-
-	// arrays_free(binar);
-	// return(0);
-// }
 
 void process_builtins_and_divide_externals(t_main *main)
 {
@@ -946,7 +749,7 @@ void process_builtins_and_divide_externals(t_main *main)
 	else
 	{
 		// process_folder(main, command);// обработка на этапе парсера
-		process_ready_exe(main); // если подается готовая команда то она здесь выполнится
+//		process_ready_exe(main); // если подается готовая команда то она здесь выполнится
 		process_exe(main);
 	}
 }
