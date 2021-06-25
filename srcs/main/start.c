@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/18 16:27:49 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/22 11:12:51 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,15 @@ void	init_struct(t_main *main)
 	main->sub = 0;// for args sub in export
 	main->flag2 = 0;// for check_valid_args
 	main->exit = 0;
-//	redir->redir_to = 0;
+	job->pipe_next = NULL;
+	job->job_next = NULL;
+	redir->redir_file = NULL;
+	redir->redir_type = 0;
+
 	main->job = job;
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
 	main->job->pipe->redir->command = NULL;
-	main->job->pipe->redir->flags = NULL;
 	main->job->pipe->redir->args = NULL;
 }
 
