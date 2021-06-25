@@ -653,30 +653,78 @@ int unset(t_main *main)
 	return(0);
 }
 
-int process_ready_exe(t_main *main)
-{
-	char *command; 
-	char **args;
-	char **envir;
-	int fork_res;
-	int res;
-
-	command = main->job->pipe->redir->command;
-	args = main->job->pipe->redir->args;
-	envir = main->my_env;
-
-	fork_res = fork();
-	if (fork_res == 0)//  d proc
-	{
-		res = execve(command, args, envir);
-		if (res == -1)// if no execution then we go out from d process
-			exit(1);
-	}
-	if (fork_res > 0)
-		wait(NULL); // waiting for the daughter to finish
-	// printf("%d\n", (execve(exe2, args, envir)));
-	return(0);
-}
+//int process_ready_exe(t_main *main)
+//{
+//	char *command;
+//	char **args;
+//	char **envir;
+//	char **binar;
+//	int fork_res;
+//	int res;
+//	int i;
+//    DIR *folder;
+//    struct dirent *entry;
+//    int status;
+//
+//	command = main->job->pipe->redir->command;
+//	args = main->job->pipe->redir->args;
+//	envir = main->my_env;
+//	i = 0;
+////    binar = ft_split(command, '/');
+//
+//    status = 0;
+//    while (binar[i] != NULL)
+//    {
+//        folder = opendir(binar[i]);
+//        if(folder == NULL)
+//            i++;
+//        else
+//        {
+//            while((entry = readdir(folder)))
+//            {
+//                if (ft_strcmp(entry->d_name, command) == 0)
+//                {
+//                    argv = cmd_args_to_argv_recorder(main);
+//                    fork_res = fork();
+//                    if (fork_res == 0)
+//                        execve(exe2, argv, envir);
+//                    if (fork_res > 0)
+//                    {
+//                        waitpid(fork_res, &status, 0);
+//                        main->exit = WEXITSTATUS(status);
+//                        free(exe);
+//                        free(exe2);
+//                    }
+////                    ft_putstr_fd("status number is ", 1);
+////                    ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
+////                    write(1, "\n", 1);
+////                    ft_putstr_fd("main_>exit is ", 1);
+////                    ft_putnbr_fd (main->exit, 1);
+////                    write(1, "\n", 1);
+////                    ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
+////                    ft_putnbr_fd (fork_res, 1);// ID родителя
+////                    write(1, "\n", 1);
+//                    closedir(folder);
+//                    arrays_free(binar);
+//                    return(1);// можно просто брейкать
+//                }
+//            }
+//            closedir(folder);
+//        }
+//        i++;
+//    }
+//	fork_res = fork();
+//	if (fork_res == 0)//  d proc
+//	{
+//		res = execve(command, args, envir);
+//		if (res == -1)// if no execution then we go out from d process
+//			exit(1);
+//	}
+//	if (fork_res > 0)
+//		wait(NULL); // waiting for the daughter to finish
+//	// printf("%d\n", (execve(exe2, args, envir)));
+//	return(0);
+//}
 
 
 void process_builtins_and_divide_externals(t_main *main)
@@ -701,7 +749,7 @@ void process_builtins_and_divide_externals(t_main *main)
 	else
 	{
 		// process_folder(main, command);// обработка на этапе парсера
-		process_ready_exe(main); // если подается готовая команда то она здесь выполнится
+//		process_ready_exe(main); // если подается готовая команда то она здесь выполнится
 		process_exe(main);
 	}
 }
