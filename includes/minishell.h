@@ -52,12 +52,12 @@ typedef struct s_redir
 	char			*error;
 	char			*redir_file;
 	int				redir_type;
+	struct s_redir	*redir_next;
 }					t_redir;
 
 typedef struct s_pipe
 {
 	t_redir			*redir;
-	struct s_redir	*redir_next;
 }					t_pipe;
 
 typedef struct s_job

@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/24 10:46:51 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/25 11:16:05 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void	add_value_in_line(t_parser *parser)
 	mem_free(&parser->variable);
 }
 
-void	pars_env_and_append_line(t_parser *parser, t_main *main)
+t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 {
 	int		c;
 
@@ -194,12 +194,15 @@ void	pars_env_and_append_line(t_parser *parser, t_main *main)
 		parser->line = ft_strjoin(parser->line, ft_itoa(main->exit));
 	else if (c == '=')
 		parser->line = ft_strjoin(parser->line, "$=");
+	else if (c == '|')
+		job = get_next_pipe_addr(job, parser);
 	else
 	{
 		pars_env_variable(parser);
 		parser->variable_value = get_env_value(main->my_env, parser->variable);
 		add_value_in_line(parser);
 	}
+	return (job);
 }
 
 void	print_params(t_main *main)
@@ -236,14 +239,14 @@ void	check_symbols_and_append_line(t_job *job, t_parser *parser)
 	}
 }
 
-void	pars_double_quote(t_parser *parser, t_main *main)
+void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
 {
 	int		c;
 
 	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '"' && c != '\n')
 	{
 		if (c == '$')
-			pars_env_and_append_line(parser, main);
+			pars_env_and_append_line(parser, main, job);
 		add_char(&parser->line, c);
 	}
 }
@@ -311,11 +314,11 @@ void	parser_go(t_main *main, t_parser *parser)
 	ft_isprint(c) && c != '\n')
 	{
 		if (c == '"')
-			pars_double_quote(parser, main);
+			pars_double_quote(parser, main, job);
 		else if (c == '\'')
 			pars_quote(parser);
 		else if (c == '$')
-			pars_env_and_append_line(parser, main);
+			pars_env_and_append_line(parser, main, job);
 		else if (c == '|')
 			job = get_next_pipe_addr(job, parser);
 		else if (c == '>' || c == '<')
