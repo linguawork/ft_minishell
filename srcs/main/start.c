@@ -58,7 +58,7 @@ void	init_struct(t_main *main)
 
 void	end_session(t_main *main)
 {
-	free(main->job->pipe->redir->command);
+    mem_free(&main->job->pipe->redir->command);
 	free(main->job->pipe->redir->args);// just free to avoid double freeing
 	main->job->pipe->redir->args = NULL;
 }
