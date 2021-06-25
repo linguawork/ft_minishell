@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/24 19:08:58 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/25 20:00:13 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ typedef struct s_main
 	t_job			*job;
 	char			**my_env;
 	int				exit;
+	int             sub;
+	int             flag2;
 }					t_main;
 
 /*
@@ -117,6 +119,8 @@ int		process_exe(t_main *main);
 int		how_many_lines(char **a);
 char**	cmd_args_to_argv_recorder(t_main *main);
 void	*arrays_free(char **s);
+char    *ft_getenv(t_main *main, char *name);
+int     cd(t_main *main);
 
 
 #endif //MINISHELL_H

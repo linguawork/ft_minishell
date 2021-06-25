@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 11:12:51 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/25 20:00:13 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	init_struct(t_main *main)
 	pipe = (t_pipe *)malloc(sizeof(t_pipe));
 	redir = (t_redir *)malloc(sizeof(t_redir));
 
+	main->sub = 0;// for args sub in export
+	main->flag2 = 0;// for check_valid_args
 	main->exit = 0;
 	job->pipe_next = NULL;
 	job->job_next = NULL;
@@ -56,8 +58,8 @@ void	init_struct(t_main *main)
 
 void	end_session(t_main *main)
 {
-	mem_free(&main->job->pipe->redir->command);
-    arrays_free(main->job->pipe->redir->args);// just free to avoid double freeing
+    mem_free(&main->job->pipe->redir->command);
+	free(main->job->pipe->redir->args);// just free to avoid double freeing
 	main->job->pipe->redir->args = NULL;
 }
 
