@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/25 20:00:13 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/26 08:04:26 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # define NO_VALID_ENV_VAR "\"'/.,-/= $\'<>\\`\0?*"
 # define NO_VALID_COMMAND_SYMBOLS ":\"'"
 # define NO_VALID_DOBLE_QUOTE "!"
+# define SPEC_SYMBOLS "$'\" \n><|"
 
 /*
 ** Errors
@@ -84,6 +85,11 @@ typedef struct s_main
 ** PARSING
 */
 void	parser(t_main *main);
+void	pars_quote(t_parser *parser);
+void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
+t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser);
+t_job	*redirects(t_job *job, t_parser *parser);
+
 
 
 /*

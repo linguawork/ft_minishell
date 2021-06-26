@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/25 11:16:05 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/26 10:22:56 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,13 +142,13 @@ char 	*pars_env_variable(t_parser *parser)
 
 	parser->pars_var = 1;
 	add_char(&parser->variable, parser->cur_c);
-	while (get_next_char(parser, &c) && c != ' ' && c != '\n')
+	while (get_next_char(parser, &c) && (ft_isalnum(c) || c == '_' || c == '$')
+	&& c != ' ' && c != '\n')
 	{
-		if (ft_isalnum(c) && c == '_')
-			add_char(&parser->variable, c);
-		else if (c == '$')
+		if (c == '$')
 			c = '$';
 		//TODO Double dollar
+		add_char(&parser->variable, c);
 	}
 	return (parser->variable);
 }
@@ -185,6 +185,21 @@ void	add_value_in_line(t_parser *parser)
 	mem_free(&parser->variable);
 }
 
+t_job	*env_digit(t_main *main, t_job *job, t_parser *parser)
+{
+	int c;
+
+	if (parser->cur_c == '0')
+		parser->line = ft_strjoin(parser->line, "bash");
+	else
+	{
+		while (get_next_char(parser, &c) && strchr(SPEC_SYMBOLS, c))
+			add_char(&parser->line, c);
+		job = distribution_parser(main , job, parser);
+	}
+	return (job);
+}
+
 t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 {
 	int		c;
@@ -196,11 +211,16 @@ t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 		parser->line = ft_strjoin(parser->line, "$=");
 	else if (c == '|')
 		job = get_next_pipe_addr(job, parser);
+	else if (c == '>' || c == '<')
+		job = redirects(job, parser);
+	else if (ft_isdigit(c))
+		job = env_digit(main, job, parser);
 	else
 	{
 		pars_env_variable(parser);
 		parser->variable_value = get_env_value(main->my_env, parser->variable);
 		add_value_in_line(parser);
+		job = distribution_parser(main, job, parser);
 	}
 	return (job);
 }
@@ -304,30 +324,39 @@ t_job	*redirects(t_job *job, t_parser *parser)
 	return (job);
 }
 
+t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
+{
+	int	c;
+
+	c = parser->cur_c;
+	if (!ft_isprint(c))
+		return (job);
+	if (c == '"')
+		pars_double_quote(parser, main, job);
+	else if (c == '\'')
+		pars_quote(parser);
+	else if (c == '$')
+		pars_env_and_append_line(parser, main, job);
+	else if (c == '|')
+		job = get_next_pipe_addr(job, parser);
+	else if (c == '>' || c == '<')
+		job = redirects(job, parser);
+	else if (c == ' ')
+		write_pars_line(job, parser);
+	else
+		check_symbols_and_append_line(job, parser);
+	return (job);
+}
+
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
 	t_job	*job;
 
 	job = main->job;
-	while (parser->cur_c != '\n' && get_next_char(parser, &c) &&
-	ft_isprint(c) && c != '\n')
-	{
-		if (c == '"')
-			pars_double_quote(parser, main, job);
-		else if (c == '\'')
-			pars_quote(parser);
-		else if (c == '$')
-			pars_env_and_append_line(parser, main, job);
-		else if (c == '|')
-			job = get_next_pipe_addr(job, parser);
-		else if (c == '>' || c == '<')
-			job = redirects(job, parser);
-		else if (c == ' ')
-			write_pars_line(job, parser);
-		else
-			check_symbols_and_append_line(job, parser);
-	}
+	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
+		job = distribution_parser(main, job, parser);
+
 	write_pars_line(job, parser);
 // 	print_params(main);
 }
