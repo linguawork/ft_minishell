@@ -33,49 +33,38 @@ int echo(t_main *main)
 	command = main->job->pipe->redir->command;
     args = main->job->pipe->redir->args;
 //    dup_args = args;
-	if (command != '\0')
+    main->exit = 0;
+	if (command)
 	{
-	    if (command && !args)
+        if (!args)
             ft_putchar_fd('\n', 1);
-
-		if (command && args)
+        if (args)
         {
-			while (*args != NULL && (ft_strcmp(*args, "-n") == 0))
-				args++;	
-			if (*args == NULL)
-				return(0);
-			if (command && !(ft_strcmp(*args, "-n") == 0))
-			{
-				if (*(args - 1) != NULL && ft_strcmp(*(args - 1), "-n") == 0 && !(ft_strcmp(*args, "-n") == 0))
-				{
-					write(1, *args, ft_strlen(*args));
-					while (*++args != NULL)
-					{
-						ft_putchar_fd(' ', 1);
-						write(1, *args, ft_strlen(*args));				
-					}
-				}	
-				if (*(args - 1) == NULL && !(ft_strcmp(*args, "-n") == 0))
-				{
-					while (*args != NULL)
-					{
-						ft_putstr_fd(*args, 1);
-						ft_putchar_fd(' ', 1);
-						args++;				
-					}
-					ft_putchar_fd('\n', 1);
-				}
+            if (ft_strcmp(*args, "-n") == 0)
+            {
+                while (*args != NULL && (ft_strcmp(*args, "-n") == 0))
+                    args++;
+                if (*args == NULL)
+                    return (0);
+                write(1, *args, ft_strlen(*args));
+                while (*++args != NULL)
+                {
+                    ft_putchar_fd(' ', 1);
+                    write(1, *args, ft_strlen(*args));
+                }
             }
-
+            else
+            {
+                while (*args != NULL)
+                {
+                    ft_putstr_fd(*args, 1);
+                    ft_putchar_fd(' ', 1);
+                    args++;
+                }
+                ft_putchar_fd('\n', 1);
+            }
         }
-	}
-//	while(args)
-//	{
-//	    if (!args)
-//	        break;
-//        args--;
-//    }
-//    arrays_free(args);
+    }// here we need to free leaks
 	return(0);
 }
 
@@ -394,14 +383,6 @@ int check_args_unset(t_main *main, char **a)
 
 	if (ft_strchr (*a, '_')) // допустимый символ в аргументе
 		return(0);
-//	if (!ft_isalpha(*a[0])) // если первый  символ не буква то сообщение об ошибке
-//	{
-//		ft_putstr_fd ("minishell: ", 1);
-//        ft_putstr_fd (main->job->pipe->redir->command, 1);
-//        ft_putstr_fd (": `", 1);
-//		ft_putstr_fd (*a, 1);
-//        printf("': not a valid identifier\n");
-//	}
 	i = 0;
     while(invalid_char_str[i])
     {
@@ -454,7 +435,6 @@ int export(t_main *main)
     int i;
 	int flag;
 
-	// envir = main->my_env;	// env в алфавитном порядке но нет утечек
     envir = env_recorder(main);// копия чтобы в env не было алфавитного порядка, утечки были и я их убрал
     command = main->job->pipe->redir->command;
 	args = main->job->pipe->redir->args;
@@ -502,12 +482,10 @@ int export(t_main *main)
 				flag = checker(main, &args[i], envir);
 				if ((flag != 1) && (main->flag2 != 1))
 				{
-//				    envir = ft_new_memory_alloc(envir,len + 2); // обязательно нужно указывать на размер чего-то (в данном случае чаров)
                     e = env_recorder2(envir,len); //перезапись на лен +2
 				    e[len] = args[i];// в выделенную ячейку добавляем аргумент по индексу длины рядов массива, ставим аргумент в конце массива
 				    e[len + 1] = NULL; //сместили указатель на ноль по индексу длины рядов массива
 				    len++; //Длина у меня уже увеличилась на один в функции realloc и не нужно прибавлят
-
 				}
 				if (flag == 1 && main->sub == 1)
 				{
@@ -653,78 +631,47 @@ int unset(t_main *main)
 	return(0);
 }
 
-//int process_ready_exe(t_main *main)
-//{
-//	char *command;
-//	char **args;
-//	char **envir;
-//	char **binar;
-//	int fork_res;
-//	int res;
-//	int i;
-//    DIR *folder;
-//    struct dirent *entry;
-//    int status;
-//
-//	command = main->job->pipe->redir->command;
-//	args = main->job->pipe->redir->args;
-//	envir = main->my_env;
-//	i = 0;
-////    binar = ft_split(command, '/');
-//
-//    status = 0;
-//    while (binar[i] != NULL)
-//    {
-//        folder = opendir(binar[i]);
-//        if(folder == NULL)
-//            i++;
-//        else
-//        {
-//            while((entry = readdir(folder)))
-//            {
-//                if (ft_strcmp(entry->d_name, command) == 0)
-//                {
-//                    argv = cmd_args_to_argv_recorder(main);
-//                    fork_res = fork();
-//                    if (fork_res == 0)
-//                        execve(exe2, argv, envir);
-//                    if (fork_res > 0)
-//                    {
-//                        waitpid(fork_res, &status, 0);
-//                        main->exit = WEXITSTATUS(status);
-//                        free(exe);
-//                        free(exe2);
-//                    }
-////                    ft_putstr_fd("status number is ", 1);
-////                    ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
-////                    write(1, "\n", 1);
-////                    ft_putstr_fd("main_>exit is ", 1);
-////                    ft_putnbr_fd (main->exit, 1);
-////                    write(1, "\n", 1);
-////                    ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
-////                    ft_putnbr_fd (fork_res, 1);// ID родителя
-////                    write(1, "\n", 1);
-//                    closedir(folder);
-//                    arrays_free(binar);
-//                    return(1);// можно просто брейкать
-//                }
-//            }
-//            closedir(folder);
-//        }
-//        i++;
-//    }
-//	fork_res = fork();
-//	if (fork_res == 0)//  d proc
-//	{
-//		res = execve(command, args, envir);
-//		if (res == -1)// if no execution then we go out from d process
-//			exit(1);
-//	}
-//	if (fork_res > 0)
-//		wait(NULL); // waiting for the daughter to finish
-//	// printf("%d\n", (execve(exe2, args, envir)));
-//	return(0);
-//}
+int process_ready_exe(t_main *main)
+{
+	char *command;
+	char **args;
+	char **envir;
+	int fork_res;
+	char **argv;
+    int status;
+
+	command = main->job->pipe->redir->command;
+	args = main->job->pipe->redir->args;
+	envir = main->my_env;
+    status = 0;
+
+    argv = cmd_args_to_argv_recorder2(main);
+    fork_res = fork();
+    if (fork_res == 0)
+        execve(command, argv, envir);
+    if (fork_res > 0)
+    {
+        waitpid(fork_res, &status, 0);
+        main->exit = WEXITSTATUS(status);
+    }
+    // for testing
+//    ft_putstr_fd("status number is ", 1);
+//    ft_putnbr_fd(status, 1);
+//    ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
+//    write(1, "\n", 1);
+//    ft_putstr_fd("main_>exit is ", 1);
+//    ft_putnbr_fd (main->exit, 1);
+//    write(1, "\n", 1);
+//    ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
+//    ft_putnbr_fd (fork_res, 1);// ID родителя
+//    write(1, "\n", 1);
+    // end for testing
+    if (main->exit == 0)
+        return(1);// можно просто брейкать
+    else
+        return(0);
+    return(0);
+}
 
 
 void process_builtins_and_divide_externals(t_main *main)
@@ -748,9 +695,23 @@ void process_builtins_and_divide_externals(t_main *main)
 		exit_command(main);
 	else
 	{
+        if (ft_strchr(command, '/') && command[0] == '.' && command[1] == '/')
+        {
+            main->flag2 = 1;
+            ft_putstr_fd("minishell: ", 1);
+            ft_putstr_fd(command, 1);
+            ft_putstr_fd(": is a directory\n", 1);
+            main->exit = 126;
+            strerror(main->exit);
+        }
+		if (ft_strchr(command, '/') && command[0] == '/')// запуск готовой команды
+            main->flag2 = process_ready_exe(main);
 		// process_folder(main, command);// обработка на этапе парсера
-//		process_ready_exe(main); // если подается готовая команда то она здесь выполнится
-		process_exe(main);
+//		 process_ready_exe(main); // если подается готовая команда то она здесь выполнится
+        if (main->flag2 != 1)
+//            write(1, "ok\n", 4);
+            process_exe(main);
+        main->flag2 = 0;
 	}
 }
 

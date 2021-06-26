@@ -104,23 +104,20 @@ char 	*pars_env_variable(t_parser *parser);
 ** EXECUTION BUILTINS
 */
 int     pwd(t_main *main);
-int     ft_strcmp(const char *s1, const char *s2);
-void    process_externals(t_main *main);
 void    process_builtins_and_divide_externals(t_main *main);
 void	copy_env(t_main *main, char **env);
-void	copy_env2(t_main *main, char **env);// с функцией free
-void	copy_env3(t_main *main, char **env);// с функцией free отключил
-void	overwrite_args(t_main *main, char **a);
+void	copy_env2(t_main *main, char **env);// с функцией free 2 раза
+void	copy_env3(t_main *main, char **env);// с функцией free 1 раз
 int		check_string_to_eraze(t_main *main, char **args, char **en);
 int		check_string_to_eraze2(t_main *main, char **args, char **en);
 int		char_count(const char *str);
-char    **ft_new_memory_alloc(void *p, size_t length);
 int		process_exe(t_main *main);
 int		how_many_lines(char **a);
 char**	cmd_args_to_argv_recorder(t_main *main);
 void	*arrays_free(char **s);
 char    *ft_getenv(t_main *main, char *name);
 int     cd(t_main *main);
+char** cmd_args_to_argv_recorder2(t_main *main);
 
 
 #endif //MINISHELL_H

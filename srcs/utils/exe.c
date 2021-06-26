@@ -1,5 +1,48 @@
 #include "minishell.h"
 
+char *return_cmd_from_absolute_path(t_main *main)
+{
+    char *cmd;
+    char **parts;
+    int len;
+
+    parts = ft_split(main->job->pipe->redir->command, '/');
+    len = how_many_lines(parts);
+    cmd = parts[len-1];
+    return(cmd);
+}
+
+char** cmd_args_to_argv_recorder2(t_main *main) // запись аргументов в 2мер массив
+{
+    char **e;
+    int length;
+    char **a;
+    char *cmd;
+    cmd = return_cmd_from_absolute_path(main);
+    a = main->job->pipe->redir->args;
+    int i = 1;
+    int j = 0;
+    if (a == NULL)// если аргумент всего 1 (то это сама команда) то пишем его в массив env и 1 ячейку резерв для терминатора
+    {
+        e = (char **) malloc(sizeof(char *) * (1 + 1));
+        e[0] = cmd;
+    }
+    else// если аргументов не один
+    {
+        length = how_many_lines((char **) a);// считаем кол-во аргументов
+        e = (char **) malloc(sizeof(char *) * (length + 1+1)); // выделяем память + 1 для ноля и +1 для команды
+        e[0] = cmd;
+        while (a[j] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала после записи команды
+        {
+            e[i] = a[j];// лучше записывать через индекс// i = 1 так как в ноль записана команда, j = 0
+            j++;
+            i++;
+        }
+    }
+    e[i]=NULL;// в конце добав терминатор
+    return(e);
+}
+
 char** cmd_args_to_argv_recorder(t_main *main) // запись аргументов в 2мер массив
 {
     char **e;
