@@ -64,7 +64,7 @@ int echo(t_main *main)
                 ft_putchar_fd('\n', 1);
             }
         }
-    }// here we need to free leaks
+    }// here we need to free leaks after working
 	return(0);
 }
 
