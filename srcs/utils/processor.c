@@ -677,6 +677,7 @@ int process_ready_exe(t_main *main)
 void process_builtins_and_divide_externals(t_main *main)
 {
 	char *command;
+    struct stat sb;
 
 	command = main->job->pipe->redir->command;
 	if (ft_strncmp(command, "echo", 4) == 0)
@@ -695,17 +696,34 @@ void process_builtins_and_divide_externals(t_main *main)
 		exit_command(main);
 	else
 	{
-        if (ft_strchr(command, '/') && command[0] == '.' && command[1] == '/')
+        stat(command, &sb);
+        if (ft_strchr(command, '/'))
         {
-            main->flag2 = 1;
-            ft_putstr_fd("minishell: ", 1);
-            ft_putstr_fd(command, 1);
-            ft_putstr_fd(": is a directory\n", 1);
-            main->exit = 126;
-            strerror(main->exit);
+            if((sb.st_mode & S_IFMT) == S_IFDIR)//directory present in the local directory
+            {
+                main->flag2 = 1;
+                ft_putstr_fd("minishell: ", 1);
+                ft_putstr_fd(command, 1);
+                ft_putstr_fd(": is a directory\n", 1);
+                main->exit = 126;
+                strerror(main->exit);
+            }
+//        }
+//		if (ft_strchr(command, '/') && command[0] == '/')// запуск готовой команды
+//        {
+            else if((sb.st_mode & S_IFMT) == S_IFREG)// clean command
+                main->flag2 = process_ready_exe(main);
+            else // in the directory there is not such file or directory
+            {
+                main->flag2 = 1;
+                ft_putstr_fd("minishell: ", 1);
+                ft_putstr_fd(command, 1);
+                ft_putstr_fd(": No such file or directory\n", 1);
+                main->exit = 127;
+                strerror(main->exit);
+            }
+
         }
-		if (ft_strchr(command, '/') && command[0] == '/')// запуск готовой команды
-            main->flag2 = process_ready_exe(main);
 		// process_folder(main, command);// обработка на этапе парсера
 //		 process_ready_exe(main); // если подается готовая команда то она здесь выполнится
         if (main->flag2 != 1)

@@ -20,6 +20,7 @@
 # include <errno.h>
 # include "libft.h"
 # include <dirent.h>
+# include <sys/stat.h>
 
 # define NO_VALID_SYMBOLS ""
 # define NO_VALID_ENV_VAR "\"'/.,-/= $\'<>\\`\0?*"
