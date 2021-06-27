@@ -696,10 +696,21 @@ void process_builtins_and_divide_externals(t_main *main)
 		exit_command(main);
 	else
 	{
-        stat(command, &sb);
+	    int status_num;
+
+	    status_num = stat(command, &sb);
         if (ft_strchr(command, '/'))
         {
-            if((sb.st_mode & S_IFMT) == S_IFDIR)//directory present in the local directory
+            if (status_num == -1)
+            {
+                main->flag2 = 1;
+                ft_putstr_fd("minishell: ", 1);
+                ft_putstr_fd(command, 1);
+                ft_putstr_fd(": Permission denied\n", 1);
+                main->exit = 126;
+                strerror(main->exit);
+            }
+            else if((sb.st_mode & S_IFMT) == S_IFDIR)//directory present in the local directory
             {
                 main->flag2 = 1;
                 ft_putstr_fd("minishell: ", 1);
