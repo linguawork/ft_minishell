@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/29 11:13:24 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/29 17:50:40 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -289,16 +289,24 @@ void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
 	}
 	if (c != '"')
 		exit_with_error(main, "No two quote");
+	parser->double_quote = 0;
 }
 
 void	pars_quote(t_parser *parser, t_main *main)
 {
 	int		c;
 
+	if (parser->double_quote == 1)
+	{
+		add_char(&parser->line, parser->cur_c);
+		return ;
+	}
+	parser->quote = 1;
 	while (get_next_char(parser, &c) && c != '\'' && c != '\n')
 		add_char(&parser->line, c);
 	if (c != '\'')
 		exit_with_error(main, "No two quote");
+	parser->quote = 0;
 }
 
 t_pipe	*get_current_pipe(t_job *job)
@@ -351,9 +359,9 @@ t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 	int	c;
 
 	c = parser->cur_c;
-	if (!ft_isprint(c))
+	if (!ft_isprint(c) || c == ';')
 		return (job);
-	if (c == '"')
+	else if (c == '"')
 		pars_double_quote(parser, main, job);
 	else if (c == '\'')
 		pars_quote(parser, main);
@@ -391,12 +399,13 @@ void	parser_go(t_main *main, t_parser *parser)
 	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
 	{
 		job = distribution_parser(main, job, parser);
-		if (i == 2 && ft_strchr(SPECIFICATORS, *parser->line) &&
+		if (i == 2 && parser->line && ft_strchr(SPECIFICATORS, *parser->line) &&
 		ft_strchr(SPECIFICATORS, c))
 			print_error_message(main, parser->line,  i);
 		i++;
 	}
-	if (i == 2 && ft_strchr(SPECIFICATORS, *parser->line) && c == '\n')
+	if (i == 2 && parser->line && ft_strchr(SPECIFICATORS, *parser->line) &&
+	c == '\n')
 		print_error_message(main, parser->line,  i - 1);
 	write_pars_line(job, parser);
 	// 	print_params(main);
