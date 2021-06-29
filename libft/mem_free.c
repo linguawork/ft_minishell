@@ -14,7 +14,9 @@
 
 void	mem_free(char **str)
 {
-	if (*str)
-		free(*str);
-	*str = NULL;
+	if (str && *str)
+    {
+	    free(*str);
+        *str = NULL;
+    }
 }
