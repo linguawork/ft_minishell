@@ -54,7 +54,7 @@ int	get_next_char(t_parser *parser,int *c)
 	return (1);
 }
 
-void	set_error(t_redir *redir, char *error)
+void	set_error(t_redir *redir, int n)
 {
-	redir->error = error;
+	redir->error = n;
 }

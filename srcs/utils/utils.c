@@ -6,21 +6,37 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/29 08:39:56 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	all_mem_free(t_main *main)
+static void	pipe_free(t_pipe *pipe)
 {
-	while (main->my_env)
-		mem_free(main->my_env++);
+	mem_free(&pipe->redir->command);
+	arr_free(pipe->redir->args);
+	mem_free(pipe->redir->args);
+	pipe->redir->args = NULL;
+}
+
+static void	all_mem_free(t_job *job)
+{
+	pipe_free(job->pipe);
+	if (job->job_next)
+		pipe_free(job->pipe_next);
+	while (job->job_next)
+	{
+		job = job->job_next;
+		pipe_free(job->pipe);
+		if (job->job_next)
+			pipe_free(job->pipe_next);
+	}
 }
 
 void	exit_with_error(t_main *main, char *massage)
 {
-	all_mem_free(main);
+	all_mem_free(main->job);
 	printf("Error: %s\n", massage);
 	exit(-1);
 }

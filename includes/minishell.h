@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/26 08:04:26 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/29 10:53:45 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # define NO_VALID_COMMAND_SYMBOLS ":\"'"
 # define NO_VALID_DOBLE_QUOTE "!"
 # define SPEC_SYMBOLS "$'\" \n><|"
+# define SPECIFICATORS ";|><!"
 
 /*
 ** Errors
@@ -44,16 +45,17 @@ typedef struct s_parser
 	int 			pars_var;
 	int 			pars_args;
 	int 			args_len;
+	int 			double_quote;
 }					t_parser;
 
 typedef struct s_redir
 {
 	char			*command;
 	char			**args;
-	char			*error;
 	char			*redir_file;
 	int				redir_type;
 	struct s_redir	*redir_next;
+	int				error;
 }					t_redir;
 
 typedef struct s_pipe
@@ -85,7 +87,7 @@ typedef struct s_main
 ** PARSING
 */
 void	parser(t_main *main);
-void	pars_quote(t_parser *parser);
+void	pars_quote(t_parser *parser, t_main *main);
 void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
 t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser);
 t_job	*redirects(t_job *job, t_parser *parser);
@@ -99,6 +101,7 @@ void	exit_with_error(t_main *main, char *massage);
 int		add_char(char **str, int c);
 int		get_next_char(t_parser *parser, int *c);
 void	arr_free(char **str);
+void	set_error(t_redir *redir, int n);
 
 /*
 ** TESTS

@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/26 10:22:56 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/29 11:13:24 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,15 +141,13 @@ char 	*pars_env_variable(t_parser *parser)
 	int		c;
 
 	parser->pars_var = 1;
-	add_char(&parser->variable, parser->cur_c);
-	while (get_next_char(parser, &c) && (ft_isalnum(c) || c == '_' || c == '$')
-	&& c != ' ' && c != '\n')
-	{
-		if (c == '$')
-			c = '$';
-		//TODO Double dollar
+	if (ft_isalnum(parser->cur_c) || parser->cur_c == '_')
+		add_char(&parser->variable, parser->cur_c);
+	else
+		return (parser->variable);
+	while (get_next_char(parser, &c) && (ft_isalnum(c) || c == '_') &&
+	c != ' ' && c != '\n')
 		add_char(&parser->variable, c);
-	}
 	return (parser->variable);
 }
 
@@ -207,7 +205,11 @@ t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 	get_next_char(parser, &c);
 	if (c == '?')
 		parser->line = ft_strjoin(parser->line, ft_itoa(main->exit));
+	else if (c == '\n' || c == ' ')
+		parser->line = ft_strjoin(parser->line, "$");
 	else if (c == '=')
+		parser->line = ft_strjoin(parser->line, "$=");
+	else if (c == '$')
 		parser->line = ft_strjoin(parser->line, "$=");
 	else if (c == '|')
 		job = get_next_pipe_addr(job, parser);
@@ -220,8 +222,11 @@ t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 		pars_env_variable(parser);
 		parser->variable_value = get_env_value(main->my_env, parser->variable);
 		add_value_in_line(parser);
-		job = distribution_parser(main, job, parser);
+		if (parser->double_quote != 1)
+			job = distribution_parser(main, job, parser);
 	}
+	if (parser->cur_c == ' ')
+		job = distribution_parser(main, job, parser);
 	return (job);
 }
 
@@ -229,10 +234,17 @@ void	print_params(t_main *main)
 {
 	int i;
 
-	i = 0;
-	printf("command: %s", main->job->pipe->redir->command);
+	i = -1;
+	write(1, "command: ", ft_strlen("command: "));
+	write(1, main->job->pipe->redir->command, ft_strlen(main->job->pipe->redir->command));
 	while (main->job->pipe->redir->args && main->job->pipe->redir->args[++i])
-		printf("\nargv[%d]: %s", i, main->job->pipe->redir->args[i]);
+	{
+		write(1, "\nargv[" , ft_strlen("\nargv["));
+		ft_putnbr_fd(i, 1);
+		write(1, "]: ", ft_strlen("]: "));
+		write(1, main->job->pipe->redir->args[i], ft_strlen(main->job->pipe->redir->args[i]));
+		write(1, "\n", 1);
+	}
 }
 
 void	check_symbols_and_append_line(t_job *job, t_parser *parser)
@@ -263,20 +275,30 @@ void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
 {
 	int		c;
 
+	parser->double_quote = 1;
 	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '"' && c != '\n')
 	{
 		if (c == '$')
+		{
 			pars_env_and_append_line(parser, main, job);
-		add_char(&parser->line, c);
+			if (parser->cur_c == '"')
+				break ;
+		}
+		else
+			add_char(&parser->line, c);
 	}
+	if (c != '"')
+		exit_with_error(main, "No two quote");
 }
 
-void	pars_quote(t_parser *parser)
+void	pars_quote(t_parser *parser, t_main *main)
 {
 	int		c;
 
 	while (get_next_char(parser, &c) && c != '\'' && c != '\n')
 		add_char(&parser->line, c);
+	if (c != '\'')
+		exit_with_error(main, "No two quote");
 }
 
 t_pipe	*get_current_pipe(t_job *job)
@@ -334,7 +356,7 @@ t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 	if (c == '"')
 		pars_double_quote(parser, main, job);
 	else if (c == '\'')
-		pars_quote(parser);
+		pars_quote(parser, main);
 	else if (c == '$')
 		pars_env_and_append_line(parser, main, job);
 	else if (c == '|')
@@ -348,17 +370,36 @@ t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 	return (job);
 }
 
+void	print_error_message(t_main *main, char *line, int len)
+{
+	char	*error;
+	set_error(main->job->pipe->redir, 1);
+	error = "bash: syntax error near unexpected token `";
+	write(1, error, strlen(error));
+	write(1, line, len);
+	write(1, "'\n", 2);
+}
+
 void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
+	int		i;
 	t_job	*job;
 
+	i = 1;
 	job = main->job;
 	while (parser->cur_c != '\n' && get_next_char(parser, &c) && c != '\n')
+	{
 		job = distribution_parser(main, job, parser);
-
+		if (i == 2 && ft_strchr(SPECIFICATORS, *parser->line) &&
+		ft_strchr(SPECIFICATORS, c))
+			print_error_message(main, parser->line,  i);
+		i++;
+	}
+	if (i == 2 && ft_strchr(SPECIFICATORS, *parser->line) && c == '\n')
+		print_error_message(main, parser->line,  i - 1);
 	write_pars_line(job, parser);
-// 	print_params(main);
+	// 	print_params(main);
 }
 
 void	init_parser(t_parser *parser)
@@ -367,6 +408,7 @@ void	init_parser(t_parser *parser)
 	parser->pars_command = 0;
 	parser->pars_args = 0;
 	parser->pars_var = 0;
+	parser->double_quote = 0;
 	parser->args_len = 0;
 	parser->pipe_exist = 0;
 	parser->variable = NULL;
