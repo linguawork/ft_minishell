@@ -119,6 +119,8 @@ void	*arrays_free(char **s);
 char    *ft_getenv(t_main *main, char *name);
 int     cd(t_main *main);
 char** cmd_args_to_argv_recorder2(t_main *main);
+int     exists(const char *command);
+int     check_dir (char *cmd);
 
 
 #endif //MINISHELL_H

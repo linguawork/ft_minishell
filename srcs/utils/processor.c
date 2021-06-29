@@ -673,6 +673,33 @@ int process_ready_exe(t_main *main)
     return(0);
 }
 
+int exists(const char *command)
+{
+    FILE *file;
+    if ((file = fopen(command, "r+")))
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
+int check_dir(char *cmd)
+{
+
+    DIR *dir = opendir(cmd);
+//    int errnum;
+    if (dir)
+    {
+        closedir(dir);
+        return(1);
+    } else if (ENOENT == errno)
+    {
+        return(2);
+    } else if (EACCES == errno)
+        return(3);
+    return(0);
+}
 
 void process_builtins_and_divide_externals(t_main *main)
 {
@@ -697,34 +724,16 @@ void process_builtins_and_divide_externals(t_main *main)
 	else
 	{
 	    int status_num;
+	    int f;
+	    int d;
+        char *message;
 
 	    status_num = stat(command, &sb);
-        if (ft_strchr(command, '/'))
-        {
-            if (status_num == -1)
-            {
-                main->flag2 = 1;
-                ft_putstr_fd("minishell: ", 1);
-                ft_putstr_fd(command, 1);
-                ft_putstr_fd(": Permission denied\n", 1);
-                main->exit = 126;
-                strerror(main->exit);
-            }
-            else if((sb.st_mode & S_IFMT) == S_IFDIR)//directory present in the local directory
-            {
-                main->flag2 = 1;
-                ft_putstr_fd("minishell: ", 1);
-                ft_putstr_fd(command, 1);
-                ft_putstr_fd(": is a directory\n", 1);
-                main->exit = 126;
-                strerror(main->exit);
-            }
-//        }
-//		if (ft_strchr(command, '/') && command[0] == '/')// запуск готовой команды
-//        {
-            else if((sb.st_mode & S_IFMT) == S_IFREG)// clean command
-                main->flag2 = process_ready_exe(main);
-            else // in the directory there is not such file or directory
+        f = exists(command); // checking for file is redundant
+        d = check_dir(command);
+
+        if (ft_strchr(command, '/')) {
+            if (d == 2 && status_num == -1) // no entry to dir (non existent), no file, no status
             {
                 main->flag2 = 1;
                 ft_putstr_fd("minishell: ", 1);
@@ -733,12 +742,30 @@ void process_builtins_and_divide_externals(t_main *main)
                 main->exit = 127;
                 strerror(main->exit);
             }
-
+            else if ((sb.st_mode & S_IFMT) == S_IFDIR)//directory present in the local directory
+            {
+                main->flag2 = 1;
+                ft_putstr_fd("minishell: ", 1);
+                ft_putstr_fd(command, 1);
+                ft_putstr_fd(": is a directory\n", 1);
+                main->exit = 126;
+                strerror(main->exit);
+            }
+            else if (status_num < 0 && d == 3)  // dir exists but can not be entered
+            {
+                message = strerror(errno);
+                main->flag2 = 1;
+                ft_putstr_fd("minishell: ", 2);
+                ft_putstr_fd(command, 2);
+                ft_putchar_fd(' ', 2);
+                ft_putstr_fd(message, 2);
+                ft_putchar_fd('\n', 2);
+                main->exit = 126;
+            }
+            else if ((sb.st_mode & S_IFMT) == S_IFREG)// clean command
+                main->flag2 = process_ready_exe(main);
         }
-		// process_folder(main, command);// обработка на этапе парсера
-//		 process_ready_exe(main); // если подается готовая команда то она здесь выполнится
         if (main->flag2 != 1)
-//            write(1, "ok\n", 4);
             process_exe(main);
         main->flag2 = 0;
 	}
