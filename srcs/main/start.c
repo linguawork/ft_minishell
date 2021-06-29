@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 11:12:51 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/29 10:55:59 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void	init_struct(t_main *main)
 	main->job->pipe->redir = redir;
 	main->job->pipe->redir->command = NULL;
 	main->job->pipe->redir->args = NULL;
+	set_error(main->job->pipe->redir, 0);
 }
 
 void	end_session(t_main *main)
@@ -74,8 +75,8 @@ int	main(int ac, char **av, char **env)
 	{
 		write(1, "minishell: ", 11);
 		parser(&main);
-		if (main.job->pipe->redir->command)
-            process_builtins_and_divide_externals(&main);
+		if (main.job->pipe->redir->command && !main.job->pipe->redir->error)
+			process_builtins_and_divide_externals(&main);
 		end_session(&main);
 	}
 	av[ac] = env[ac];
