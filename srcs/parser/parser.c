@@ -276,29 +276,55 @@ char *get_redir_file(t_parser *parser)
 	return (parser->line);
 }
 
+char    *get_milty(t_parser *parser)
+{
+    int		c;
+    char    *del;
+
+    while (get_next_char(parser, &c) && c != ' ' && c != '\n')
+        add_char(&parser->del, c);
+    while (get_next_char(parser, &c))
+    {
+        if (c == '\n')
+        {
+            mem_free(&parser->del);
+            if (ft_strnstr(parser->del, del, ft_strlen(parser->del)))
+            break ;
+        }
+        add_char(&parser->line, c);
+        add_char(&parser->del, c);
+
+    }
+
+    return (parser->line);
+}
+
 t_job	*redirects(t_job *job, t_parser *parser)
 {
-	int		c;
-	int		redir_type;
-	char	*redir_file;
-	t_pipe	*pipe;
+	int		    c;
+	t_options	redir_type;
+	char	    *redir_file;
+	t_pipe	    *pipe;
 
 	write_pars_line(job, parser);
-	redir_type = 0;
+	redir_type = ;
 	if (parser->cur_c == '>')
-		redir_type = 1;
+		redir_type = OUTPUT;
 	else if (parser->cur_c == '<')
-		redir_type = 2;
+		redir_type = INPUT;
 	else
 	{
 		get_next_char(parser, &c);
 		if (c == '>')
-			redir_type = 3;
+			redir_type = OUTPUT_APPEND;
 		else if (c == '<')
-			redir_type = 4;
+			redir_type = INPUT_MULTILINE;
 	}
 	pipe = get_current_pipe(job);
-	redir_file = get_redir_file(parser);
+	if (redir_type == INPUT_MULTILINE)
+        redir_file = get_milty(parser);
+	else
+	    redir_file = get_redir_file(parser);
 	pipe->redir->redir_type = redir_type;
 	pipe->redir->redir_file = redir_file;
 	return (job);

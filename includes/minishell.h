@@ -38,6 +38,7 @@ typedef struct s_parser
 	int 			cur_c;
 	char			*variable;
 	char			*variable_value;
+	char			*del;
 	int 			pars_command;
 	int 			pipe_exist;
 	int 			pars_var;
@@ -52,7 +53,7 @@ typedef struct s_redir
 	char			**args;
 	char			*error;
 	char			*redir_file;
-	int				redir_type;
+    t_options		redir_type;
 	struct s_redir	*redir_next;
 }					t_redir;
 
@@ -76,6 +77,14 @@ typedef struct s_main
 	int             sub;
 	int             flag2;
 }					t_main;
+
+typedef enum e_options
+{
+            OUTPUT,
+            OUTPUT_APPEND,
+            INPUT,
+            INPUT_MULTILINE
+}            t_options;
 
 /*
 ** MAIN
