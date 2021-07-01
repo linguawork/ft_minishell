@@ -41,8 +41,11 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
     char ***cmds;
     int p_num;
 
+   c_num= main->job->num_commands;
+   p_num =  main->job->num_pipes;
+
 //    c_num = how_many_lines(main->job); // подсчет комманд
-    c_num = 2;
+//    c_num = 2;
     cmds = (char ***) malloc(sizeof(char *) * (c_num + 1));
     i = 0;
     p_num = c_num - 1;
@@ -109,8 +112,8 @@ void execute_pipes (t_main *main)
         if (fork() == 0) // в дочери
         {
             connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-            char ***cmd = commands[i]; // команду пишем в двумерный для подачи в execve
-            execve(cmd[0], cmd, NULL);// исполняем в дочери
+            char ***cmd = &commands[i]; // команду пишем в двумерный для подачи в execve
+            execve(*cmd[0], *cmd, NULL);// исполняем в дочери
             //exit(127);// не нужен exit, так как  дочерний процесс сам себя зачищает
         }
         close(prev_pipe_fds[0]); // закрываем вход предыдущ
