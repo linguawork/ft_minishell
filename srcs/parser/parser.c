@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/29 17:50:40 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/01 11:41:55 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ void	append_command_to_main(t_job *job, t_parser *parser)
 		job->pipe_next->redir->command = parser->line;
 	if (parser->line)
 		parser->pars_command = 1;
+	job->num_commands++;
 	parser->line = NULL;
 }
 
@@ -119,19 +120,21 @@ void	zero_parser(t_parser *parser)
 	parser->args_len = 0;
 }
 
-t_job	*get_next_pipe_addr(t_job *job, t_parser *parser)
+t_job	*get_next_pipe_addr(t_job *job, t_main *main, t_parser *parser)
 {
 	write_pars_line(job, parser);
 	zero_parser(parser);
 	if (!job->pipe_next)
 	{
 		init_struct_pipe_next(job, 0);
+		main->job->num_pipes++;
 		return (job);
 	}
 	else
 	{
 		parser->pipe_exist = 0;
 		init_struct_job_next(job);
+		main->job->num_pipes++;
 		return (job->job_next);
 	}
 }
@@ -212,7 +215,7 @@ t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 	else if (c == '$')
 		parser->line = ft_strjoin(parser->line, "$=");
 	else if (c == '|')
-		job = get_next_pipe_addr(job, parser);
+		job = get_next_pipe_addr(job, main, parser);
 	else if (c == '>' || c == '<')
 		job = redirects(job, parser);
 	else if (ft_isdigit(c))
@@ -321,7 +324,8 @@ char *get_redir_file(t_parser *parser)
 {
 	int		c;
 
-	while (get_next_char(parser, &c) && c != ' ' && c != '\n')
+	while (get_next_char(parser, &c) && ft_strchr(VALID_SYMBOLS_FILES, c) &&
+	ft_isalnum(c) && c != '\n')
 		add_char(&parser->line, c);
 	return (parser->line);
 }
@@ -346,6 +350,8 @@ t_job	*redirects(t_job *job, t_parser *parser)
 			redir_type = 3;
 		else if (c == '<')
 			redir_type = 4;
+		else if (c != ' ')
+			add_char(&parser->line, c);
 	}
 	pipe = get_current_pipe(job);
 	redir_file = get_redir_file(parser);
@@ -368,7 +374,7 @@ t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 	else if (c == '$')
 		pars_env_and_append_line(parser, main, job);
 	else if (c == '|')
-		job = get_next_pipe_addr(job, parser);
+		job = get_next_pipe_addr(job, main, parser);
 	else if (c == '>' || c == '<')
 		job = redirects(job, parser);
 	else if (c == ' ')
@@ -429,11 +435,12 @@ void	end_session_pars(t_parser *parser)
 	parser->line = NULL;
 }
 
-void	parser(t_main *main)
+void	parser(t_main *main, char *string)
 {
 	t_parser	parser;
 
 	init_parser(&parser);
+	parser.string = string;
 	parser_go(main, &parser);
 	end_session_pars(&parser);
 //	TODO add static to functions
