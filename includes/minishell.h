@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/30 17:33:31 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/01 11:40:56 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <readline/history.h>
 
 # define NO_VALID_SYMBOLS ""
+# define VALID_SYMBOLS_FILES " ._"
 # define NO_VALID_ENV_VAR "\"'/.,-/= $\'<>\\`\0?*"
 # define NO_VALID_COMMAND_SYMBOLS ":\"'"
 # define NO_VALID_DOBLE_QUOTE "!"
