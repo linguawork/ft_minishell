@@ -88,42 +88,65 @@ void connect_stdio_to_pipes(int prev_fds[], int next_fds[])
 
 void execute_pipes (t_main *main)
 {
-    int length;
+    int c_num;
     char ***commands;
     int prev_pipe_fds[2]; // объявляем массив предыдущ файловых дескрипторов
     int next_pipe_fds[2];
+    char **cmd;
+    int fork_res;
+    int status;
 
     commands = pipe_cmd_args_recorder(main);
-    length = how_many_lines(*commands); // кол-во комманд
+//    char **cmd = &*commands[i]; // по адресу передаем значение в разыменовании 3мерного в 2хмерный // test
+//    length = how_many_lines(*commands); // кол-во комманд
+    c_num = main->job->num_commands;
+
     int i = 0; // итератор
     next_pipe_fds[0] = -1; // инициализация  значения следующих файловых дескрипторов нулевого элемента
     next_pipe_fds[1] = -1;
-    while (i < length) // пока не прошлись по всем командам
+    while (i < c_num) // пока не прошлись по всем командам
     {
         prev_pipe_fds[0] = next_pipe_fds[0]; // предыдущ нулевой присваивает значение след нулевого
         prev_pipe_fds[1] = next_pipe_fds[1];
-        if (i != length - 1) // если кол-во команд не равно количеству команд-1 (те кол-ву пайпов)
+        if (i != c_num - 1) // если кол-во команд не равно количеству команд-1 (те кол-ву пайпов)
             pipe(next_pipe_fds);// создаем каналы (трубы для следующих команд)
         else // иначе если команды равны пайпам
         {
             next_pipe_fds[0] = -1; // инициализируем на -1
             next_pipe_fds[1] = -1;
         }
-        if (fork() == 0) // в дочери
+        status = 0;
+        cmd = &*commands[i];
+        fork_res = fork();
+        if (fork_res == 0) // в дочери
         {
             connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-            char ***cmd = &commands[i]; // команду пишем в двумерный для подачи в execve
-            execve(*cmd[0], *cmd, NULL);// исполняем в дочери
+//            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
+            execve(cmd[0], cmd, NULL);// исполняем в дочери
             //exit(127);// не нужен exit, так как  дочерний процесс сам себя зачищает
         }
         close(prev_pipe_fds[0]); // закрываем вход предыдущ
         close(prev_pipe_fds[1]); // закрываем вход предыдущ
+
+
+//        waitpid(fork_res, &status, 0);
+//        main->exit = WEXITSTATUS(status);
+
+        // for testing
+//        ft_putstr_fd("status number is ", 1);
+//        ft_putnbr_fd(status, 1);
+//        write(1, "\n", 1);
+//        ft_putstr_fd("Wexitstatus(status) is ", 1);
+//        ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
+//        write(1, "\n", 1);
+//        ft_putstr_fd("main_>exit is ", 1);
+//        ft_putnbr_fd (main->exit, 1);
+//        write(1, "\n", 1);
+//        ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
+//        ft_putnbr_fd (fork_res, 1);// ID родителя
+//        write(1, "\n", 1);
         i++;
+
     }
     wait(NULL); // один wait может ждать несколько процессов // без pid
-    //wait(NULL);
-    //wait(NULL);
-    // wait(NULL);
-//    return (0);
-
 }
