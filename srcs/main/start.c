@@ -76,7 +76,8 @@ int	main(int ac, char **av, char **env)
 		write(1, "minishell: ", 11);
 		parser(&main);
 		if (main.job->pipe->redir->command && !main.job->pipe->redir->error)
-			process_builtins_and_divide_externals(&main);
+//			process_builtins_and_divide_externals(&main);
+            execute_pipes(&main);
 		end_session(&main);
 	}
 	av[ac] = env[ac];
