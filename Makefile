@@ -19,14 +19,15 @@ TESTS = $(addprefix $(TESTS_DIR), $(TESTS_FILES))
 SRC_FILES = $(MAIN) $(PARS) $(UTILS) $(TESTS)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
-FLAGS = -Iincludes -Ilibft -g -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -g -Ilibft -Iincludes
+#FLAGS += -lreadline -I/Users/meunostu/.brew/Cellar/readline/8.1/include
 
 CC= gcc $(FLAGS)
 
 all:$(NAME) $?
 
 %.o: %.c includes/minishell.h
-	$(CC)  -c $< -o $@
+	$(CC) -c $< -o $@
 
 $(NAME): $(OBJ_FILES)
 	$(MAKE) -C $(LIBFT_PATH)

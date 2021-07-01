@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/29 10:53:45 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/06/30 17:33:31 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <errno.h>
 # include "libft.h"
 # include <dirent.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # define NO_VALID_SYMBOLS ""
 # define NO_VALID_ENV_VAR "\"'/.,-/= $\'<>\\`\0?*"
@@ -36,6 +38,7 @@
 
 typedef struct s_parser
 {
+	char			*string;
 	char			*line;
 	int 			cur_c;
 	char			*variable;
@@ -69,6 +72,8 @@ typedef struct s_job
 	t_pipe			*pipe;
 	t_pipe			*pipe_next;
 	struct s_job	*job_next;
+	int             num_commands;
+	int             num_pipes;
 }					t_job;
 
 typedef struct s_main
@@ -87,11 +92,12 @@ typedef struct s_main
 /*
 ** PARSING
 */
-void	parser(t_main *main);
+void	parser(t_main *main, char *string);
 void	pars_quote(t_parser *parser, t_main *main);
 void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
 t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser);
 t_job	*redirects(t_job *job, t_parser *parser);
+void	parser_go(t_main *main, t_parser *parser);
 
 
 
@@ -132,5 +138,5 @@ void	*arrays_free(char **s);
 char    *ft_getenv(t_main *main, char *name);
 int     cd(t_main *main);
 
-
+void	rl_replace_line();
 #endif //MINISHELL_H

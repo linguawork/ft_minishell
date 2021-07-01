@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/29 10:55:59 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/01 09:00:13 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,8 @@ void	init_struct(t_main *main)
 	main->exit = 0;
 	job->pipe_next = NULL;
 	job->job_next = NULL;
+	job->num_commands = 0;
+	job->num_pipes = 0;
 	redir->redir_file = NULL;
 	redir->redir_type = 0;
 
@@ -67,14 +69,17 @@ void	end_session(t_main *main)
 int	main(int ac, char **av, char **env)
 {
 	t_main	main;
+	char	*string;
 
 	init_struct(&main);
 	copy_env(&main, env);
 //	tests();
 	while (1)
 	{
-		write(1, "minishell: ", 11);
-		parser(&main);
+//		string = readline("minishell> ");
+		string = "";
+		write(1, "minishell-> ", 12);
+		parser(&main, string);
 		if (main.job->pipe->redir->command && !main.job->pipe->redir->error)
 			process_builtins_and_divide_externals(&main);
 		end_session(&main);
