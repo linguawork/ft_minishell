@@ -43,6 +43,7 @@ typedef struct s_parser
 	int 			pars_var;
 	int 			pars_args;
 	int 			args_len;
+	int 			index;
 }					t_parser;
 
 typedef struct s_redir

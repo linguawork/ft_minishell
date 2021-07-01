@@ -42,15 +42,19 @@ int	get_next_char(t_parser *parser,int *c)
 	char	*buf;
 	int		readed;
 
-	buf = malloc(sizeof(char) * 1);
-	readed = read(0, buf, 1);
-	if (readed == 0)
-		return (0);
-	else if (readed < 0)
-		return (-1);
-	*c = *buf;
-	parser->cur_c = *buf;
-	mem_free(&buf);
+	parser->index++;
+	*c = parser->string[index];
+	if (!parser->string[index])
+        return (0);
+//	buf = malloc(sizeof(char) * 1);
+//	readed = read(0, buf, 1);
+//	if (readed == 0)
+//		return (0);
+//	else if (readed < 0)
+//		return (-1);
+//	*c = *buf;
+//	parser->cur_c = *buf;
+//	mem_free(&buf);buf
 	return (1);
 }
 

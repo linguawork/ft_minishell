@@ -340,6 +340,7 @@ void	init_parser(t_parser *parser)
 	parser->pars_var = 0;
 	parser->args_len = 0;
 	parser->pipe_exist = 0;
+    parser->index = -1;
 	parser->variable = NULL;
 	parser->variable_value = NULL;
 }
