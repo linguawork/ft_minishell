@@ -51,6 +51,7 @@ typedef struct s_parser
 	int 			args_len;
 	int 			double_quote;
 	int 			quote;
+	int 			index;
 }					t_parser;
 
 typedef struct s_redir
@@ -97,7 +98,7 @@ void	parser(t_main *main, char *string);
 void	pars_quote(t_parser *parser, t_main *main);
 void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
 t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser);
-t_job	*redirects(t_job *job, t_parser *parser);
+t_job	*redirects(t_main *main, t_job *job, t_parser *parser);
 void	parser_go(t_main *main, t_parser *parser);
 
 
