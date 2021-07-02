@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/01 11:41:55 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/01 18:56:48 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,8 +324,8 @@ char *get_redir_file(t_parser *parser)
 {
 	int		c;
 
-	while (get_next_char(parser, &c) && ft_strchr(VALID_SYMBOLS_FILES, c) &&
-	ft_isalnum(c) && c != '\n')
+	while (get_next_char(parser, &c) && (ft_strchr(VALID_SYMBOLS_FILES, c) ||
+	ft_isalnum(c)) && c != '\n')
 		add_char(&parser->line, c);
 	return (parser->line);
 }
@@ -343,16 +343,13 @@ t_job	*redirects(t_job *job, t_parser *parser)
 		redir_type = 1;
 	else if (parser->cur_c == '<')
 		redir_type = 2;
-	else
-	{
-		get_next_char(parser, &c);
-		if (c == '>')
-			redir_type = 3;
-		else if (c == '<')
-			redir_type = 4;
-		else if (c != ' ')
-			add_char(&parser->line, c);
-	}
+	get_next_char(parser, &c);
+	if (c == '>')
+		redir_type = 3;
+	else if (c == '<')
+		redir_type = 4;
+	else if (c != ' ')
+		add_char(&parser->line, c);
 	pipe = get_current_pipe(job);
 	redir_file = get_redir_file(parser);
 	pipe->redir->redir_type = redir_type;

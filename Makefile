@@ -20,7 +20,7 @@ SRC_FILES = $(MAIN) $(PARS) $(UTILS) $(TESTS)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
 FLAGS = -Wall -Wextra -Werror -g -Ilibft -Iincludes
-#FLAGS += -lreadline -I/Users/meunostu/.brew/Cellar/readline/8.1/include
+#FLAGS +=  #-I/Users/meunostu/.brew/Cellar/readline/8.1/include
 
 CC= gcc $(FLAGS)
 
@@ -31,7 +31,7 @@ all:$(NAME) $?
 
 $(NAME): $(OBJ_FILES)
 	$(MAKE) -C $(LIBFT_PATH)
-	$(CC)  $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME)
+	$(CC) $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME) -lreadline
 
 clean:
 	$(MAKE) clean -C $(LIBFT_PATH)
