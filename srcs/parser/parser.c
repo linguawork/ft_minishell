@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/01 11:41:55 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/02 16:22:07 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	append_arg_to_main(t_job *job, t_parser *parser)
 	parser->line = NULL;
 }
 
-void	append_command_to_main(t_job *job, t_parser *parser)
+void	append_command_to_main(t_main *main, t_job *job, t_parser *parser)
 {
 	if (!job->pipe->redir->command)
 		job->pipe->redir->command = parser->line;
@@ -52,14 +52,14 @@ void	append_command_to_main(t_job *job, t_parser *parser)
 		job->pipe_next->redir->command = parser->line;
 	if (parser->line)
 		parser->pars_command = 1;
-	job->num_commands++;
+	main->job->num_commands++;
 	parser->line = NULL;
 }
 
-void	write_pars_line(t_job *job, t_parser *parser)
+void	write_pars_line(t_main *main, t_job *job, t_parser *parser)
 {
 	if (!parser->pars_command && parser->line && *parser->line)
-		append_command_to_main(job, parser);
+		append_command_to_main(main, job, parser);
 	else if (parser->line && *parser->line)
 		append_arg_to_main(job, parser);
 }
@@ -122,7 +122,7 @@ void	zero_parser(t_parser *parser)
 
 t_job	*get_next_pipe_addr(t_job *job, t_main *main, t_parser *parser)
 {
-	write_pars_line(job, parser);
+	write_pars_line(main, job, parser);
 	zero_parser(parser);
 	if (!job->pipe_next)
 	{
@@ -217,7 +217,7 @@ t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 	else if (c == '|')
 		job = get_next_pipe_addr(job, main, parser);
 	else if (c == '>' || c == '<')
-		job = redirects(job, parser);
+		job = redirects(main, job, parser);
 	else if (ft_isdigit(c))
 		job = env_digit(main, job, parser);
 	else
@@ -250,7 +250,8 @@ void	print_params(t_main *main)
 	}
 }
 
-void	check_symbols_and_append_line(t_job *job, t_parser *parser)
+void	check_symbols_and_append_line(t_main *main, t_job *job, t_parser
+*parser)
 {
 	int c;
 
@@ -263,7 +264,7 @@ void	check_symbols_and_append_line(t_job *job, t_parser *parser)
 		if (!parser->pars_command)
 		{
 			parser->pars_command = 1;
-			append_command_to_main(job, parser);
+			append_command_to_main(main, job, parser);
 			add_char(&parser->line, c);
 		}
 		else
@@ -324,35 +325,32 @@ char *get_redir_file(t_parser *parser)
 {
 	int		c;
 
-	while (get_next_char(parser, &c) && ft_strchr(VALID_SYMBOLS_FILES, c) &&
-	ft_isalnum(c) && c != '\n')
+	while (get_next_char(parser, &c) && (ft_strchr(VALID_SYMBOLS_FILES, c) ||
+	ft_isalnum(c)) && c != '\n')
 		add_char(&parser->line, c);
 	return (parser->line);
 }
 
-t_job	*redirects(t_job *job, t_parser *parser)
+t_job	*redirects(t_main *main, t_job *job, t_parser *parser)
 {
 	int		c;
 	int		redir_type;
 	char	*redir_file;
 	t_pipe	*pipe;
 
-	write_pars_line(job, parser);
+	write_pars_line(main, job, parser);
 	redir_type = 0;
 	if (parser->cur_c == '>')
 		redir_type = 1;
 	else if (parser->cur_c == '<')
 		redir_type = 2;
-	else
-	{
-		get_next_char(parser, &c);
-		if (c == '>')
-			redir_type = 3;
-		else if (c == '<')
-			redir_type = 4;
-		else if (c != ' ')
-			add_char(&parser->line, c);
-	}
+	get_next_char(parser, &c);
+	if (c == '>')
+		redir_type = 3;
+	else if (c == '<')
+		redir_type = 4;
+	else if (c != ' ')
+		add_char(&parser->line, c);
 	pipe = get_current_pipe(job);
 	redir_file = get_redir_file(parser);
 	pipe->redir->redir_type = redir_type;
@@ -376,11 +374,11 @@ t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 	else if (c == '|')
 		job = get_next_pipe_addr(job, main, parser);
 	else if (c == '>' || c == '<')
-		job = redirects(job, parser);
+		job = redirects(main, job, parser);
 	else if (c == ' ')
-		write_pars_line(job, parser);
+		write_pars_line(main, job, parser);
 	else
-		check_symbols_and_append_line(job, parser);
+		check_symbols_and_append_line(main, job, parser);
 	return (job);
 }
 
@@ -413,7 +411,7 @@ void	parser_go(t_main *main, t_parser *parser)
 	if (i == 2 && parser->line && ft_strchr(SPECIFICATORS, *parser->line) &&
 	c == '\n')
 		print_error_message(main, parser->line,  i - 1);
-	write_pars_line(job, parser);
+	write_pars_line(main, job, parser);
 	// 	print_params(main);
 }
 
@@ -426,6 +424,7 @@ void	init_parser(t_parser *parser)
 	parser->double_quote = 0;
 	parser->args_len = 0;
 	parser->pipe_exist = 0;
+	parser->index = -1;
 	parser->variable = NULL;
 	parser->variable_value = NULL;
 }
