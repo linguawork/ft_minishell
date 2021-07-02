@@ -41,8 +41,8 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
     char ***cmds;
     int p_num;
 
-//   c_num= main->job->num_commands;
-    c_num = 4; // this is for test
+    c_num= main->job->num_commands;
+//    c_num = 4; // this is for test
     p_num =  main->job->num_pipes;
 
 //    c_num = how_many_lines(main->job); // подсчет комманд
