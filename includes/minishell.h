@@ -136,10 +136,21 @@ char**	cmd_args_to_argv_recorder(t_main *main);
 void	*arrays_free(char **s);
 char    *ft_getenv(t_main *main, char *name);
 int     cd(t_main *main);
-char** cmd_args_to_argv_recorder2(t_main *main);
+char**  cmd_args_to_argv_recorder2(t_main *main);
 int     exists(const char *command);
 int     check_dir (char *cmd);
-void execute_pipes (t_main *main);
+void    execute_pipes (t_main *main);
+char**  cmd_args_to_argv_recorder_p(t_job *job);
+int     echo(t_main *main);
+int     exit_command(t_main *main);
+int     env(t_main *main);
+int     export(t_main *main);
+char**  env_recorder(t_main *main);
+char**  env_recorder2(char **envir, int len);
+int     checker (t_main *main, char **a, char **e);
+int     unset(t_main *main);
+void    process_folder_or_ready_exe(t_main *main);
+//char**  cmd_args_to_argv_recorder_p(t_main *main);
 
 void	rl_replace_line();
 #endif //MINISHELL_H

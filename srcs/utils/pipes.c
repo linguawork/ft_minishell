@@ -40,34 +40,40 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
 
     char ***cmds;
     int p_num;
-
+    t_job *job;
+    job = main->job;
     c_num= main->job->num_commands;
 //    c_num = 4; // this is for test
-    p_num =  main->job->num_pipes;
+//    p_num =  main->job->num_pipes;
 
 //    c_num = how_many_lines(main->job); // подсчет комманд
 //    c_num = 2;
     cmds = (char ***) malloc(sizeof(char *) * (c_num + 1));
 
     p_num = c_num - 1;
+    i = 0;
     if (p_num == 1)
     {
-        cmds[0] = cmd_args_to_argv_recorder(main);
-        cmds[1] = pipe_next_cmd_recorder(main->job);
-        cmds[2] = NULL;
+        cmds[i] = cmd_args_to_argv_recorder_p(job);
+        cmds[++i] = pipe_next_cmd_recorder(job);
+        cmds[++i] = NULL;
         return(cmds);
     }
-    i = 0;
+
     if (p_num > 1)
     {
-        while (main->job->job_next) {
-            main->job = main->job->job_next;
-            cmds[i] = cmd_args_to_argv_recorder(main);
-            if (main->job->pipe_next)
-                cmds[i++] = pipe_next_cmd_recorder(main->job);
-            i++;
+        cmds[i] = cmd_args_to_argv_recorder_p(job);
+        cmds[++i] = pipe_next_cmd_recorder(job);
+
+        while (job->job_next)
+        {
+            job = job->job_next;// трансформация структуры
+            cmds[++i] = cmd_args_to_argv_recorder_p(job); // функция для job->pipe
+
+            if (job->pipe_next)
+                cmds[++i] = pipe_next_cmd_recorder(job); // функция для job->pipe_next
         }
-        cmds[i] = NULL;
+        cmds[++i] = NULL;
     }
     return(cmds);
 }
@@ -101,7 +107,9 @@ void execute_pipes (t_main *main)
     commands = pipe_cmd_args_recorder(main);
 //    char **cmd = &*commands[i]; // по адресу передаем значение в разыменовании 3мерного в 2хмерный // test
 //    length = how_many_lines(*commands); // кол-во комманд
-    c_num = main->job->num_commands;
+//    c_num = main->job->num_pipes + 1;
+//    c_num = 4;
+    c_num= main->job->num_commands;
 
     int i = 0; // итератор
     next_pipe_fds[0] = -1; // инициализация  значения следующих файловых дескрипторов нулевого элемента
@@ -118,12 +126,12 @@ void execute_pipes (t_main *main)
             next_pipe_fds[1] = -1;
         }
         status = 0;
-        cmd = &*commands[i];
+//        cmd = &*commands[i];
         fork_res = fork();
         if (fork_res == 0) // в дочери
         {
             connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-//            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
+            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
             execve(cmd[0], cmd, NULL);// исполняем в дочери
             //exit(127);// не нужен exit, так как  дочерний процесс сам себя зачищает
         }
@@ -131,10 +139,10 @@ void execute_pipes (t_main *main)
         close(prev_pipe_fds[1]); // закрываем вход предыдущ
 
 
-//        waitpid(fork_res, &status, 0);
-//        main->exit = WEXITSTATUS(status);
+        waitpid(fork_res, &status, 0);
+        main->exit = WEXITSTATUS(status);
 
-        // for testing
+//         for testing
 //        ft_putstr_fd("status number is ", 1);
 //        ft_putnbr_fd(status, 1);
 //        write(1, "\n", 1);
@@ -151,4 +159,6 @@ void execute_pipes (t_main *main)
 
     }
     wait(NULL); // один wait может ждать несколько процессов // без pid
+    main->job->num_commands = 0;
+    main->job->num_pipes = 0;
 }

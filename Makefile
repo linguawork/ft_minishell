@@ -9,7 +9,8 @@ TESTS_DIR = ./srcs/tests/
 MAIN_FILES = start.c
 PARS_FILES = parser.c
 UTILS_FILES = utils.c processor.c utils_parser.c utils_processor.c exe.c cd.c \
-pipes.c
+pipes.c  echo.c pwd.c exit.c env.c export.c export2.c unset.c utils_processor2.c \
+processor2.c
 TESTS_FILES = #tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))
@@ -28,11 +29,11 @@ CC= gcc $(FLAGS)
 all:$(NAME) $?
 
 %.o: %.c includes/minishell.h
-	$(CC) -c $< -o $@
+	$(CC)  -c $< -o $@
 
 $(NAME): $(OBJ_FILES)
 	$(MAKE) -C $(LIBFT_PATH)
-	$(CC) $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME) -lreadline
+	$(CC)  $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME) -lreadline
 
 clean:
 	$(MAKE) clean -C $(LIBFT_PATH)

@@ -64,6 +64,7 @@ void	end_session(t_main *main)
     mem_free(&main->job->pipe->redir->command);
 	free(main->job->pipe->redir->args);// just free to avoid double freeing
 	main->job->pipe->redir->args = NULL;
+	main->job->job_next = NULL;
 }
 
 int	main(int ac, char **av, char **env)
@@ -80,8 +81,9 @@ int	main(int ac, char **av, char **env)
 		if (*string)
 			add_history(string);
 		parser(&main, string);
-		if (main.job->pipe->redir->command && !main.job->pipe->redir->error)
-//			process_builtins_and_divide_externals(&main);
+		if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0)
+			process_builtins_and_divide_externals(&main);
+		if (main.job->num_pipes != 0)
             execute_pipes(&main);
 		end_session(&main);
 	}
