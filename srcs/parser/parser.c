@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/02 16:22:07 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/02 21:23:56 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,7 @@ char 	*pars_env_variable(t_parser *parser)
 	while (get_next_char(parser, &c) && (ft_isalnum(c) || c == '_') &&
 	c != ' ' && c != '\n')
 		add_char(&parser->variable, c);
+	parser->index--;
 	return (parser->variable);
 }
 
@@ -225,11 +226,7 @@ t_job	*pars_env_and_append_line(t_parser *parser, t_main *main, t_job *job)
 		pars_env_variable(parser);
 		parser->variable_value = get_env_value(main->my_env, parser->variable);
 		add_value_in_line(parser);
-		if (parser->double_quote != 1)
-			job = distribution_parser(main, job, parser);
 	}
-	if (parser->cur_c == ' ')
-		job = distribution_parser(main, job, parser);
 	return (job);
 }
 
@@ -331,28 +328,90 @@ char *get_redir_file(t_parser *parser)
 	return (parser->line);
 }
 
-t_job	*redirects(t_main *main, t_job *job, t_parser *parser)
+int	get_next_char_from_input(t_parser *parser, int *c)
+{
+	char	*buf;
+	int		readed;
+
+	buf = malloc(sizeof(char) * 1);
+	readed = read(0, buf, 1);
+	if (readed == 0)
+		return (0);
+	else if (readed < 0)
+		return (-1);
+	*c = *buf;
+	parser->cur_c = *buf;
+	mem_free(&buf);
+	return (1);
+}
+
+char *get_text(t_parser *parser)
 {
 	int		c;
-	int		redir_type;
-	char	*redir_file;
-	t_pipe	*pipe;
+	char	*del;
+	char	*buf;
 
-	write_pars_line(main, job, parser);
-	redir_type = 0;
+	while (get_next_char(parser, &c))
+		add_char(&parser->line, c);
+	del = parser->line;
+	parser->line = NULL;
+	write(0, "> ", 2);
+	while (get_next_char_from_input(parser, &c))
+	{
+		if (c == '\n')
+		{
+			write(0, "> ", 2);
+			if (ft_strnstr(parser->line, del, ft_strlen(parser->line)))
+				break ;
+			mem_free(&buf);
+		}
+		add_char(&parser->line, c);
+		add_char(&buf, c);
+	}
+	return (parser->line);
+}
+
+t_options	get_redir_type(t_parser *parser)
+{
+	int			c;
+	int			prev_c;
+	t_options	redir_type;
+
 	if (parser->cur_c == '>')
-		redir_type = 1;
+		redir_type = OUTPUT;
 	else if (parser->cur_c == '<')
-		redir_type = 2;
-	get_next_char(parser, &c);
-	if (c == '>')
-		redir_type = 3;
-	else if (c == '<')
-		redir_type = 4;
+		redir_type = INPUT;
+	prev_c = parser->cur_c;
+	if (!get_next_char(parser, &c))
+		return (-1);
+	if (prev_c == '>' && c == '>')
+		redir_type = APPEND_OUTPUT;
+	else if (prev_c == '<' && c == '<')
+		redir_type = INPUT_MULTILINE;
 	else if (c != ' ')
 		add_char(&parser->line, c);
+	return (redir_type);
+}
+
+t_job	*redirects(t_main *main, t_job *job, t_parser *parser)
+{
+	int			c;
+	t_options	redir_type;
+	char		*redir_file;
+	t_pipe		*pipe;
+
+	if (parser->line)
+		write_pars_line(main, job, parser);
+	redir_type = get_redir_type(parser);
+	if (redir_type == -1 || !get_next_char(parser, &c))
+		return (job);
+	if (c != ' ')
+		add_char(&parser->line, c);
 	pipe = get_current_pipe(job);
-	redir_file = get_redir_file(parser);
+	if (redir_type == INPUT_MULTILINE)
+		redir_file = get_text(parser);
+	else
+		redir_file = get_redir_file(parser);
 	pipe->redir->redir_type = redir_type;
 	pipe->redir->redir_file = redir_file;
 	return (job);

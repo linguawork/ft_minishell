@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/01 11:42:41 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/02 18:33:41 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,14 @@ typedef struct s_main
 	int             sub;
 	int             flag2;
 }					t_main;
+
+typedef enum	e_options
+{
+				OUTPUT,
+				APPEND_OUTPUT,
+				INPUT,
+				INPUT_MULTILINE,
+}				t_options;
 
 /*
 ** MAIN
