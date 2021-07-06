@@ -61,10 +61,16 @@ void	init_struct(t_main *main)
 
 void	end_session(t_main *main)
 {
-    mem_free(&main->job->pipe->redir->command);
-	free(main->job->pipe->redir->args);// just free to avoid double freeing
+    if (main->job->num_pipes == 0) // пока для пайпов такое условие иначе ругается
+    {
+        mem_free(&main->job->pipe->redir->command);
+        free(main->job->pipe->redir->args);// just free to avoid double freeing
+    }
+    main->job->num_commands = 0; // занулил здесь чтобы прописать условие выше
+    main->job->num_pipes = 0;
 	main->job->pipe->redir->args = NULL;
 	main->job->job_next = NULL;
+
 }
 
 int	main(int ac, char **av, char **env)

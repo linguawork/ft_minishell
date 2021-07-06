@@ -28,3 +28,50 @@ int count_args(char **args)
 //		i++;
 //	}
 //}
+
+//int echo_pipes(char **cmd)
+//{
+//    char *command;
+//    char *args;
+//    int i;
+//
+//    i = 0;
+////	char **dup_args;
+//
+//    command = cmd[i];
+//    args = cmd[++i];
+////    dup_args = args;
+//    main->exit = 0;
+//    if (command)
+//    {
+//        if (!args)
+//            ft_putchar_fd('\n', 1);
+//        if (args)
+//        {
+//            if (ft_strcmp(*args, "-n") == 0)
+//            {
+//                while (*args != NULL && (ft_strcmp(*args, "-n") == 0))
+//                    args++;
+//                if (*args == NULL)
+//                    return (0);
+//                write(1, *args, ft_strlen(*args));
+//                while (*++args != NULL)
+//                {
+//                    ft_putchar_fd(' ', 1);
+//                    write(1, *args, ft_strlen(*args));
+//                }
+//            }
+//            else
+//            {
+//                while (*args != NULL)
+//                {
+//                    ft_putstr_fd(*args, 1);
+//                    ft_putchar_fd(' ', 1);
+//                    args++;
+//                }
+//                ft_putchar_fd('\n', 1);
+//            }
+//        }
+//    }// here we need to free leaks after working
+//    return(0);
+//}

@@ -70,7 +70,7 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
             job = job->job_next;// трансформация структуры
             cmds[++i] = cmd_args_to_argv_recorder_p(job); // функция для job->pipe
 
-            if (job->pipe_next)
+            if (job->pipe_next != NULL)
                 cmds[++i] = pipe_next_cmd_recorder(job); // функция для job->pipe_next
         }
         cmds[++i] = NULL;
@@ -103,6 +103,7 @@ void execute_pipes (t_main *main)
     char **cmd;
     int fork_res;
     int status;
+//    int flag;
 
     commands = pipe_cmd_args_recorder(main);
 //    char **cmd = &*commands[i]; // по адресу передаем значение в разыменовании 3мерного в 2хмерный // test
@@ -126,20 +127,28 @@ void execute_pipes (t_main *main)
             next_pipe_fds[1] = -1;
         }
         status = 0;
-//        cmd = &*commands[i];
+        cmd = &*commands[i];
         fork_res = fork();
         if (fork_res == 0) // в дочери
         {
             connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
-            execve(cmd[0], cmd, NULL);// исполняем в дочери
+            process_builtins_in_pipes(main, cmd);
+////            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
+//            ft_putnbr_fd(flag, 2);
+//            ft_putchar_fd('\n', 2);
+////            if (ft_strchr(cmd[0], '/'))
+//            if (flag == 1)
+//                exit(1);
+//            else
+                execve(cmd[0], cmd, NULL);// исполняем в дочери
             //exit(127);// не нужен exit, так как  дочерний процесс сам себя зачищает
+//            main->flag2 = 0;
         }
         close(prev_pipe_fds[0]); // закрываем вход предыдущ
         close(prev_pipe_fds[1]); // закрываем вход предыдущ
 
 
-        waitpid(fork_res, &status, 0);
+        waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
         main->exit = WEXITSTATUS(status);
 
 //         for testing
@@ -158,7 +167,7 @@ void execute_pipes (t_main *main)
         i++;
 
     }
-    wait(NULL); // один wait может ждать несколько процессов // без pid
-    main->job->num_commands = 0;
-    main->job->num_pipes = 0;
+//    wait(NULL); // один wait может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
+//    main->job->num_commands = 0; // занулил в end_session
+//    main->job->num_pipes = 0;
 }

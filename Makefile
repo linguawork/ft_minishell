@@ -10,7 +10,7 @@ MAIN_FILES = start.c
 PARS_FILES = parser.c
 UTILS_FILES = utils.c processor.c utils_parser.c utils_processor.c exe.c cd.c \
 pipes.c  echo.c pwd.c exit.c env.c export.c export2.c unset.c utils_processor2.c \
-processor2.c
+processor2.c pipes2.c
 TESTS_FILES = #tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))
