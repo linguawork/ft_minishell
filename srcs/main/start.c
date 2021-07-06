@@ -50,25 +50,28 @@ void	init_struct(t_main *main)
 	job->num_pipes = 0;
 	redir->redir_next = NULL;
 	redir->redir_file = NULL;
-	redir->redir_type = -1;
+	redir->redir_type = ERROR;
 	main->job = job;
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
 	main->job->pipe->redir->command = NULL;
 	main->job->pipe->redir->args = NULL;
+    main->job->pipe->redir->error = 0;
 }
 
 void	end_session(t_main *main)
 {
-    if (main->job->num_pipes == 0) // пока для пайпов такое условие иначе ругается
-    {
-        all_mem_free(main);
+//    if (main->job->num_pipes == 0) // пока для пайпов такое условие иначе ругается
+//    {
+
+    all_mem_free(main);
 //        mem_free(&main->job->pipe->redir->command);
 //        free(main->job->pipe->redir->args);// just free to avoid double freeing
-    }
+//    }
     main->job->num_commands = 0; // занулил здесь чтобы прописать условие выше
     main->job->num_pipes = 0;
-	main->job->pipe->redir->args = NULL;
+//	main->job->pipe->redir->command = NULL;
+//	main->job->pipe->redir->args = NULL;
 	main->job->job_next = NULL;
     main->job->pipe_next = NULL;
 	main->job->pipe->redir->error = 0;

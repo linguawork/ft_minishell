@@ -21,7 +21,7 @@ TESTS = $(addprefix $(TESTS_DIR), $(TESTS_FILES))
 SRC_FILES = $(MAIN) $(PARS) $(UTILS) $(TESTS)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
-FLAGS = -Wall -Wextra -Werror -g -Ilibft -Iincludes -fsanitize=address
+FLAGS = -Wall -Wextra -Werror -g -Ilibft -Iincludes #-fsanitize=address
 #FLAGS +=  #-I/Users/meunostu/.brew/Cellar/readline/8.1/include
 
 CC= gcc $(FLAGS)

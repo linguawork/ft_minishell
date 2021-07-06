@@ -429,7 +429,7 @@ t_redir *get_curren_redir(t_redir *redir)
 {
 	if (redir->redir_next)
 		return (get_curren_redir(redir->redir_next));
-	else if (redir->redir_type != -1)
+	else if (redir->redir_type != ERROR)
 	{
 		init_struct_redir_next(redir);
 		return (redir->redir_next);
