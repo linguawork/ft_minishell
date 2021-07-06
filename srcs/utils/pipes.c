@@ -129,25 +129,34 @@ void execute_pipes (t_main *main)
         }
         status = 0;
         cmd = &*commands[i];
-        fork_res = fork();
+        process_folder_in_pipes(main, cmd);// обработка папки
+        if (main->flag2 != 1)
+            fork_res = fork();
         if (fork_res == 0) // в дочери
         {
             connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
             process_builtins_in_pipes(main, cmd);
-////            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
-//            ft_putnbr_fd(flag, 2);
-//            ft_putchar_fd('\n', 2);
             if (ft_strchr(cmd[0], '/'))
+            {
                 execve(cmd[0], cmd, NULL);// если absolute path
+            }
             else
+            {
                 process_exe_in_pipes(main, cmd);// if external cmd without path
+            }
         }
         close(prev_pipe_fds[0]); // закрываем вход предыдущ
         close(prev_pipe_fds[1]); // закрываем вход предыдущ
-
-
         waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
         main->exit = WEXITSTATUS(status);
+        if (status == 11) // command not found
+        {
+            ft_putstr_fd("minishell: ", 1);
+            ft_putstr_fd(cmd[0], 1);
+            ft_putstr_fd(": Command not found\n", 1);
+            main->exit = 127;
+            break;
+        }
 
 //         for testing
 //        ft_putstr_fd("status number is ", 1);

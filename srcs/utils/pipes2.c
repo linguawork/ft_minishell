@@ -121,7 +121,7 @@ int process_exe_in_pipes(t_main *main, char **cmd)
         i++;
     }
     ft_putstr_fd("minishell: ", 1);
-    ft_putstr_fd(command, 1);
+    ft_putstr_fd(cmd[0], 1);
     ft_putstr_fd(": Command not found\n", 1);
     main->exit = 127;
     return(0);
