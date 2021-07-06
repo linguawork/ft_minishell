@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/02 15:37:41 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/05 18:10:29 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,30 @@ void	init_struct(t_main *main)
 	job->job_next = NULL;
 	job->num_commands = 0;
 	job->num_pipes = 0;
+	redir->redir_next = NULL;
 	redir->redir_file = NULL;
-	redir->redir_type = 0;
-
+	redir->redir_type = -1;
 	main->job = job;
 	main->job->pipe = pipe;
 	main->job->pipe->redir = redir;
 	main->job->pipe->redir->command = NULL;
 	main->job->pipe->redir->args = NULL;
-	set_error(main->job->pipe->redir, 0);
 }
 
 void	end_session(t_main *main)
 {
     if (main->job->num_pipes == 0) // пока для пайпов такое условие иначе ругается
     {
-        mem_free(&main->job->pipe->redir->command);
-        free(main->job->pipe->redir->args);// just free to avoid double freeing
+        all_mem_free(main);
+//        mem_free(&main->job->pipe->redir->command);
+//        free(main->job->pipe->redir->args);// just free to avoid double freeing
     }
     main->job->num_commands = 0; // занулил здесь чтобы прописать условие выше
     main->job->num_pipes = 0;
 	main->job->pipe->redir->args = NULL;
 	main->job->job_next = NULL;
-
+    main->job->pipe_next = NULL;
+	main->job->pipe->redir->error = 0;
 }
 
 int	main(int ac, char **av, char **env)
@@ -87,6 +88,7 @@ int	main(int ac, char **av, char **env)
 		if (*string)
 			add_history(string);
 		parser(&main, string);
+        mem_free(&string);
 		if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0)
 			process_builtins_and_divide_externals(&main);
 		if (main.job->num_pipes != 0)

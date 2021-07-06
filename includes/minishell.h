@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/01 11:42:41 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/06 12:37:06 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,22 @@
 # define NO_VALID_COMMAND_SYMBOLS ":\"'"
 # define NO_VALID_DOBLE_QUOTE "!"
 # define SPEC_SYMBOLS "$'\" \n><|"
-# define SPECIFICATORS ";|><!"
+# define SPECIFICATORS "&;|><!"
 
 /*
 ** Errors
 */
 # define ERROR_MALLOC "error malloc"
 # define ERROR_COMMAND "command not found"
+
+typedef enum	e_options
+{
+	OUTPUT,
+	APPEND_OUTPUT,
+	INPUT,
+	INPUT_MULTILINE,
+	ERROR,
+}				t_options;
 
 typedef struct s_parser
 {
@@ -60,7 +69,7 @@ typedef struct s_redir
 	char			*command;
 	char			**args;
 	char			*redir_file;
-	int				redir_type;
+	t_options		redir_type;
 	struct s_redir	*redir_next;
 	int				error;
 }					t_redir;
@@ -99,8 +108,8 @@ void	parser(t_main *main, char *string);
 void	pars_quote(t_parser *parser, t_main *main);
 void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
 t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser);
-t_job	*redirects(t_main *main, t_job *job, t_parser *parser);
 void	parser_go(t_main *main, t_parser *parser);
+t_pipe	*get_current_pipe(t_job *job);
 
 
 
@@ -111,7 +120,14 @@ void	exit_with_error(t_main *main, char *massage);
 int		add_char(char **str, int c);
 int		get_next_char(t_parser *parser, int *c);
 void	arr_free(char **str);
-void	set_error(t_redir *redir, int n);
+void	set_error_and_free_pipe(t_job *job, int n);
+void	free_data_redir(t_redir * redir);
+void	all_mem_free(t_main *main);
+void	main_free(t_main **structure);
+void	job_free(t_job **structure);
+void	pipe_free(t_pipe **structure);
+void	redir_free(t_redir **structure);
+
 
 /*
 ** TESTS
