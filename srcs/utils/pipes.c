@@ -103,6 +103,7 @@ void execute_pipes (t_main *main)
     char **cmd;
     int fork_res;
     int status;
+
 //    int flag;
 
     commands = pipe_cmd_args_recorder(main);
@@ -136,13 +137,10 @@ void execute_pipes (t_main *main)
 ////            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
 //            ft_putnbr_fd(flag, 2);
 //            ft_putchar_fd('\n', 2);
-////            if (ft_strchr(cmd[0], '/'))
-//            if (flag == 1)
-//                exit(1);
-//            else
-                execve(cmd[0], cmd, NULL);// исполняем в дочери
-            //exit(127);// не нужен exit, так как  дочерний процесс сам себя зачищает
-//            main->flag2 = 0;
+            if (ft_strchr(cmd[0], '/'))
+                execve(cmd[0], cmd, NULL);// если absolute path
+            else
+                process_exe_in_pipes(main, cmd);// if external cmd without path
         }
         close(prev_pipe_fds[0]); // закрываем вход предыдущ
         close(prev_pipe_fds[1]); // закрываем вход предыдущ

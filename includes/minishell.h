@@ -152,6 +152,7 @@ int     unset(t_main *main);
 void    process_folder_or_ready_exe(t_main *main);
 //char**  cmd_args_to_argv_recorder_p(t_main *main);
 void    process_builtins_in_pipes(t_main *main, char **cmd);
+int     process_exe_in_pipes(t_main *main, char **cmd);
 
         void	rl_replace_line();
 #endif //MINISHELL_H

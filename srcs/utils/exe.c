@@ -159,8 +159,6 @@ int process_exe(t_main *main)
     char **argv;
     envir = main->my_env;
     i = 0;
-
-    // process_folder(main, command); // на обработке у Мишы
     path = ft_getenv(main, "PATH");
     if(!path)
         return 0;
