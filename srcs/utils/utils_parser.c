@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 08:32:49 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/02 15:25:37 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/05 17:59:30 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,18 +45,13 @@ int	get_next_char(t_parser *parser, int *c)
 	if (!parser->string[parser->index])
 		return (0);
 	return (1);
-//	buf = malloc(sizeof(char) * 1);
-//	readed = read(0, buf, 1);
-//	if (readed == 0)
-//		return (0);
-//	else if (readed < 0)
-//		return (-1);
-//	*c = *buf;
-//	parser->cur_c = *buf;
-//	mem_free(&buf);
 }
 
-void	set_error(t_redir *redir, int n)
+void	set_error_and_free_pipe(t_job *job, int n)
 {
-	redir->error = n;
+	t_pipe *pipe;
+
+	pipe = get_current_pipe(job);
+	free_data_redir(pipe->redir);
+	pipe->redir->error = n;
 }

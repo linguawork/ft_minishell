@@ -8,7 +8,9 @@ TESTS_DIR = ./srcs/tests/
 
 MAIN_FILES = start.c
 PARS_FILES = parser.c
-UTILS_FILES = utils.c processor.c utils_parser.c utils_processor.c exe.c cd.c
+UTILS_FILES = utils.c processor.c utils_parser.c utils_processor.c exe.c cd.c \
+pipes.c  echo.c pwd.c exit.c env.c export.c export2.c unset.c utils_processor2.c \
+processor2.c
 TESTS_FILES = #tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))
@@ -19,7 +21,7 @@ TESTS = $(addprefix $(TESTS_DIR), $(TESTS_FILES))
 SRC_FILES = $(MAIN) $(PARS) $(UTILS) $(TESTS)
 OBJ_FILES = $(SRC_FILES:.c=.o)
 
-FLAGS = -Wall -Wextra -Werror -g -Ilibft -Iincludes
+FLAGS = -Wall -Wextra -Werror -g -Ilibft -Iincludes -fsanitize=address
 #FLAGS +=  #-I/Users/meunostu/.brew/Cellar/readline/8.1/include
 
 CC= gcc $(FLAGS)
@@ -27,11 +29,11 @@ CC= gcc $(FLAGS)
 all:$(NAME) $?
 
 %.o: %.c includes/minishell.h
-	$(CC) -c $< -o $@
+	$(CC)  -c $< -o $@
 
 $(NAME): $(OBJ_FILES)
 	$(MAKE) -C $(LIBFT_PATH)
-	$(CC) $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME) -lreadline
+	$(CC)  $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME) -lreadline
 
 clean:
 	$(MAKE) clean -C $(LIBFT_PATH)

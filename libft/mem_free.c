@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 08:27:31 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/05 12:19:25 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void	mem_free(char **str)
 {
-	if (*str)
-		free(*str);
-	*str = NULL;
+	if (str && *str)
+    {
+	    free(*str);
+        *str = NULL;
+    }
 }

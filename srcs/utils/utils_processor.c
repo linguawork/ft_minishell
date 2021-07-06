@@ -1,5 +1,50 @@
 #include "minishell.h"
 
+int how_many_lines(char **a)
+{
+    int i;
+    char **env;
+
+    i = 0;
+    env = a;
+    while(env[i] != NULL)
+    {
+        i++;
+    }
+    return(i);
+}
+
+void	*arrays_free(char **s)
+{
+    int	i;
+
+    i = 0;
+    while (s[i])
+    {
+        free(s[i]);
+        i++;
+    }
+    free(s);
+    return (NULL);
+}
+
+int char_count(const char *str)
+{
+    int i;
+
+    i = 0;
+    if (!(ft_strchr(str, '=')))
+        return(0);
+    else
+    {
+        while (str[i] != '=')
+        {
+            i++;
+        }
+    }
+    return(i);
+}
+
 void	copy_env3(t_main *main, char **env)
 {
     int i;
