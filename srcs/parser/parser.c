@@ -295,7 +295,7 @@ void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
 			add_char(&parser->line, c);
 	}
 	if (c != '"')
-		exit_with_error(main, "No two quote");
+		exit_with_error(main, "Add one more quotation mark");
 	parser->double_quote = 0;
 }
 
@@ -312,7 +312,7 @@ void	pars_quote(t_parser *parser, t_main *main)
 	while (get_next_char(parser, &c) && c != '\'' && c != '\n')
 		add_char(&parser->line, c);
 	if (c != '\'')
-		exit_with_error(main, "No two quote");
+		exit_with_error(main, "Add one more quotation mark");
 	parser->quote = 0;
 }
 
@@ -417,7 +417,7 @@ void	init_struct_redir_next(t_redir *redir)
 	t_redir	*redir_next;
 
 	redir_next = (t_redir *)malloc(sizeof(t_redir));
-	redir->redir_next = redir;
+	redir->redir_next = redir_next;
 	redir->redir_next->command = NULL;
 	redir->redir_next->args = NULL;
 	redir->redir_next->redir_file = NULL;
