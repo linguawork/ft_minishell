@@ -80,7 +80,7 @@ void	init_struct_job_next(t_job *job)
 	job->job_next->pipe->redir->command = NULL;
 	job->job_next->pipe->redir->args = NULL;
 	job->job_next->pipe->redir->redir_file = NULL;
-	job->job_next->pipe->redir->redir_type = 0;
+	job->job_next->pipe->redir->redir_type = ERROR;
 	job->job_next->pipe->redir->redir_next = NULL;
 	job->job_next->pipe_next = NULL;
 	job->job_next->job_next = NULL;
@@ -97,25 +97,25 @@ void	init_struct_pipe_next(t_job *job, int job_next)
 	if (job_next)
 	{
 		redir->redir_file = NULL;
-		redir->redir_type = 0;
+		redir->redir_type = ERROR;
 		job->job_next->pipe_next = pipe;
 		job->job_next->pipe_next->redir = redir;
 		job->job_next->pipe_next->redir->command = NULL;
 		job->job_next->pipe_next->redir->args = NULL;
 		job->job_next->pipe_next->redir->redir_file = NULL;
-		job->job_next->pipe_next->redir->redir_type = 0;
+		job->job_next->pipe_next->redir->redir_type = ERROR;
 		job->job_next->pipe_next->redir->redir_next = NULL;
 	}
 	else
 	{
 		redir->redir_file = NULL;
-		redir->redir_type = 0;
+		redir->redir_type = ERROR;
 		job->pipe_next = pipe;
 		job->pipe_next->redir = redir;
 		job->pipe_next->redir->command = NULL;
 		job->pipe_next->redir->args = NULL;
 		job->pipe_next->redir->redir_file = NULL;
-		job->pipe_next->redir->redir_type = 0;
+		job->pipe_next->redir->redir_type = ERROR;
 		job->pipe_next->redir->redir_next = NULL;
 	}
 }
@@ -424,7 +424,7 @@ void	init_struct_redir_next(t_redir *redir)
 	redir->redir_next->command = NULL;
 	redir->redir_next->args = NULL;
 	redir->redir_next->redir_file = NULL;
-	redir->redir_next->redir_type = 0;
+	redir->redir_next->redir_type = ERROR;
 	redir->redir_next->redir_next = NULL;
 }
 

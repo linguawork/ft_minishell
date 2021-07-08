@@ -76,7 +76,7 @@ void	free_data_job(t_job *job)
 		free_data_job(job->job_next);
 	pipe_free(&job->pipe);
 	pipe_free(&job->pipe_next);
-	job_free(&job->job_next);
+//	job_free(&job->job_next);
 	job_free(&job);
 }
 
