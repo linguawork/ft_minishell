@@ -74,7 +74,9 @@ void	end_session(t_main *main)
 //	main->job->pipe->redir->args = NULL;
 	main->job->job_next = NULL;
     main->job->pipe_next = NULL;
+    main->job->pipe->redir->redir_next = NULL;
 	main->job->pipe->redir->error = 0;
+	main->job->pipe->redir->redir_type = ERROR;
 }
 
 int	main(int ac, char **av, char **env)

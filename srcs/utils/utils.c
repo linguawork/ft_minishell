@@ -60,8 +60,8 @@ void	free_data_redir(t_redir *redir)
 	{
 		redir->redir_next->error = 1;
 		free_data_redir(redir->redir_next);
-		redir_free(&redir->redir_next);
-		redir->redir_next->error = 1;
+        redir->redir_next->error = 1;
+		redir->redir_next = NULL;
 	}
 	if (redir->error != 0)
 		redir_free(&redir);
