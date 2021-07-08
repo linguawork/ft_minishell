@@ -92,10 +92,12 @@ int	main(int ac, char **av, char **env)
 			add_history(string);
 		parser(&main, string);
         mem_free(&string);
-		if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0)
+		if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0 && main.job->pipe->redir->redir_file == NULL)
 			process_builtins_and_divide_externals(&main);
-		if (main.job->num_pipes != 0)
+		if (main.job->num_pipes != 0 && !main.job->pipe->redir->redir_file)
             execute_pipes(&main);
+		if (main.job->pipe->redir->redir_file)
+            redir_one_right(&main);
 		end_session(&main);
 	}
 	av[ac] = env[ac];

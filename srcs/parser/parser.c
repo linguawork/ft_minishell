@@ -340,7 +340,7 @@ char *get_redir_file(t_parser *parser)
 		add_char(&parser->line, c);
 	}
 	file = parser->line;
-	parser->line = NULL;
+    parser->line = NULL;
 	return (file);
 }
 
@@ -381,13 +381,16 @@ char *get_multi_text(t_parser *parser)
 			if (ft_strnstr(buf, del, ft_strlen(buf)))
 				break ;
 			parser->line = ft_strjoin(parser->line, buf);
+			parser->line = ft_strjoin(parser->line, "\n"); //TODO may add at the end \n, or may not. Check
 			mem_free(&buf);
 			write(0, "> ", 2);
 		}
 		else
 			add_char(&buf, c);
 	}
-	return (parser->line);
+	buf = parser->line;
+    parser->line = NULL;
+	return (buf);
 }
 
 t_options	get_redir_type(t_parser *parser)

@@ -36,20 +36,13 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
 {
     int i;
     int c_num;
-
-
     char ***cmds;
     int p_num;
     t_job *job;
+
     job = main->job;
     c_num= main->job->num_commands;
-//    c_num = 4; // this is for test
-//    p_num =  main->job->num_pipes;
-
-//    c_num = how_many_lines(main->job); // подсчет комманд
-//    c_num = 2;
     cmds = (char ***) malloc(sizeof(char *) * (c_num + 1));
-
     p_num = c_num - 1;
     i = 0;
     if (p_num == 1)
@@ -59,7 +52,6 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
         cmds[++i] = NULL;
         return(cmds);
     }
-
     if (p_num > 1)
     {
         cmds[i] = cmd_args_to_argv_recorder_p(job);

@@ -23,6 +23,8 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/stat.h>
+# include <fcntl.h>
+
 
 # define NO_VALID_SYMBOLS ""
 # define VALID_SYMBOLS_FILES "._"
@@ -95,6 +97,7 @@ typedef struct s_main
 	int				exit;
 	int             sub;
 	int             flag2;
+//	int             redir_flag;
 }					t_main;
 
 /*
@@ -170,6 +173,7 @@ void    process_folder_or_ready_exe(t_main *main);
 void    process_builtins_in_pipes(t_main *main, char **cmd);
 int     process_exe_in_pipes(t_main *main, char **cmd);
 void    process_folder_in_pipes(t_main *main, char **cmd);
+void    redir_one_right(t_main *main);
 
-        void	rl_replace_line();
+    void	rl_replace_line();
 #endif //MINISHELL_H
