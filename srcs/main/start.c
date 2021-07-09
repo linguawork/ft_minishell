@@ -99,7 +99,11 @@ int	main(int ac, char **av, char **env)
 		if (main.job->num_pipes != 0 && !main.job->pipe->redir->redir_file)
             execute_pipes(&main);
 		if (main.job->pipe->redir->redir_file)
+        {
             redir_one_right(&main);
+            redir_two_right(&main);
+        }
+
 		end_session(&main);
 	}
 	av[ac] = env[ac];
