@@ -6,62 +6,28 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/05 18:02:38 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/09 12:56:13 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	job_free(t_job **structure)
-{
-	if (structure && *structure)
-	{
-		free(*structure);
-		*structure = NULL;
-	}
-}
-
-void	pipe_free(t_pipe **structure)
-{
-	if (structure && *structure)
-	{
-		free(*structure);
-		*structure = NULL;
-	}
-}
-
-void	redir_free(t_redir **structure)
-{
-	if (structure && *structure)
-	{
-		free(*structure);
-		*structure = NULL;
-	}
-}
-
-void	main_free(t_main **structure)
-{
-	if (structure && *structure)
-	{
-		free(*structure);
-		*structure = NULL;
-	}
-}
-
 void	free_data_redir(t_redir *redir)
 {
 	mem_free(&redir->command);
-//	while (redir->args && *redir->args)
-//		mem_free(redir->args++);
-	free(redir->args);// just free to avoid double freeing
+/*
+**	while (redir->args && *redir->args)
+**		mem_free(redir->args++);
+*/
+	free(redir->args);/* just free to avoid double freeing*/
 	redir->args = NULL;
 	mem_free(&redir->redir_file);
 	if (redir->redir_next)
 	{
 		redir->redir_next->error = 1;
 		free_data_redir(redir->redir_next);
-		redir_free(&redir->redir_next);
 		redir->redir_next->error = 1;
+		redir->redir_next = NULL;
 	}
 	if (redir->error != 0)
 		redir_free(&redir);
@@ -76,7 +42,6 @@ void	free_data_job(t_job *job)
 		free_data_job(job->job_next);
 	pipe_free(&job->pipe);
 	pipe_free(&job->pipe_next);
-	job_free(&job->job_next);
 	job_free(&job);
 }
 
@@ -99,16 +64,14 @@ void	exit_with_error(t_main *main, char *massage)
 	exit(-1);
 }
 
-void	arr_free(char **arr)
+char 	**ft_arrdup(char **src, int len)
 {
-    int i;
+	int i;
+	char **dst;
 
-    i = 0;
-	while (arr && arr[i])
-	{
-		mem_free(arr + i);
-		arr[i] = NULL;
-		i++;
-	}
-    arr = NULL;
+	dst = ft_calloc(len + 2, sizeof(char *));
+	i = 0;
+	while (src && *src)
+		dst[i++] = *src++;
+	return (dst);
 }

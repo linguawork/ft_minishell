@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/05 18:10:29 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/09 15:01:39 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	copy_env(t_main *main, char **env)
 {
-	int i;
-	int len;
+	int		i;
+	int		len;
 
 	i = -1;
 	len = how_many_lines(env);
@@ -28,65 +28,56 @@ void	copy_env(t_main *main, char **env)
 		if (!main->my_env[i])
 			exit_with_error(main, ERROR_MALLOC);
 	}
-    main->my_env[i] = NULL;
+	main->my_env[i] = NULL;
 }
 
-void	init_struct(t_main *main)
+void	ctrl_slesh(int sig)
 {
-	t_job	*job;
-	t_pipe	*pipe;
-	t_redir	*redir;
-
-	job = (t_job *)malloc(sizeof(t_job));
-	pipe = (t_pipe *)malloc(sizeof(t_pipe));
-	redir = (t_redir *)malloc(sizeof(t_redir));
-
-	main->sub = 0;// for args sub in export
-	main->flag2 = 0;// for check_valid_args
-	main->exit = 0;
-	job->pipe_next = NULL;
-	job->job_next = NULL;
-	job->num_commands = 0;
-	job->num_pipes = 0;
-	redir->redir_next = NULL;
-	redir->redir_file = NULL;
-	redir->redir_type = -1;
-	main->job = job;
-	main->job->pipe = pipe;
-	main->job->pipe->redir = redir;
-	main->job->pipe->redir->command = NULL;
-	main->job->pipe->redir->args = NULL;
+	printf("CTRL + / %d  \n", sig);
+	sig = 1;
 }
 
-void	end_session(t_main *main)
+void	ctrl_d(int sig)
 {
-	all_mem_free(main);
-	main->job->pipe->redir->error = 0;
-	main->job->num_commands = 0;
-	main->job->num_pipes = 0;
-	main->job->pipe_next = NULL;
-	main->job->job_next = NULL;
+	exit(sig);
+}
+
+void	ctrl_c(int sig)
+{
+	printf("minishell> %s  \n", rl_line_buffer);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	rl_redisplay();
+	sig = 1;
 }
 
 int	main(int ac, char **av, char **env)
 {
-	t_main	main;
-	char	*string;
+	t_main			main;
+	char			*string;
+	struct termios	term;
 
 	init_struct(&main);
 	copy_env(&main, env);
-//	tests();
+	tcgetattr(0, &term);
+	term.c_lflag &= ~(ECHOCTL);
+	tcsetattr(0, TCSANOW, &term);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, &ctrl_c);
 	while (1)
 	{
 		string = readline("minishell> ");
+		if (!string)
+			ctrl_d(131);
 		if (*string)
 			add_history(string);
 		parser(&main, string);
 		mem_free(&string);
-		if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0)
+		if (main.job->pipe->redir->command && !main.job->pipe->redir->error
+			&& main.job->num_pipes == 0)
 			process_builtins_and_divide_externals(&main);
 		if (main.job->num_pipes != 0)
-            execute_pipes(&main);
+			execute_pipes(&main);
 		end_session(&main);
 	}
 	av[ac] = env[ac];
