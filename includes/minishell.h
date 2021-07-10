@@ -175,6 +175,8 @@ void    process_folder_in_pipes(t_main *main, char **cmd);
 void    redir_one_right(t_main *main);
 void    redir_two_right(t_main *main);
 int     count_redirects(t_main *main);
+int     redir_one_left(t_main *main);
+
 
     void	rl_replace_line();
 #endif //MINISHELL_H

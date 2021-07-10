@@ -205,9 +205,9 @@ int process_exe(t_main *main)
         }
         i++;
     }
-    ft_putstr_fd("minishell: ", 1);
-    ft_putstr_fd(command, 1);
-    ft_putstr_fd(": Command not found\n", 1);
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(command, 2);
+    ft_putstr_fd(": Command not found\n", 2);
     main->exit = 127;
     return(0);
 }

@@ -58,9 +58,7 @@ void	free_data_redir(t_redir *redir)
 	mem_free(&redir->redir_file);
 	if (redir->redir_next)
 	{
-		redir->redir_next->error = 1;
 		free_data_redir(redir->redir_next);
-        redir->redir_next->error = 1;
 		redir->redir_next = NULL;
 	}
 	if (redir->error != 0)

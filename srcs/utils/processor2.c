@@ -42,16 +42,7 @@ int process_ready_exe(t_main *main)
     return(0);
 }
 
-//int exists(const char *command)
-//{
-//    FILE *file;
-//    if ((file = fopen(command, "r+")))
-//    {
-//        fclose(file);
-//        return 1;
-//    }
-//    return 0;
-//}
+
 
 int check_dir(char *cmd)
 {

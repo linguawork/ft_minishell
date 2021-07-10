@@ -10,6 +10,17 @@ int count_args(char **args)
     return(i);
 }
 
+int exists(const char *command)
+{
+    FILE *file;
+    if ((file = fopen(command, "r+")))
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
 //int	process_valid_cmd(t_main *main, char *s) // от флагов в парсере лучше отказаться и парсить все в аргументы
 //{
 //	char	*str;

@@ -86,6 +86,7 @@ int	main(int ac, char **av, char **env)
 
 	init_struct(&main);
 	copy_env(&main, env);
+
 //	tests();
 	while (1)
 	{
@@ -102,8 +103,8 @@ int	main(int ac, char **av, char **env)
         {
             redir_one_right(&main);
             redir_two_right(&main);
+            redir_one_left(&main);
         }
-
 		end_session(&main);
 	}
 	av[ac] = env[ac];

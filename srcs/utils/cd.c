@@ -53,9 +53,9 @@ int cd(t_main *main)
         p = *main->job->pipe->redir->args;
         if (chdir(p) < 0)
         {
-            ft_putstr_fd("minishell: cd: ", 1);
-            ft_putstr_fd(p, 1);
-            ft_putstr_fd(": No such file or directory\n", 1);
+            ft_putstr_fd("minishell: cd: ", 2);
+            ft_putstr_fd(p, 2);
+            ft_putstr_fd(": No such file or directory\n", 2);
             main->exit = 1;
         }
     }
