@@ -21,10 +21,6 @@ char *ft_getenv(t_main *main, char *name)
             {
                 free(name_or_value);
                 name_or_value = ft_strchr(env[i], '=')+1; // pointer marks the symbol in the string// all after =, including =str
-                // +1 убирает знак "=
-                // name_or_value = name_or_value + 1;
-                // ft_putstr_fd(name_or_value, 1);
-                // ft_putchar_fd('\n', 1);
                 return(name_or_value);
             }
         }
@@ -69,10 +65,6 @@ int cd(t_main *main)
         p = *main->job->pipe->redir->args;
         if (chdir(p) < 0)
         {
-//            ft_putstr_fd("minishell: cd: ", 2);
-//            ft_putstr_fd(p, 2);
-//            ft_putstr_fd(": No such file or directory\n", 2);
-
             main->exit = 1;
             return (cd_mistakes(main, p));
         }
@@ -81,12 +73,8 @@ int cd(t_main *main)
             if (getcwd(buffer, 1024) == NULL)
             {
                 main->exit = 1;
-//                ft_putstr_fd(": we are here\n", 2);
                 return (cd_mistakes(main, p));
-                //            printf("Could not get current working directory\n");
             }
-//            else
-//                printf("current working dir is: %s\n", buffer);
         }
     }
     return(0);
