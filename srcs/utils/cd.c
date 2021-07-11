@@ -33,13 +33,16 @@ char *ft_getenv(t_main *main, char *name)
     return(0);
 }
 
-int cd_mistakes(char *p)
+int cd_mistakes(t_main *main, char *p)
 {
     char *error_mes;
 
     error_mes = strerror(errno);
     ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(main->job->pipe->redir->command, 2);
+    ft_putstr_fd(": ", 2);
     ft_putstr_fd(p, 2);
+    ft_putchar_fd(' ', 2);
     ft_putstr_fd(error_mes, 2);
     ft_putchar_fd('\n', 2);
     return (1);
@@ -66,10 +69,12 @@ int cd(t_main *main)
         p = *main->job->pipe->redir->args;
         if (chdir(p) < 0)
         {
-            ft_putstr_fd("minishell: cd: ", 2);
-            ft_putstr_fd(p, 2);
-            ft_putstr_fd(": No such file or directory\n", 2);
+//            ft_putstr_fd("minishell: cd: ", 2);
+//            ft_putstr_fd(p, 2);
+//            ft_putstr_fd(": No such file or directory\n", 2);
+
             main->exit = 1;
+            return (cd_mistakes(main, p));
         }
         else
         {
@@ -77,7 +82,7 @@ int cd(t_main *main)
             {
                 main->exit = 1;
 //                ft_putstr_fd(": we are here\n", 2);
-                return (cd_mistakes(p));
+                return (cd_mistakes(main, p));
                 //            printf("Could not get current working directory\n");
             }
 //            else
