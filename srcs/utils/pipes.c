@@ -86,6 +86,48 @@ void connect_stdio_to_pipes(int prev_fds[], int next_fds[])
     }
 }
 
+void simultaneous_pipes (int i, t_main *main, char ***commands)
+{
+    int prev_pipe_fds[2]; // объявляем массив предыдущ файловых дескрипторов
+    int next_pipe_fds[2];
+    char **cmd;
+    while (i < main->job->num_commands) // пока не прошлись по всем командам
+    {
+        prev_pipe_fds[0] = next_pipe_fds[0]; // предыдущ нулевой присваивает значение след нулевого
+        prev_pipe_fds[1] = next_pipe_fds[1];
+        if (i != main->job->num_commands - 1) // если кол-во команд не равно количеству команд-1 (те кол-ву пайпов)
+            pipe(next_pipe_fds);// создаем каналы (трубы для следующих команд)
+        else // иначе если команды равны пайпам
+        {
+            next_pipe_fds[0] = -1; // инициализируем на -1
+            next_pipe_fds[1] = -1;
+        }
+//        status = 0;
+        cmd = &*commands[i];
+        process_folder_in_pipes(main, cmd);// обработка папки
+        if (main->flag2 != 1)
+        {
+            if (fork() == 0) // в дочери
+            {
+                connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
+                process_builtins_in_pipes(main, cmd);
+                if (ft_strchr(cmd[0], '/')) {
+                    execve(cmd[0], cmd, NULL);// если absolute path
+                } else {
+                    process_exe_in_pipes(main, cmd);// if external cmd without path
+                }
+            }
+        }
+//        if (main->flag2 == 1)
+        main->flag2 = 0;// если нашел папку
+        close(prev_pipe_fds[0]); // закрываем вход предыдущ
+        close(prev_pipe_fds[1]); // закрываем вход предыдущ
+        i++;
+    }
+    wait(NULL); // один wait может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
+}
+
+
 void execute_pipes (t_main *main)
 {
     int c_num;
@@ -123,31 +165,39 @@ void execute_pipes (t_main *main)
         cmd = &*commands[i];
         process_folder_in_pipes(main, cmd);// обработка папки
         if (main->flag2 != 1)
-            fork_res = fork();
-        if (fork_res == 0) // в дочери
         {
-            connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-            process_builtins_in_pipes(main, cmd);
-            if (ft_strchr(cmd[0], '/'))
-            {
-                execve(cmd[0], cmd, NULL);// если absolute path
-            }
+            if (ft_strcmp(cmd[0],"yes")== 0)
+                simultaneous_pipes(i, main, commands);
             else
             {
-                process_exe_in_pipes(main, cmd);// if external cmd without path
+                fork_res = fork();
+
+                if (fork_res == 0) // в дочери
+                {
+                    connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
+                    process_builtins_in_pipes(main, cmd);
+                    if (ft_strchr(cmd[0], '/'))
+                    {
+                        execve(cmd[0], cmd, NULL);// если absolute path
+                    }
+                    else
+                    {
+                        process_exe_in_pipes(main, cmd);// if external cmd without path
+                    }
+                }
+                close(prev_pipe_fds[0]); // закрываем вход предыдущ
+                close(prev_pipe_fds[1]); // закрываем вход предыдущ
+                waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
+                main->exit = WEXITSTATUS(status);
+                if (status == 11) // command not found
+                {
+                    ft_putstr_fd("minishell: ", 1);
+                    ft_putstr_fd(cmd[0], 1);
+                    ft_putstr_fd(": Command not found\n", 1);
+                    main->exit = 127;
+                    break;
+                }
             }
-        }
-        close(prev_pipe_fds[0]); // закрываем вход предыдущ
-        close(prev_pipe_fds[1]); // закрываем вход предыдущ
-        waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
-        main->exit = WEXITSTATUS(status);
-        if (status == 11) // command not found
-        {
-            ft_putstr_fd("minishell: ", 1);
-            ft_putstr_fd(cmd[0], 1);
-            ft_putstr_fd(": Command not found\n", 1);
-            main->exit = 127;
-            break;
         }
 
 //         for testing

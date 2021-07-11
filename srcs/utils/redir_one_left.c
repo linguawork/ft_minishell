@@ -35,7 +35,6 @@ int redir_one_left(t_main *main)
 
 
     redir = main->job->pipe->redir;
-
     if (redir && redir->redir_next == NULL) // если есть структура redir - одна команда  один редирект и один файл
     {
         // Обработка ошибок
@@ -58,7 +57,6 @@ int redir_one_left(t_main *main)
             main->exit = 258; // Command not found
             strerror(main->exit);
         }
-
 //        check_valid_redir(main); // выше костыли вместо этой функции
 // ОТРАБОТКА ОДНОГО РЕДИР
         if (redir->command && redir->redir_type == INPUT && redir->redir_file)// команда и редирект тип < и файл
