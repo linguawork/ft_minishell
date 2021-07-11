@@ -128,7 +128,7 @@ void simultaneous_pipes (int i, t_main *main, char ***commands)
 }
 
 
-void execute_pipes (t_main *main)
+int execute_pipes (t_main *main)
 {
     int c_num;
     char ***commands;
@@ -139,6 +139,12 @@ void execute_pipes (t_main *main)
     int status;
 
 //    int flag;
+    if (main->job->num_commands == main->job->num_pipes)
+    {
+        ft_putstr_fd("Error: According to the subject we do not need to process multiline!\n", 2);
+//        main->exit = 1;
+        return(0);
+    }
 
     commands = pipe_cmd_args_recorder(main);
 //    char **cmd = &*commands[i]; // по адресу передаем значение в разыменовании 3мерного в 2хмерный // test
@@ -163,11 +169,11 @@ void execute_pipes (t_main *main)
         }
         status = 0;
         cmd = &*commands[i];
-        process_folder_in_pipes(main, cmd);// обработка папки
+//        process_folder_in_pipes(main, cmd);// обработка папки
         if (main->flag2 != 1)
         {
-            if (ft_strcmp(cmd[0],"yes")== 0)
-                simultaneous_pipes(i, main, commands);
+            if ((ft_strcmp(cmd[0],"yes")== 0) || (ft_strcmp(cmd[0],"cat")== 0))
+            simultaneous_pipes(i, main, commands);
             else
             {
                 fork_res = fork();
@@ -191,9 +197,9 @@ void execute_pipes (t_main *main)
                 main->exit = WEXITSTATUS(status);
                 if (status == 11) // command not found
                 {
-                    ft_putstr_fd("minishell: ", 1);
-                    ft_putstr_fd(cmd[0], 1);
-                    ft_putstr_fd(": Command not found\n", 1);
+                    ft_putstr_fd("minishell: ", 2);
+                    ft_putstr_fd(cmd[0], 2);
+                    ft_putstr_fd(": Command not found\n", 2);
                     main->exit = 127;
                     break;
                 }
@@ -219,4 +225,5 @@ void execute_pipes (t_main *main)
 //    wait(NULL); // один wait может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
 //    main->job->num_commands = 0; // занулил в end_session
 //    main->job->num_pipes = 0;
+    return(0);
 }

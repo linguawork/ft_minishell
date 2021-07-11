@@ -157,7 +157,7 @@ int     cd(t_main *main);
 char**  cmd_args_to_argv_recorder2(t_main *main);
 int     exists(const char *command);
 int     check_dir (char *cmd);
-void    execute_pipes (t_main *main);
+int     execute_pipes (t_main *main);
 char**  cmd_args_to_argv_recorder_p(t_job *job);
 int     echo(t_main *main);
 int     exit_command(t_main *main);
