@@ -6,11 +6,33 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/10 07:18:35 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/12 17:21:17 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
+{
+	int		c;
+
+	parser->double_quote = 1;
+	while (parser->cur_c != '\0' && get_next_char(parser, &c) && c != '"'
+		   && c != '\0')
+	{
+		if (c == '$')
+		{
+			pars_env_and_append_line(parser, main);
+			if (parser->cur_c == '"')
+				set_error_and_free_pipe(job, -1);
+		}
+		else
+			add_char(&parser->line, c);
+	}
+	if (c != '"')
+		exit_with_error(main, "No two quote");
+	parser->double_quote = 0;
+}
 
 static t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 {
@@ -36,36 +58,37 @@ static t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 	return (job);
 }
 
-static void	check_error_syntax(t_parser *parser)
+static int	check_error_syntax(t_parser *parser)
 {
 	char	*str;
 	char	c;
+	int ret;
 
+	ret = 0;
 	str = parser->string;
 	c = *str;
 	if (c == '\0')
-		return ;
+		ret = 3;
 	else if (ft_strchr(SPECIFICATORS, *str)
 		&& (*++str == '\0' || (ft_strchr(SPECIFICATORS, *str) && *str != c)))
-	{
-		print_error_syntax_message(parser->string, 1);
-		*parser->string = '\0';
-	}
-	else if (ft_strchr(SPECIFICATORS, *str) && *str == c)
-	{
-		print_error_syntax_message(parser->string, 2);
-		*parser->string = '\0';
-	}
+		ret = 1;
+	else if (ft_strchr(SPECIFICATORS, *str) && *str == c && ft_strchr
+	(SPECIFICATORS, *++str))
+		ret = 2;
+	if (ret == 1 || ret == 2)
+		print_error_syntax_message(parser->string, ret);
+	return (ret);
 }
 
 static void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
 	t_job	*job;
+	int error;
 
 	job = main->job;
-	check_error_syntax(parser);
-	while (get_next_char(parser, &c) && c != '\0')
+	error = check_error_syntax(parser);
+	while (!error && get_next_char(parser, &c) && c != '\0')
 		job = distribution_parser(main, job, parser);
 	write_pars_line(main, job, parser);
 	/*

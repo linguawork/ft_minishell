@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/09 15:01:39 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/12 17:17:16 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	copy_env(t_main *main, char **env)
 	main->my_env[i] = NULL;
 }
 
-void	ctrl_slesh(int sig)
+void	ctrl_slash(int sig)
 {
 	printf("CTRL + / %d  \n", sig);
 	sig = 1;
@@ -39,16 +39,20 @@ void	ctrl_slesh(int sig)
 
 void	ctrl_d(int sig)
 {
+	rl_replace_line(rl_line_buffer, 0);
+	rl_redisplay();
 	exit(sig);
 }
 
 void	ctrl_c(int sig)
 {
-	printf("minishell> %s  \n", rl_line_buffer);
-	rl_on_new_line();
-	rl_replace_line("", 0);
-	rl_redisplay();
-	sig = 1;
+	if (sig == SIGINT)
+	{
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 }
 
 int	main(int ac, char **av, char **env)
