@@ -12,12 +12,12 @@ void redir_two_right(t_main *main)
 
     if (redir && redir->redir_next == NULL) // если есть структура redir - одна команда  один редирект и один файл
     {
-        if (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file )// костыль пока парсер правит один редирект >> и один файл
-        {
-            fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644); // empty file // поменяли флаг на дозапись
-            if (fd == -1)
-                exit(1);
-        }
+//        if (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file )// костыль пока парсер правит один редирект >> и один файл
+//        {
+//            fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644); // empty file // поменяли флаг на дозапись
+//            if (fd == -1)
+//                exit(1);
+//        }
         check_valid_redir(main);
 
         if (redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)// команда и редирект тип >> и файл

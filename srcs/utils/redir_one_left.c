@@ -5,7 +5,6 @@ int find_file_in_folder(t_redir * redir)
     DIR *folder;
     struct dirent *entry;
     char *command;
-//    char *current_dir;
     char buffer[1024];
 
     command = redir->redir_file;
@@ -38,26 +37,26 @@ int redir_one_left(t_main *main)
     if (redir && redir->redir_next == NULL) // если есть структура redir - одна команда  один редирект и один файл
     {
         // Обработка ошибок
-        if (!redir->command && redir->redir_type == INPUT && redir->redir_file )// один редирект < и один файл костыль вместо функции пока Миша делает
-        {
-            file = exists(redir->redir_file);
-            if (file == 0)
-            {
-                ft_putstr_fd("minishell: ", 2);
-                ft_putstr_fd(redir->redir_file, 2);
-                ft_putstr_fd(": No such file or directory\n", 2);
-                main->exit = 1;
-            }
-        }
-        if (redir->command && redir->redir_type == INPUT && !redir->redir_file)// один редирект < и один файл костыль вместо функции пока Миша делает
-        {
-            ft_putstr_fd ("minishell: ", 2);
-            ft_putstr_fd("syntax error near unexpected token `newline'", 2);
-            ft_putchar_fd ('\n', 2);
-            main->exit = 258; // Command not found
-            strerror(main->exit);
-        }
-//        check_valid_redir(main); // выше костыли вместо этой функции
+//        if (!redir->command && redir->redir_type == INPUT && redir->redir_file )// один редирект < и один файл костыль вместо функции пока Миша делает
+//        {
+//            file = exists(redir->redir_file);
+//            if (file == 0)
+//            {
+//                ft_putstr_fd("minishell: ", 2);
+//                ft_putstr_fd(redir->redir_file, 2);
+//                ft_putstr_fd(": No such file or directory\n", 2);
+//                main->exit = 1;
+//            }
+//        }
+//        if (redir->command && redir->redir_type == INPUT && !redir->redir_file)// один редирект < и один файл костыль вместо функции пока Миша делает
+//        {
+//            ft_putstr_fd ("minishell: ", 2);
+//            ft_putstr_fd("syntax error near unexpected token `newline'", 2);
+//            ft_putchar_fd ('\n', 2);
+//            main->exit = 258; // Command not found
+//            strerror(main->exit);
+//        }
+        check_valid_redir(main); // выше костыли вместо этой функции
 // ОТРАБОТКА ОДНОГО РЕДИР
         if (redir->command && redir->redir_type == INPUT && redir->redir_file)// команда и редирект тип < и файл
         {

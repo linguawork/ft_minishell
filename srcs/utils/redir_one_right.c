@@ -4,18 +4,38 @@ void check_valid_redir(t_main *main)
 {
     t_redir *redir;
     int fd;
+    int file;
 //    char *message;
 
     redir = main->job->pipe->redir;
-    if ((!redir->command && redir->redir_type == OUTPUT && redir->redir_file ) || // один редирект > и один файл
-    (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)) // один редирект >> и один файл
+    if ((!redir->command && redir->redir_type == OUTPUT && redir->redir_file ) || //  > f1
+    (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)) // >> f2 parser problem with f2
     {
         fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_TRUNC, 0644); // empty file
         if (fd < 0)
             main->exit = 0;
     }
-//    if ((redir->command && redir->redir_type == ERROR && !redir->redir_file ) || // один редирект ERROR (> (Миша обработал) или >>) и один файл
-//    (redir->command && redir->redir_type == INPUT && !redir->redir_file)) // один редирект > и один файл
+    if (!redir->command && redir->redir_type == INPUT && redir->redir_file )// < f1 (если файл сущест то ничего не делаем иначе вывод ошибки
+    {
+        file = exists(redir->redir_file);
+        if (file == 0)
+        {
+            ft_putstr_fd("minishell: ", 2);
+            ft_putstr_fd(redir->redir_file, 2);
+            ft_putstr_fd(": No such file or directory\n", 2);
+            main->exit = 1;
+        }
+    }
+    if (redir->command && redir->redir_type == INPUT && !redir->redir_file)// cat <
+    {
+        ft_putstr_fd ("minishell: ", 2);
+        ft_putstr_fd("syntax error near unexpected token `newline'", 2);
+        ft_putchar_fd ('\n', 2);
+        main->exit = 258; // Command not found
+        strerror(main->exit);
+    }
+//    if ((redir->command && redir->redir_type == ERROR && !redir->redir_file ) || // одна команда и один редирект = ERROR: Миша обработал ls > ls >>)
+//    (redir->command && redir->redir_type == INPUT && !redir->redir_file)) // надо проверить ls >>
 //    {
 //        ft_putstr_fd ("minishell: ", 2);
 //        ft_putchar_fd ('\n', 2);
