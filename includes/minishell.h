@@ -217,6 +217,7 @@ void    redir_two_right(t_main *main);
 int     count_redirects(t_main *main);
 int     redir_one_left(t_main *main);
 void    check_valid_redir(t_main *main);
+int    redir_two_left(t_main *main);
 
 
 void	rl_replace_line();

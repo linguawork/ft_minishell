@@ -11,7 +11,7 @@ PARS_FILES = parser.c init_structures.c pipe.c redirect.c write_to_main.c env.c
 UTILS_FILES = utils.c processor.c utils_parser.c utils_processor.c exe.c cd.c \
 pipes.c  echo.c pwd.c exit.c env.c export.c export2.c unset.c utils_processor2.c \
 processor2.c pipes2.c pipes3.c redir_one_right.c redir_two_right.c redir_one_left.c \
-free_structures.c
+free_structures.c  redir_two_left.c
 TESTS_FILES = #tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))

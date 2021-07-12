@@ -8,12 +8,13 @@ void check_valid_redir(t_main *main)
 //    char *message;
 
     redir = main->job->pipe->redir;
-    if ((!redir->command && redir->redir_type == OUTPUT && redir->redir_file ) || //  > f1
-    (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)) // >> f2 parser problem with f2
+    if ((!redir->command && redir->redir_type == OUTPUT && redir->redir_file ) || //  > f1 sometimes prints Misha's error message
+    (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)) // >> f2 sometimes prints Misha's error message
     {
         fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_TRUNC, 0644); // empty file
         if (fd < 0)
             main->exit = 0;
+//        ft_putstr_fd(": In my function\n", 2);
     }
     if (!redir->command && redir->redir_type == INPUT && redir->redir_file )// < f1 (если файл сущест то ничего не делаем иначе вывод ошибки
     {
@@ -29,7 +30,7 @@ void check_valid_redir(t_main *main)
     if (redir->command && redir->redir_type == INPUT && !redir->redir_file)// cat <
     {
         ft_putstr_fd ("minishell: ", 2);
-        ft_putstr_fd("syntax error near unexpected token `newline'", 2);
+        ft_putstr_fd("syntax error near unexpected token `newline___'", 2);
         ft_putchar_fd ('\n', 2);
         main->exit = 258; // Command not found
         strerror(main->exit);
