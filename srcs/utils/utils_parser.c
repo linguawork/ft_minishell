@@ -6,13 +6,13 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 08:32:49 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/05 17:59:30 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/10 06:07:09 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_realloc(char **dst, int size)
+static int	ft_realloc(char **dst, int size)
 {
 	*dst = ft_calloc(size, 1);
 	if (!*dst)
@@ -54,4 +54,13 @@ void	set_error_and_free_pipe(t_job *job, int n)
 	pipe = get_current_pipe(job);
 	free_data_redir(pipe->redir);
 	pipe->redir->error = n;
+}
+
+void	print_error_syntax_message(char *string, int len)
+{
+	char	*error;
+	error = "minishell> syntax error near unexpected token `";
+	write(1, error, strlen(error));
+	write(1, string, len);
+	write(1, "'\n", 2);
 }

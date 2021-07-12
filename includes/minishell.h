@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/06 12:37:06 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/10 07:12:28 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@
 # include <readline/history.h>
 # include <sys/stat.h>
 # include <fcntl.h>
-
+# include <term.h>
+//#include <signal.h>
+//#include <termios.h>
 
 # define NO_VALID_SYMBOLS ""
 # define VALID_SYMBOLS_FILES "._"
@@ -32,7 +34,7 @@
 # define NO_VALID_COMMAND_SYMBOLS ":\"'"
 # define NO_VALID_DOBLE_QUOTE "!"
 # define SPEC_SYMBOLS "$'\" \n><|"
-# define SPECIFICATORS "&;|><!"
+# define SPECIFICATORS "&;|><!()"
 
 /*
 ** Errors
@@ -102,40 +104,83 @@ typedef struct s_main
 /*
 ** MAIN
 */
+void	init_struct(t_main *main);
+void	end_session(t_main *main);
 
 /*
-** PARSING
+** PARSER
 */
 void	parser(t_main *main, char *string);
 void	pars_quote(t_parser *parser, t_main *main);
 void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
-t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser);
-void	parser_go(t_main *main, t_parser *parser);
+
+void	write_pars_line(t_main *main, t_job *job, t_parser *parser);
+
+
+/*
+** PARSER INIT
+*/
+void	init_parser(t_parser *parser);
+void	init_struct_job_next(t_job *job);
+void	init_struct_pipe_next(t_job *job, int job_next);
+void	init_struct_redir_next(t_redir *redir);
+
+/*
+** PARSER PIPE
+*/
+t_job	*get_next_pipe_addr(t_job *job, t_main *main, t_parser *parser);
 t_pipe	*get_current_pipe(t_job *job);
+t_redir *get_curren_redir(t_redir *redir);
+void	pars_quote(t_parser *parser, t_main *main);
 
+/*
+** PARSER REDIRECT
+*/
+void	redirect(t_main *main, t_job *job, t_parser *parser);
+void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
 
+/*
+** PARSER WRITE TO MAIN
+*/
+void	write_pars_line(t_main *main, t_job *job, t_parser *parser);
+void	check_symbols_and_append_line(t_main *main, t_job *job, t_parser
+*parser);
+
+/*
+** PARSER ENV
+*/
+void	pars_env_and_append_line(t_parser *parser, t_main *main);
+char 	*pars_env_variable(t_parser *parser);
 
 /*
 ** UTILS
 */
-void	exit_with_error(t_main *main, char *massage);
-int		add_char(char **str, int c);
-int		get_next_char(t_parser *parser, int *c);
-void	arr_free(char **str);
-void	set_error_and_free_pipe(t_job *job, int n);
 void	free_data_redir(t_redir * redir);
 void	all_mem_free(t_main *main);
-void	main_free(t_main **structure);
+void	exit_with_error(t_main *main, char *massage);
+char 	**ft_arrdup(char **src, int len);
+
+/*
+** UTILS PARSER
+*/
+int		add_char(char **str, int c);
+int		get_next_char(t_parser *parser, int *c);
+void	set_error_and_free_pipe(t_job *job, int n);
+void	print_error_syntax_message(char *string, int len);
+
+/*
+** FREE_STRUCTURES
+*/
 void	job_free(t_job **structure);
 void	pipe_free(t_pipe **structure);
 void	redir_free(t_redir **structure);
+void	main_free(t_main **structure);
 
 
 /*
 ** TESTS
 */
 void	tests(void);
-char 	*pars_env_variable(t_parser *parser);
 
 /*
 ** EXECUTION BUILTINS
@@ -178,5 +223,5 @@ int     count_redirects(t_main *main);
 int     redir_one_left(t_main *main);
 
 
-    void	rl_replace_line();
+void	rl_replace_line();
 #endif //MINISHELL_H
