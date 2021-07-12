@@ -18,7 +18,7 @@ void redir_two_right(t_main *main)
             if (fd == -1)
                 exit(1);
         }
-//        check_valid_redir(main);
+        check_valid_redir(main);
 
         if (redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)// команда и редирект тип >> и файл
         {

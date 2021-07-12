@@ -91,13 +91,13 @@ void	redirect(t_main *main, t_job *job, t_parser *parser)
 	pipe = get_current_pipe(job);
 	redir = get_curren_redir(pipe->redir);
 	redir_type = get_redir_type(parser);
-    get_next_char(parser, &c);
-//	if (redir_type == ERROR || !get_next_char(parser, &c))
-//	{
-//		all_mem_free(main);
-//		print_error_syntax_message("newline", 7);
-//		return ;
-//	}
+	if (redir_type == ERROR || !get_next_char(parser, &c))
+	{
+		all_mem_free(main);
+		print_error_syntax_message("newline", 7);
+        main->exit = 258;
+		return ;
+	}
 	if (c != ' ' && c != '>' && c != '<')
 		add_char(&parser->line, c);
 	if (redir_type == INPUT_MULTILINE)

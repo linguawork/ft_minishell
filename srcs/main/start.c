@@ -78,6 +78,15 @@ int	main(int ac, char **av, char **env)
 			process_builtins_and_divide_externals(&main);
 		if (main.job->num_pipes != 0)
 			execute_pipes(&main);
+        if (main.job->pipe->redir->redir_file)
+        {
+            if (main.job->pipe->redir->redir_type == OUTPUT)
+                redir_one_right(&main);
+            if (main.job->pipe->redir->redir_type == APPEND_OUTPUT)
+                redir_two_right(&main);
+            if (main.job->pipe->redir->redir_type == INPUT)
+                redir_one_left(&main);
+        }
 		end_session(&main);
 	}
 	av[ac] = env[ac];

@@ -11,24 +11,18 @@ void check_valid_redir(t_main *main)
     (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)) // один редирект >> и один файл
     {
         fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_TRUNC, 0644); // empty file
-        if (fd == -1)
-        {
-            main->exit = 1;
-//            message = strerror(errno);
-//            ft_putstr_fd(message, 2);
-        }
-
+        if (fd < 0)
+            main->exit = 0;
     }
-    if ((redir->command && redir->redir_type == OUTPUT && !redir->redir_file ) || // один редирект > и один файл
-    (redir->command && redir->redir_type == APPEND_OUTPUT && !redir->redir_file ) || // один редирект > и один файл
-    (redir->command && redir->redir_type == INPUT && !redir->redir_file)) // один редирект >> и один файл
-    {
-        ft_putstr_fd ("minishell: ", 2);
-        ft_putchar_fd ('\n', 2);
-        ft_putstr_fd("syntax error near unexpected token `newline'", 2);
-        main->exit = 258; // Command not found
-        strerror(main->exit);
-    }
+//    if ((redir->command && redir->redir_type == ERROR && !redir->redir_file ) || // один редирект ERROR (> (Миша обработал) или >>) и один файл
+//    (redir->command && redir->redir_type == INPUT && !redir->redir_file)) // один редирект > и один файл
+//    {
+//        ft_putstr_fd ("minishell: ", 2);
+//        ft_putchar_fd ('\n', 2);
+//        ft_putstr_fd("syntax error near unexpected token `newline'", 2);
+//        main->exit = 258;
+//        strerror(main->exit);
+//    }
 }
 
 int count_redirects(t_main *main)
@@ -57,7 +51,6 @@ void redir_one_right(t_main *main)
 
 
     redir = main->job->pipe->redir;
-
     if (redir && redir->redir_next == NULL) // если есть структура redir - одна команда  один редирект и один файл
     {
         if (!redir->command && redir->redir_type == OUTPUT && redir->redir_file )// один редирект и один файл
