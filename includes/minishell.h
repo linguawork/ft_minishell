@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/10 07:12:28 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/12 14:47:51 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,10 +112,7 @@ void	end_session(t_main *main);
 */
 void	parser(t_main *main, char *string);
 void	pars_quote(t_parser *parser, t_main *main);
-void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
-
 void	write_pars_line(t_main *main, t_job *job, t_parser *parser);
-
 
 /*
 ** PARSER INIT
@@ -137,7 +134,6 @@ void	pars_quote(t_parser *parser, t_main *main);
 ** PARSER REDIRECT
 */
 void	redirect(t_main *main, t_job *job, t_parser *parser);
-void	pars_double_quote(t_parser *parser, t_main *main, t_job *job);
 
 /*
 ** PARSER WRITE TO MAIN
@@ -175,7 +171,6 @@ void	job_free(t_job **structure);
 void	pipe_free(t_pipe **structure);
 void	redir_free(t_redir **structure);
 void	main_free(t_main **structure);
-
 
 /*
 ** TESTS

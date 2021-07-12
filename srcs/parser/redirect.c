@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 06:32:21 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/10 07:12:28 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/12 15:53:34 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,29 @@ static char	*get_redir_file(t_parser *parser)
 	return (parser->line);
 }
 
-static char	*get_multi_text(t_parser *parser)
+void	append_to_redir_file(t_main *main, t_parser *parser, char *buf)
+{
+	int	c;
+	int	i_old;
+	char *str_old;
+
+	i_old = parser->index;
+	str_old = parser->string;
+	parser->index = -1;
+	parser->string = buf;
+	while (get_next_char(parser, &c) && c != '\0')
+	{
+		if (c == '$')
+			pars_env_and_append_line(parser, main);
+		else
+			add_char(&parser->line, c);
+	}
+	parser->index = i_old;
+	parser->string = str_old;
+	parser->cur_c = (int)str_old[i_old];
+}
+
+static char	*get_multi_text(t_main *main, t_parser *parser)
 {
 	int		c;
 	int		find_key;
@@ -46,7 +68,7 @@ static char	*get_multi_text(t_parser *parser)
 	while (!find_key)
 	{
 		if (buf)
-			parser->line = ft_strjoin(parser->line, buf);
+			append_to_redir_file(main, parser, buf);
 		mem_free(&buf);
 		buf = readline("> ");
 		if (ft_strnstr(del, buf, ft_strlen(del)))
@@ -101,32 +123,10 @@ void	redirect(t_main *main, t_job *job, t_parser *parser)
 	if (c != ' ' && c != '>' && c != '<')
 		add_char(&parser->line, c);
 	if (redir_type == INPUT_MULTILINE)
-		redir_file = get_multi_text(parser);
+		redir_file = get_multi_text(main, parser);
 	else
 		redir_file = get_redir_file(parser);
 	parser->line = NULL;
 	redir->redir_type = redir_type;
 	redir->redir_file = redir_file;
-}
-
-void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
-{
-	int		c;
-
-	parser->double_quote = 1;
-	while (parser->cur_c != '\0' && get_next_char(parser, &c) && c != '"'
-		&& c != '\0')
-	{
-		if (c == '$')
-		{
-			pars_env_and_append_line(parser, main);
-			if (parser->cur_c == '"')
-				set_error_and_free_pipe(job, -1);
-		}
-		else
-			add_char(&parser->line, c);
-	}
-	if (c != '"')
-		exit_with_error(main, "No two quote");
-	parser->double_quote = 0;
 }

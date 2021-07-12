@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 07:05:42 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/10 07:10:35 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/12 12:56:32 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,10 +88,7 @@ void	pars_env_and_append_line(t_parser *parser, t_main *main)
 	else if (ft_isdigit(c))
 		env_digit(parser);
 	else if (ft_strchr(SPECIFICATORS, c))
-	{
 		parser->index--;
-		return ;
-	}
 	else
 	{
 		pars_env_variable(parser);
