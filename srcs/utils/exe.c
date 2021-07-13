@@ -179,7 +179,11 @@ int process_exe(t_main *main)
                     exe2 = ft_strjoin(exe, command);
                     fork_res = fork();
                     if (fork_res == 0)
+                    {
                         execve(exe2, argv, envir);
+                        printf(" we are here");
+                    }
+
                     if (fork_res > 0)
                     {
                         waitpid(fork_res, &status, 0);
