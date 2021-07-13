@@ -180,8 +180,11 @@ int process_exe(t_main *main)
                     fork_res = fork();
                     if (fork_res == 0)
                     {
+//                        for (int j = 0; argv[j] != NULL; ++j) {
+//                            printf("%s\n", argv[i]);
+//                        }
                         execve(exe2, argv, envir);
-                        printf(" we are here");
+//                        printf(" we are here\n");
                     }
 
                     if (fork_res > 0)
