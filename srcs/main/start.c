@@ -111,11 +111,11 @@ int	main(int ac, char **av, char **env)
 		parser(&main, string);
 		mem_free(&string);
         if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0 &&
-        main.job->pipe->redir->redir_file == NULL)
+        main.job->pipe->redir->redir_type == ERROR)
             process_builtins_and_divide_externals(&main);
-        if (main.job->num_pipes != 0 && !main.job->pipe->redir->redir_file)
+        if (main.job->num_pipes != 0 && main.job->pipe->redir->redir_type == ERROR)
             execute_pipes(&main);
-        if (main.job->pipe->redir->redir_file)
+        if (main.job->pipe->redir->redir_type != ERROR)
         {
             if (main.job->pipe->redir->redir_type == OUTPUT)
                 redir_one_right(&main);

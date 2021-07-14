@@ -35,15 +35,15 @@ void check_valid_redir(t_main *main)
         main->exit = 258; // Command not found
         strerror(main->exit);
     }
-//    if ((redir->command && redir->redir_type == ERROR && !redir->redir_file ) || // одна команда и один редирект = ERROR: Миша обработал ls > ls >>)
-//    (redir->command && redir->redir_type == INPUT && !redir->redir_file)) // надо проверить ls >>
-//    {
-//        ft_putstr_fd ("minishell: ", 2);
-//        ft_putchar_fd ('\n', 2);
-//        ft_putstr_fd("syntax error near unexpected token `newline'", 2);
-//        main->exit = 258;
-//        strerror(main->exit);
-//    }
+    if ((redir->command && redir->redir_type == APPEND_OUTPUT && !redir->redir_file ) || // одна команда и один редирект = ERROR: Миша обработал ls > ls >>)
+    (redir->command && redir->redir_type == OUTPUT && !redir->redir_file)) // надо проверить ls >>
+    {
+        ft_putstr_fd ("minishell: ", 2);
+        ft_putstr_fd("syntax error near unexpected token `newline__'", 2);
+        ft_putchar_fd ('\n', 2);
+        main->exit = 258; // Command not found
+        strerror(main->exit);
+    }
 }
 
 int count_redirects(t_main *main)

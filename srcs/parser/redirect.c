@@ -16,7 +16,7 @@ static char	*get_redir_file(t_parser *parser)
 {
 	int	c;
 
-	while (get_next_char(parser, &c) && (ft_strchr(VALID_SYMBOLS_FILES, c)
+	while (parser->cur_c && get_next_char(parser, &c) && (ft_strchr(VALID_SYMBOLS_FILES, c)
 			|| ft_isalnum(c)) && c != '\0')
 	{
 		if (c == '>' || c == '<')
@@ -93,13 +93,12 @@ static t_options	get_redir_type(t_parser *parser)
 	else if (parser->cur_c == '<')
 		redir_type = INPUT;
 	prev_c = parser->cur_c;
-	if (!get_next_char(parser, &c))
-		return (ERROR);
+	get_next_char(parser, &c);
 	if (prev_c == '>' && c == '>')
 		redir_type = APPEND_OUTPUT;
 	else if (prev_c == '<' && c == '<')
 		redir_type = INPUT_MULTILINE;
-	else if (c != ' ')
+	else if (c && c != ' ')
 		add_char(&parser->line, c);
 	return (redir_type);
 }
@@ -112,12 +111,14 @@ void	redirect(t_main *main, t_job *job, t_parser *parser)
 	t_pipe		*pipe;
 	t_redir		*redir;
 
+	c = 0;
 	write_pars_line(main, job, parser);
 	pipe = get_current_pipe(job);
 	redir = get_curren_redir(pipe->redir);
 	redir_type = get_redir_type(parser);
-	get_next_char(parser, &c);
-	if (c != ' ' && c != '>' && c != '<')
+	if (parser->cur_c)
+	    get_next_char(parser, &c);
+	if (c && c != ' ' && c != '>' && c != '<')
 		add_char(&parser->line, c);
 	if (redir_type == INPUT_MULTILINE)
 		redir_file = get_multi_text(main, parser);
