@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 06:32:21 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/12 15:53:34 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/14 12:43:25 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,13 +116,7 @@ void	redirect(t_main *main, t_job *job, t_parser *parser)
 	pipe = get_current_pipe(job);
 	redir = get_curren_redir(pipe->redir);
 	redir_type = get_redir_type(parser);
-	if (redir_type == ERROR || !get_next_char(parser, &c))
-	{
-		all_mem_free(main);
-		print_error_syntax_message("newline", 7);
-        main->exit = 258;
-		return ;
-	}
+	get_next_char(parser, &c);
 	if (c != ' ' && c != '>' && c != '<')
 		add_char(&parser->line, c);
 	if (redir_type == INPUT_MULTILINE)
