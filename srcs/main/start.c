@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/12 17:17:16 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/13 10:55:17 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,38 @@ void	ctrl_c(int sig)
 	}
 }
 
+char *get_value(char *str, int *index)
+{
+	int	i;
+	i = 0;
+	while (str && str[i] != '=')
+		i++;
+	*index = ++i;
+	return (str + i);
+}
+
+void	inc_SHLVL(t_main *main)
+{
+	int		i;
+	int		len;
+	char 	**env;
+	int		nbr;
+	char 	*str;
+
+	i = -1;
+	env = main->my_env;
+	while (env[++i])
+	{
+		if (!ft_strncmp(env[i], "SHLVL", 5))
+		{
+			nbr = ft_atoi(get_value(env[i], &len));
+			str = ft_substr(env[i], 0, len);
+			free(env[i]);
+			env[i] = ft_strjoin(str, ft_itoa(++nbr));
+		}
+	}
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_main			main;
@@ -63,6 +95,7 @@ int	main(int ac, char **av, char **env)
 
 	init_struct(&main);
 	copy_env(&main, env);
+	inc_SHLVL(&main);
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ECHOCTL);
 	tcsetattr(0, TCSANOW, &term);
@@ -73,7 +106,7 @@ int	main(int ac, char **av, char **env)
 		string = readline("minishell> ");
 		if (!string)
 			ctrl_d(131);
-		if (*string)
+		else if (*string)
 			add_history(string);
 		parser(&main, string);
 		mem_free(&string);

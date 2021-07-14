@@ -31,20 +31,17 @@ char 	*pars_env_variable(t_parser *parser)
 static char	*get_env_value(char **my_env, char	*name_variable)
 {
 	int		i;
-	char	*env;
+	char	**env_sp;
 	char	*env_value;
 
 	i = 0;
 	env_value = NULL;
 	while (my_env[i])
 	{
-		if (ft_strnstr(my_env[i], name_variable, ft_strlen(name_variable)))
+		env_sp = ft_split(my_env[i], '=');
+		if (ft_strncmp(env_sp[0], name_variable, ft_strlen(name_variable)) == 0)
 		{
-			env = my_env[i];
-			while (*env && *env != '=')
-				env++;
-			env++;
-			env_value = ft_strdup(env);
+			env_value = ft_strdup(env_sp[1]);
 			break ;
 		}
 		i++;

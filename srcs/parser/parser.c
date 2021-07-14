@@ -91,9 +91,6 @@ static void	parser_go(t_main *main, t_parser *parser)
 	while (!error && get_next_char(parser, &c) && c != '\0')
 		job = distribution_parser(main, job, parser);
 	write_pars_line(main, job, parser);
-	/*
-	 ** print_params(main);
-	 */
 }
 
 void	parser(t_main *main, char *string)
