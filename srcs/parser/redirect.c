@@ -60,9 +60,11 @@ static char	*get_multi_text(t_main *main, t_parser *parser)
 
 	del = NULL;
 	buf = NULL;
-	while (get_next_char(parser, &c) && c != ' ')
+	while (parser->cur_c && get_next_char(parser, &c) && c != ' ')
 		add_char(&parser->line, c);
 	del = parser->line;
+	if (!del)
+        return (check_valid_redir(main));
 	parser->line = NULL;
 	find_key = 0;
 	while (!find_key)
@@ -78,7 +80,9 @@ static char	*get_multi_text(t_main *main, t_parser *parser)
 			find_key = 1;
 //		else if (parser->line)
 //			parser->line = ft_strjoin(parser->line, "\n");
+//        check_valid_redir(main);
 	}
+
 	return (parser->line);
 }
 

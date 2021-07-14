@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-void check_valid_redir(t_main *main)
+char *check_valid_redir(t_main *main)
 {
     t_redir *redir;
     int fd;
@@ -27,10 +27,11 @@ void check_valid_redir(t_main *main)
             main->exit = 1;
         }
     }
-    if (redir->command && redir->redir_type == INPUT && !redir->redir_file)// cat <
+    if ((redir->command && redir->redir_type == INPUT && !redir->redir_file) ||
+    (redir->command && redir->redir_type == INPUT_MULTILINE && !redir->redir_file))// cat << or cat<
     {
         ft_putstr_fd ("minishell: ", 2);
-        ft_putstr_fd("syntax error near unexpected token `newline___'", 2);
+        ft_putstr_fd("syntax error near unexpected token `newline'", 2);
         ft_putchar_fd ('\n', 2);
         main->exit = 258; // Command not found
         strerror(main->exit);
@@ -39,11 +40,12 @@ void check_valid_redir(t_main *main)
     (redir->command && redir->redir_type == OUTPUT && !redir->redir_file)) // надо проверить ls >>
     {
         ft_putstr_fd ("minishell: ", 2);
-        ft_putstr_fd("syntax error near unexpected token `newline__'", 2);
+        ft_putstr_fd("syntax error near unexpected token `newline'", 2);
         ft_putchar_fd ('\n', 2);
         main->exit = 258; // Command not found
         strerror(main->exit);
     }
+    return NULL;
 }
 
 int count_redirects(t_main *main)

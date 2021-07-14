@@ -25,7 +25,7 @@
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <term.h>
-//#include <signal.h>
+# include <signal.h>
 //#include <termios.h>
 
 # define NO_VALID_SYMBOLS ""
@@ -216,8 +216,9 @@ void    redir_one_right(t_main *main);
 void    redir_two_right(t_main *main);
 int     count_redirects(t_main *main);
 int     redir_one_left(t_main *main);
-void    check_valid_redir(t_main *main);
+char   *check_valid_redir(t_main *main);
 int    redir_two_left(t_main *main);
+void	ctrl_slash2(int sig);
 
 
 void	rl_replace_line();

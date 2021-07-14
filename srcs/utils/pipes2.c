@@ -95,6 +95,7 @@ int process_exe_in_pipes(t_main *main, char **cmd)
 //                    fork_res = fork();
 //                    if (fork_res == 0)
                         execve(exe2, cmd, NULL);
+                        signal(SIGQUIT, SIG_IGN);
 //                    if (fork_res > 0)
 //                    {
 //                        waitpid(fork_res, &status, 0);

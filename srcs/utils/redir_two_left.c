@@ -10,10 +10,9 @@ int redir_two_left(t_main *main) {
     char *cmd;
     char *file;
 
+    check_valid_redir(main);
     file = "tmp";
-
     redir = main->job->pipe->redir;
-
     cmd = redir->command;
     if (redir && redir->redir_next == NULL) // если есть структура redir - одна команда  один редирект и один файл
     {
@@ -53,7 +52,8 @@ int redir_two_left(t_main *main) {
     if (!redir->command && redir->redir_type == INPUT_MULTILINE &&
         redir->redir_file && redir->redir_next == NULL)// команда и редирект тип >> и файл
         {
-
+            if (cmd == NULL)
+                return(0);
             if (ft_strcmp(cmd, "cat") == 0)
             {
 //                redir->command = cmd;

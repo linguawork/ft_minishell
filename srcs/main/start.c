@@ -103,7 +103,7 @@ int	main(int ac, char **av, char **env)
 	signal(SIGINT, &ctrl_c);
 	while (1)
 	{
-		string = readline("minishell> ");
+		string = readline("minishell: ");
 		if (!string)
 			ctrl_d(131);
 		else if (*string)

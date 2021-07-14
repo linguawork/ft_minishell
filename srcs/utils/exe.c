@@ -140,6 +140,13 @@ char** cmd_args_to_argv_recorder(t_main *main) // запись аргумент�
 //    return(e);
 //}
 
+void	ctrl_slash2(int sig)
+{
+    ft_putstr_fd("^\\Quit: 3\n", 2);
+    sig = 3;
+
+}
+
 int process_exe(t_main *main)
 {
     char *command;
@@ -183,8 +190,10 @@ int process_exe(t_main *main)
 //                        for (int j = 0; argv[j] != NULL; ++j) {
 //                            printf("%s\n", argv[i]);
 //                        }
+                        signal(SIGQUIT, ctrl_slash2);
                         execve(exe2, argv, envir);
 //                        printf(" we are here\n");
+
                     }
 
                     if (fork_res > 0)
@@ -203,6 +212,8 @@ int process_exe(t_main *main)
 //                    ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
 //                    ft_putnbr_fd (fork_res, 1);// ID родителя
 //                    write(1, "\n", 1);
+                    if (signal(SIGQUIT, ctrl_slash2) == 0)
+                        ft_putstr_fd("^\\Quit: 3\n", 2);
                     closedir(folder);
                     arrays_free(binar);
                     return(1);// можно просто брейкать
