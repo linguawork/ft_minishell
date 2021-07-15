@@ -208,7 +208,6 @@ char**  env_recorder2(char **envir, int len);
 int     checker (t_main *main, char **a, char **e);
 int     unset(t_main *main);
 void    process_folder_or_ready_exe(t_main *main);
-//char**  cmd_args_to_argv_recorder_p(t_main *main);
 void    process_builtins_in_pipes(t_main *main, char **cmd);
 int     process_exe_in_pipes(t_main *main, char **cmd);
 void    process_folder_in_pipes(t_main *main, char **cmd);
@@ -216,9 +215,13 @@ void    redir_one_right(t_main *main);
 void    redir_two_right(t_main *main);
 int     count_redirects(t_main *main);
 int     redir_one_left(t_main *main);
-char   *check_valid_redir(t_main *main);
-int    redir_two_left(t_main *main);
-void	ctrl_slash2(int sig);
+char    *check_valid_redir(t_main *main);
+int     redir_two_left(t_main *main);
+void    process_redirects(t_main *main);
+int     execute_pipes_and_redirs(t_main *main);
+char    ***pipe_cmd_args_recorder(t_main *main);
+void    stdin_and_out_to_pipes(int prev_fds[], int next_fds[]);
+
 
 
 void	rl_replace_line();

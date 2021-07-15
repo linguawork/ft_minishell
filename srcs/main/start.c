@@ -87,6 +87,8 @@ void	inc_SHLVL(t_main *main)
 	}
 }
 
+
+
 int	main(int ac, char **av, char **env)
 {
 	t_main			main;
@@ -115,17 +117,10 @@ int	main(int ac, char **av, char **env)
             process_builtins_and_divide_externals(&main);
         if (main.job->num_pipes != 0 && main.job->pipe->redir->redir_type == ERROR)
             execute_pipes(&main);
-        if (main.job->pipe->redir->redir_type != ERROR)
-        {
-            if (main.job->pipe->redir->redir_type == OUTPUT)
-                redir_one_right(&main);
-            if (main.job->pipe->redir->redir_type == APPEND_OUTPUT)
-                redir_two_right(&main);
-            if (main.job->pipe->redir->redir_type == INPUT)
-                redir_one_left(&main);
-            if (main.job->pipe->redir->redir_type == INPUT_MULTILINE)
-                redir_two_left(&main);
-        }
+        if (main.job->num_pipes == 0 &&main.job->pipe->redir->redir_type != ERROR)
+            process_redirects(&main);
+        if (main.job->num_pipes != 0 &&main.job->pipe->redir->redir_type != ERROR)
+            execute_pipes_and_redirs(&main);
 		end_session(&main);
 	}
 	av[ac] = env[ac];
