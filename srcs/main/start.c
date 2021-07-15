@@ -103,18 +103,29 @@ int	main(int ac, char **av, char **env)
 	signal(SIGINT, &ctrl_c);
 	while (1)
 	{
-		string = readline("minishell> ");
+		string = readline("minishell: ");
 		if (!string)
 			ctrl_d(131);
 		else if (*string)
 			add_history(string);
 		parser(&main, string);
 		mem_free(&string);
-		if (main.job->pipe->redir->command && !main.job->pipe->redir->error
-			&& main.job->num_pipes == 0)
-			process_builtins_and_divide_externals(&main);
-		if (main.job->num_pipes != 0)
-			execute_pipes(&main);
+        if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0 &&
+        main.job->pipe->redir->redir_type == ERROR)
+            process_builtins_and_divide_externals(&main);
+        if (main.job->num_pipes != 0 && main.job->pipe->redir->redir_type == ERROR)
+            execute_pipes(&main);
+        if (main.job->pipe->redir->redir_type != ERROR)
+        {
+            if (main.job->pipe->redir->redir_type == OUTPUT)
+                redir_one_right(&main);
+            if (main.job->pipe->redir->redir_type == APPEND_OUTPUT)
+                redir_two_right(&main);
+            if (main.job->pipe->redir->redir_type == INPUT)
+                redir_one_left(&main);
+            if (main.job->pipe->redir->redir_type == INPUT_MULTILINE)
+                redir_two_left(&main);
+        }
 		end_session(&main);
 	}
 	av[ac] = env[ac];

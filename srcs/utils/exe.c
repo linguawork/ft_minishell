@@ -140,6 +140,13 @@ char** cmd_args_to_argv_recorder(t_main *main) // запись аргумент�
 //    return(e);
 //}
 
+void	ctrl_slash2(int sig)
+{
+    ft_putstr_fd("^\\Quit: 3\n", 2);
+    sig = 3;
+
+}
+
 int process_exe(t_main *main)
 {
     char *command;
@@ -159,8 +166,6 @@ int process_exe(t_main *main)
     char **argv;
     envir = main->my_env;
     i = 0;
-
-    // process_folder(main, command); // на обработке у Мишы
     path = ft_getenv(main, "PATH");
     if(!path)
         return 0;
@@ -181,7 +186,16 @@ int process_exe(t_main *main)
                     exe2 = ft_strjoin(exe, command);
                     fork_res = fork();
                     if (fork_res == 0)
+                    {
+//                        for (int j = 0; argv[j] != NULL; ++j) {
+//                            printf("%s\n", argv[i]);
+//                        }
+                        signal(SIGQUIT, ctrl_slash2);
                         execve(exe2, argv, envir);
+//                        printf(" we are here\n");
+
+                    }
+
                     if (fork_res > 0)
                     {
                         waitpid(fork_res, &status, 0);
@@ -198,6 +212,8 @@ int process_exe(t_main *main)
 //                    ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
 //                    ft_putnbr_fd (fork_res, 1);// ID родителя
 //                    write(1, "\n", 1);
+                    if (signal(SIGQUIT, ctrl_slash2) == 0)
+                        ft_putstr_fd("^\\Quit: 3\n", 2);
                     closedir(folder);
                     arrays_free(binar);
                     return(1);// можно просто брейкать
@@ -207,9 +223,9 @@ int process_exe(t_main *main)
         }
         i++;
     }
-    ft_putstr_fd("minishell: ", 1);
-    ft_putstr_fd(command, 1);
-    ft_putstr_fd(": Command not found\n", 1);
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(command, 2);
+    ft_putstr_fd(": Command not found\n", 2);
     main->exit = 127;
     return(0);
 }

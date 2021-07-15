@@ -69,12 +69,12 @@ void check_args(t_main *main, char **a)
     {
         if (!ft_isalpha(*a[0]) || (ft_strchr(*a, invalid_char_str[i]))) // если первый  символ не буква то сообщение об ошибке
         {
-            ft_putstr_fd ("minishell: ", 1);
-            ft_putstr_fd (main->job->pipe->redir->command, 1);
-            ft_putstr_fd (": `", 1);
-            ft_putstr_fd (*a, 1);
-            ft_putstr_fd ("': not a valid identifier", 1); // sega
-            ft_putchar_fd ('\n', 1);
+            ft_putstr_fd ("minishell: ", 2);
+            ft_putstr_fd (main->job->pipe->redir->command, 2);
+            ft_putstr_fd (": `", 2);
+            ft_putstr_fd (*a, 2);
+            ft_putstr_fd ("': not a valid identifier", 2); // sega
+            ft_putchar_fd ('\n', 2);
             main->flag2 = 1;
             break;
         }

@@ -59,7 +59,7 @@ void	set_error_and_free_pipe(t_job *job, int n)
 void	print_error_syntax_message(char *string, int len)
 {
 	char	*error;
-	error = "minishell> syntax error near unexpected token `";
+	error = "minishell: syntax error near unexpected token `";
 	write(1, error, strlen(error));
 	write(1, string, len);
 	write(1, "'\n", 2);

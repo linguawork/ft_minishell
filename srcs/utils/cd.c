@@ -21,10 +21,6 @@ char *ft_getenv(t_main *main, char *name)
             {
                 free(name_or_value);
                 name_or_value = ft_strchr(env[i], '=')+1; // pointer marks the symbol in the string// all after =, including =str
-                // +1 убирает знак "=
-                // name_or_value = name_or_value + 1;
-                // ft_putstr_fd(name_or_value, 1);
-                // ft_putchar_fd('\n', 1);
                 return(name_or_value);
             }
         }
@@ -33,9 +29,25 @@ char *ft_getenv(t_main *main, char *name)
     return(0);
 }
 
+int cd_mistakes(t_main *main, char *p)
+{
+    char *error_mes;
+
+    error_mes = strerror(errno);
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(main->job->pipe->redir->command, 2);
+    ft_putstr_fd(": ", 2);
+    ft_putstr_fd(p, 2);
+    ft_putchar_fd(' ', 2);
+    ft_putstr_fd(error_mes, 2);
+    ft_putchar_fd('\n', 2);
+    return (1);
+}
+
 int cd(t_main *main)
 {
     char *p;
+    char buffer[1024];
 
     if (main->job->pipe->redir->command && !main->job->pipe->redir->args)
     {
@@ -53,10 +65,16 @@ int cd(t_main *main)
         p = *main->job->pipe->redir->args;
         if (chdir(p) < 0)
         {
-            ft_putstr_fd("minishell: cd: ", 1);
-            ft_putstr_fd(p, 1);
-            ft_putstr_fd(": No such file or directory\n", 1);
             main->exit = 1;
+            return (cd_mistakes(main, p));
+        }
+        else
+        {
+            if (getcwd(buffer, 1024) == NULL)
+            {
+                main->exit = 1;
+                return (cd_mistakes(main, p));
+            }
         }
     }
     return(0);

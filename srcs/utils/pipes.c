@@ -36,20 +36,13 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
 {
     int i;
     int c_num;
-
-
     char ***cmds;
     int p_num;
     t_job *job;
+
     job = main->job;
     c_num= main->job->num_commands;
-//    c_num = 4; // this is for test
-//    p_num =  main->job->num_pipes;
-
-//    c_num = how_many_lines(main->job); // подсчет комманд
-//    c_num = 2;
     cmds = (char ***) malloc(sizeof(char *) * (c_num + 1));
-
     p_num = c_num - 1;
     i = 0;
     if (p_num == 1)
@@ -59,7 +52,6 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
         cmds[++i] = NULL;
         return(cmds);
     }
-
     if (p_num > 1)
     {
         cmds[i] = cmd_args_to_argv_recorder_p(job);
@@ -70,7 +62,7 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
             job = job->job_next;// трансформация структуры
             cmds[++i] = cmd_args_to_argv_recorder_p(job); // функция для job->pipe
 
-            if (job->pipe_next)
+            if (job->pipe_next != NULL)
                 cmds[++i] = pipe_next_cmd_recorder(job); // функция для job->pipe_next
         }
         cmds[++i] = NULL;
@@ -94,7 +86,49 @@ void connect_stdio_to_pipes(int prev_fds[], int next_fds[])
     }
 }
 
-void execute_pipes (t_main *main)
+void simultaneous_pipes (int i, t_main *main, char ***commands)
+{
+    int prev_pipe_fds[2]; // объявляем массив предыдущ файловых дескрипторов
+    int next_pipe_fds[2];
+    char **cmd;
+    while (i < main->job->num_commands) // пока не прошлись по всем командам
+    {
+        prev_pipe_fds[0] = next_pipe_fds[0]; // предыдущ нулевой присваивает значение след нулевого
+        prev_pipe_fds[1] = next_pipe_fds[1];
+        if (i != main->job->num_commands - 1) // если кол-во команд не равно количеству команд-1 (те кол-ву пайпов)
+            pipe(next_pipe_fds);// создаем каналы (трубы для следующих команд)
+        else // иначе если команды равны пайпам
+        {
+            next_pipe_fds[0] = -1; // инициализируем на -1
+            next_pipe_fds[1] = -1;
+        }
+//        status = 0;
+        cmd = &*commands[i];
+        process_folder_in_pipes(main, cmd);// обработка папки
+        if (main->flag2 != 1)
+        {
+            if (fork() == 0) // в дочери
+            {
+                connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
+                process_builtins_in_pipes(main, cmd);
+                if (ft_strchr(cmd[0], '/')) {
+                    execve(cmd[0], cmd, NULL);// если absolute path
+                } else {
+                    process_exe_in_pipes(main, cmd);// if external cmd without path
+                }
+            }
+        }
+//        if (main->flag2 == 1)
+        main->flag2 = 0;// если нашел папку
+        close(prev_pipe_fds[0]); // закрываем вход предыдущ
+        close(prev_pipe_fds[1]); // закрываем вход предыдущ
+        i++;
+    }
+    wait(NULL); // один wait может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
+}
+
+
+int execute_pipes (t_main *main)
 {
     int c_num;
     char ***commands;
@@ -103,6 +137,14 @@ void execute_pipes (t_main *main)
     char **cmd;
     int fork_res;
     int status;
+
+//    int flag;
+    if (main->job->num_commands == main->job->num_pipes)
+    {
+        ft_putstr_fd("Error: According to the subject we do not need to process multiline!\n", 2);
+//        main->exit = 1;
+        return(0);
+    }
 
     commands = pipe_cmd_args_recorder(main);
 //    char **cmd = &*commands[i]; // по адресу передаем значение в разыменовании 3мерного в 2хмерный // test
@@ -126,21 +168,30 @@ void execute_pipes (t_main *main)
             next_pipe_fds[1] = -1;
         }
         status = 0;
-//        cmd = &*commands[i];
-        fork_res = fork();
+        cmd = &*commands[i];
+        process_folder_in_pipes(main, cmd);// обработка папки
+        if (main->flag2 != 1)
+            fork_res = fork();
         if (fork_res == 0) // в дочери
         {
+
             connect_stdio_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-            cmd = &*commands[i]; // берем указатель по адресу из элемента трехмерного и передаем указатель на двумерный массив для подачи в execve
-            execve(cmd[0], cmd, NULL);// исполняем в дочери
-            //exit(127);// не нужен exit, так как  дочерний процесс сам себя зачищает
+            process_builtins_in_pipes(main, cmd);
+            signal(SIGQUIT, SIG_DFL);
+            if (ft_strchr(cmd[0], '/'))
+            {
+                execve(cmd[0], cmd, NULL);// если absolute path
+            }
+            else
+            {
+                process_exe_in_pipes(main, cmd);// if external cmd without path
+            }
         }
         close(prev_pipe_fds[0]); // закрываем вход предыдущ
         close(prev_pipe_fds[1]); // закрываем вход предыдущ
+//        waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
+//        main->exit = WEXITSTATUS(status);
 
-
-        waitpid(fork_res, &status, 0);
-        main->exit = WEXITSTATUS(status);
 
 //         for testing
 //        ft_putstr_fd("status number is ", 1);
@@ -156,9 +207,26 @@ void execute_pipes (t_main *main)
 //        ft_putnbr_fd (fork_res, 1);// ID родителя
 //        write(1, "\n", 1);
         i++;
-
     }
-    wait(NULL); // один wait может ждать несколько процессов // без pid
-    main->job->num_commands = 0;
-    main->job->num_pipes = 0;
+    waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
+    main->exit = WEXITSTATUS(status);
+    if (status == 11) // command not found
+    {
+        ft_putstr_fd("minishell: ", 1);
+        ft_putstr_fd(cmd[0], 1);
+        ft_putstr_fd(": Command not found\n", 1);
+        main->exit = 127;
+    }
+    i = 1;
+    while (i < c_num)
+    {
+        ft_putnbr_fd(i, 1);
+        wait(NULL);
+        i++;
+    }
+     // один wait может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
+//    main->job->num_commands = 0; // занулил в end_session
+//    main->job->num_pipes = 0;
+
+    return(0);
 }

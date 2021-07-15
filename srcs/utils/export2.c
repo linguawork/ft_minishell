@@ -33,7 +33,7 @@ int check_doubles(t_main *main, char **args, char **en)
             len2 = char_count(*en);
             a_name = ft_substr(*args, 0, len); // получ арг до знака равно
             e_name = ft_substr(*en, 0, len2); // получ env до знака равно
-            if (ft_strcmp(a_name, e_name) != 0) // полное соответствие строк до знака =
+            if (ft_strcmp(a_name, e_name) != 0) // если нет полного соответствия строк до знака =
             {
                 free(e_name);
                 free(a_name);

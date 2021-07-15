@@ -17,11 +17,11 @@ int process_buildins2(t_main *main)
         env(main);
         return(1);
     }
-//    else if (ft_strncmp(main->job->pipe->redir->command, "exit", 4) == 0)
-//    {
-//        exit_command(main);
-//        return(1);
-//    }
+    else if (ft_strncmp(main->job->pipe->redir->command, "exit", 4) == 0)
+    {
+        exit_command(main);
+        return(1);
+    }
     else
         return(0);
 }
