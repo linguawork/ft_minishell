@@ -90,6 +90,7 @@ typedef struct s_job
 	struct s_job	*job_next;
 	int             num_commands;
 	int             num_pipes;
+	int             num_redirects;
 }					t_job;
 
 typedef struct s_main

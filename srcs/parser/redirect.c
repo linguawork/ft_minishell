@@ -116,6 +116,7 @@ void	redirect(t_main *main, t_job *job, t_parser *parser)
 	t_redir		*redir;
 
 	c = 0;
+	main->job->num_redirects++;
 	write_pars_line(main, job, parser);
 	pipe = get_current_pipe(job);
 	redir = get_curren_redir(pipe->redir);

@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/15 20:27:36 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/17 22:14:07 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,7 @@ void	ctrl_slash(int sig)
 
 void	ctrl_d(int sig)
 {
-	rl_replace_line(rl_line_buffer, 0);
-	rl_redisplay();
+	printf("\033[Aminishell: exit\n");
 	exit(sig);
 }
 
@@ -103,7 +102,7 @@ int	main(int ac, char **av, char **env)
 	signal(SIGINT, &ctrl_c);
 	while (1)
 	{
-		string = readline("minishell> ");
+		string = readline("minishell: ");
 		if (!string)
 			ctrl_d(131);
 		else if (*string)
