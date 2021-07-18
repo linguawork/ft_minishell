@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/12 14:47:51 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/15 20:27:36 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ typedef struct s_job
 	struct s_job	*job_next;
 	int             num_commands;
 	int             num_pipes;
+	int             num_redirects;
 }					t_job;
 
 typedef struct s_main

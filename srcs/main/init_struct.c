@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/09 12:40:47 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/09 12:41:15 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/17 21:57:12 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	init_struct(t_main *main)
 	job->job_next = NULL;
 	job->num_commands = 0;
 	job->num_pipes = 0;
+	job->num_redirects = 0;
 	redir->redir_next = NULL;
 	redir->redir_file = NULL;
 	redir->redir_type = ERROR;
@@ -46,6 +47,7 @@ void	end_session(t_main *main)
 	all_mem_free(main);
 	main->job->num_commands = 0;
 	main->job->num_pipes = 0;
+	main->job->num_redirects = 0;
 	main->job->job_next = NULL;
 	main->job->pipe_next = NULL;
 	main->job->pipe->redir->redir_next = NULL;
