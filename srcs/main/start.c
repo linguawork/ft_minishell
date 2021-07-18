@@ -110,13 +110,13 @@ int	main(int ac, char **av, char **env)
 		parser(&main, string);
 		mem_free(&string);
         if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0 &&
-        main.job->pipe->redir->redir_type == ERROR)
+        main.job->num_redirects == 0)
             process_builtins_and_divide_externals(&main);
-        if (main.job->num_pipes != 0 && main.job->pipe->redir->redir_type == ERROR && main.job->pipe_next->redir->redir_type == ERROR)
+        if (main.job->num_pipes != 0 && main.job->num_redirects == 0)
             execute_pipes(&main);
-        if (main.job->num_pipes == 0 && main.job->pipe->redir->redir_type != ERROR)
+        if (main.job->num_pipes == 0 && main.job->num_redirects != 0)
             process_redirects(&main);
-        if (main.job->num_pipes != 0 && (main.job->pipe->redir->redir_type != ERROR || main.job->pipe_next->redir->redir_type != ERROR))
+        if (main.job->num_pipes != 0 && main.job->num_redirects != 0)
             execute_pipes_and_redirs(&main);
 		end_session(&main);
 	}

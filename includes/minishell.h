@@ -100,8 +100,6 @@ typedef struct s_main
 	int				exit;
 	int             sub;
 	int             flag2;
-	int             saved_stdout;
-    int             saved_stdin;
 }					t_main;
 
 /*

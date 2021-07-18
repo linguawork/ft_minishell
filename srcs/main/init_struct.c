@@ -38,8 +38,6 @@ void	init_struct(t_main *main)
 	main->job->pipe->redir->command = NULL;
 	main->job->pipe->redir->args = NULL;
 	main->job->pipe->redir->error = 0;
-	dup2(main->saved_stdout, STDOUT_FILENO);
-    dup2(main->saved_stdin, STDIN_FILENO);
 }
 
 void	end_session(t_main *main)
