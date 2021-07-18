@@ -11,3 +11,4 @@ void process_redirects(t_main *main)
     if (main->job->pipe->redir->redir_type == INPUT_MULTILINE)
         redir_two_left(main);
 }
+

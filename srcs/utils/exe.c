@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exe.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/18 18:06:52 by areggie           #+#    #+#             */
+/*   Updated: 2021/07/18 18:06:53 by areggie          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
+
 #include "minishell.h"
 
 char *return_cmd_from_absolute_path(t_main *main)
@@ -190,7 +204,7 @@ int process_exe(t_main *main)
 //                        printf(" we are here\n");
 
                     }
-
+//
                     if (fork_res > 0)
                     {
                         waitpid(fork_res, &status, 0);
@@ -210,8 +224,8 @@ int process_exe(t_main *main)
 
 //                    ft_putnbr_fd (WIFSIGNALED(status), 2);// для теста сигнала
 //                    write(1, "\n", 1);// для теста сигнала
-                    if (WIFSIGNALED(status)== 1) // if true
-                        ft_putstr_fd("^\\Quit: 3\n", 2);
+//                    if (WIFSIGNALED(status)== 1) // if true
+//                        ft_putstr_fd("^\\Quit: 3\n", 2);
 
 
                     closedir(folder);

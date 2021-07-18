@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipes_and_redirs.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/18 18:07:23 by areggie           #+#    #+#             */
+/*   Updated: 2021/07/18 18:07:26 by areggie          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int check_for_redir_type(t_main *main, int i)
@@ -23,44 +35,27 @@ void process_redirs_in_pipes(t_main *main, int *prev_pipe_fds, int *next_pipe_fd
     int fork_res;
 
         fork_res = fork();
-    if (fork_res == 0) // в дочери
-    {
-        stdin_and_out_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-        signal(SIGQUIT, SIG_DFL);
-//        if (ft_strchr(cmd[0], '/'))
-//        {
-//            execve(cmd[0], cmd, NULL);// если absolute path
-//        }
-//        else
-//        {
-//            process_exe_in_pipes(main, cmd);// if external cmd without path
-//        }
-        process_redirects(main);
-//        write(1, "ok", 2);
-        dup2(1, 0);
+        if (fork_res == 0) // в дочери
+        {
+            stdin_and_out_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
+            signal(SIGQUIT, SIG_DFL);
+            process_redirects_in_pipes2(main);
+        }
 
-    }
-//    close(prev_pipe_fds[0]); // закрываем вход предыдущ
-//    close(prev_pipe_fds[1]); // закрываем вход предыдущ
-//        waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
-//        main->exit = WEXITSTATUS(status);
-
-
-//         for testing
-//        ft_putstr_fd("status number is ", 1);
-//        ft_putnbr_fd(status, 1);
-//        write(1, "\n", 1);
-//        ft_putstr_fd("Wexitstatus(status) is ", 1);
-//        ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
-//        write(1, "\n", 1);
-//        ft_putstr_fd("main_>exit is ", 1);
-//        ft_putnbr_fd (main->exit, 1);
-//        write(1, "\n", 1);
-//        ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
-//        ft_putnbr_fd (fork_res, 1);// ID родителя
-//        write(1, "\n", 1);
-//    i++;
-
+//    if (prev_pipe_fds[0] >= 0) // если есть что-то в нулевом фд (вход) или ноль ()
+//    {
+//        close(prev_pipe_fds[0]);
+//        dup2(prev_pipe_fds[0], 0); // дублируем нулевой в ноль (запись в файл) // вливание в трубу
+//        close(prev_pipe_fds[1]);
+////        dup2(saved_stdout, 1);
+////        close(saved_stdout);
+//    }
+//    if (next_pipe_fds[1] >= 0)// след 1 фд на выход имеет что-то
+//    {
+//        close(next_pipe_fds[1]);
+//        dup2(next_pipe_fds[1], 1); // дублируем 1 в 1 (письмо из файла = выход) выливание из трубы
+//        close(next_pipe_fds[0]);
+//    }
 }
 
 
@@ -112,9 +107,9 @@ int execute_pipes_and_redirs(t_main *main)
         check_for_redir_type(main, i);
         if(main->sub == 1 && main->flag2 != 1)
         {
-//            process_redirects(main);
             process_redirs_in_pipes(main, prev_pipe_fds, next_pipe_fds);
             main->sub = 0;
+
         }
         else
         {
@@ -126,15 +121,26 @@ int execute_pipes_and_redirs(t_main *main)
                 stdin_and_out_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
                 process_builtins_in_pipes(main, cmd);
                 signal(SIGQUIT, SIG_DFL);
-                if (ft_strchr(cmd[0], '/')) {
+                if (ft_strchr(cmd[0], '/'))
+                {
                     execve(cmd[0], cmd, NULL);// если absolute path
-                } else {
+                } else
+                {
                     process_exe_in_pipes(main, cmd);// if external cmd without path
                 }
             }
         }
-        close(prev_pipe_fds[0]); // закрываем вход предыдущ
-        close(prev_pipe_fds[1]); // закрываем вход предыдущ
+//        if (i != c_num - 1)
+//        {
+////            close(prev_pipe_fds[0]); // закрываем вход предыдущ
+//            close(prev_pipe_fds[1]); // закрываем вход предыдущ
+//        }
+//        else
+//        {
+            close(prev_pipe_fds[0]); // закрываем вход предыдущ
+            close(prev_pipe_fds[1]); // закрываем вход предыдущ
+//        }
+
 //        waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
 //        main->exit = WEXITSTATUS(status);
 

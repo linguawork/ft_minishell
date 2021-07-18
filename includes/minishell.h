@@ -99,6 +99,8 @@ typedef struct s_main
 	int				exit;
 	int             sub;
 	int             flag2;
+	int             saved_stdout;
+    int             saved_stdin;
 }					t_main;
 
 /*
@@ -221,6 +223,11 @@ void    process_redirects(t_main *main);
 int     execute_pipes_and_redirs(t_main *main);
 char    ***pipe_cmd_args_recorder(t_main *main);
 void    stdin_and_out_to_pipes(int prev_fds[], int next_fds[]);
+int     find_file_in_folder(t_redir * redir);
+void    process_redirects_in_pipes2(t_main *main);
+void    process_builtins_and_divide_externals_in_rp(t_main *main);
+int     process_buildins(t_main *main);
+int     redir_two_left_in_pipes(t_main *main);
 
 
 

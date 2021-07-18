@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipes.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/18 18:07:31 by areggie           #+#    #+#             */
+/*   Updated: 2021/07/18 18:07:34 by areggie          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 char **pipe_next_cmd_recorder(t_job *job)
@@ -86,7 +98,7 @@ void stdin_and_out_to_pipes(int prev_fds[], int next_fds[])
     }
 }
 
-int execute_pipes (t_main *main)
+int execute_pipes(t_main *main)
 {
     int c_num;
     char ***commands;
@@ -127,14 +139,14 @@ int execute_pipes (t_main *main)
         }
         status = 0;
         cmd = &*commands[i];
-        process_folder_in_pipes(main, cmd);// обработка папки
+        process_folder_in_pipes(main, cmd);// обработка папки no fork
         if (main->flag2 != 1)
             fork_res = fork();
         if (fork_res == 0) // в дочери
         {
 
-            stdin_and_out_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие
-            process_builtins_in_pipes(main, cmd);
+            stdin_and_out_to_pipes(prev_pipe_fds, next_pipe_fds); // соединяем предыд в следующие, no fork
+            process_builtins_in_pipes(main, cmd);// no forks
             signal(SIGQUIT, SIG_DFL);
             if (ft_strchr(cmd[0], '/'))
             {
@@ -142,7 +154,7 @@ int execute_pipes (t_main *main)
             }
             else
             {
-                process_exe_in_pipes(main, cmd);// if external cmd without path
+                process_exe_in_pipes(main, cmd);// if external cmd without path / no fork
             }
         }
         close(prev_pipe_fds[0]); // закрываем вход предыдущ
@@ -178,11 +190,13 @@ int execute_pipes (t_main *main)
     i = 1;
     while (i < c_num)
     {
-        ft_putnbr_fd(i, 1);
+//        ft_putnbr_fd(i, 1);
+
         wait(NULL);
         i++;
     }
-     // один wait может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
+     ft_putstr_fd(": one fork in all pipes checked, function: execute_pipes\n", 1);
+    //один wait не может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
 //    main->job->num_commands = 0; // занулил в end_session
 //    main->job->num_pipes = 0;
 
