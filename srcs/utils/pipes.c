@@ -54,8 +54,9 @@ char ***pipe_cmd_args_recorder(t_main *main) // запись команд и и�
 
     job = main->job;
     c_num= main->job->num_commands;
+    p_num = main->job->num_pipes;
     cmds = (char ***) malloc(sizeof(char *) * (c_num + 1));
-    p_num = c_num - 1;
+//    p_num = c_num - 1;
     i = 0;
     if (p_num == 1)
     {
@@ -109,7 +110,7 @@ int execute_pipes(t_main *main)
     int status;
 
 //    int flag;
-    if (main->job->num_commands == main->job->num_pipes)
+    if ((main->job->num_commands == main->job->num_pipes) || (main->job->num_commands < main->job->num_pipes))
     {
         ft_putstr_fd("Error: According to the subject we do not need to process multiline!\n", 2);
 //        main->exit = 1;
@@ -176,8 +177,10 @@ int execute_pipes(t_main *main)
 //        ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
 //        ft_putnbr_fd (fork_res, 1);// ID родителя
 //        write(1, "\n", 1);
+        free(commands[i]);
         i++;
     }
+    free(commands);
     waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
     main->exit = WEXITSTATUS(status);
     if (status == 11) // command not found

@@ -135,6 +135,8 @@ void	pars_quote(t_parser *parser, t_main *main);
 ** PARSER REDIRECT
 */
 void	redirect(t_main *main, t_job *job, t_parser *parser);
+t_pipe	*get_current_pipe(t_job *job);
+t_redir	*get_curren_redir(t_redir *redir);
 
 /*
 ** PARSER WRITE TO MAIN

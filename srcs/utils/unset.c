@@ -36,7 +36,7 @@ int check_string_to_eraze2(t_main *main, char **args, char **en)// провер�
                     i--;// смещаем указатель на следующий для всех элемнтов после того как я зафриши
                 len = how_many_lines(en);
                 copy_env2(main, en);
-                free(*args);
+//                free(*args);
                 return(1);
             }
         }
@@ -79,7 +79,7 @@ int check_string_to_eraze(t_main *main, char **args, char **en)// проверк
                 // printf("after-->%d", len);
                 copy_env2(main, en);
                 free (name);// зачистка утечки
-                free(*args);//зачистка утечки (после выполнения след команды после unset)
+//                free(*args);//зачистка утечки (после выполнения след команды после unset)
                 return(1);
             }
         }
@@ -126,6 +126,8 @@ int check_args_unset(t_main *main, char **a)
     return(0);
 }
 
+
+
 int unset(t_main *main)
 {
     char *command;
@@ -141,12 +143,13 @@ int unset(t_main *main)
     while (command && args && *args != NULL)
     {
         flag = check_args_unset(main, args);
-        if(flag == 1)
-            free(*args);
+//        if(flag == 1)
+//            free(*args);
         if (flag != 1)
         {
             envir = env_recorder(main);
             checker2 (main, args, envir);
+            free(envir);
         }
         // if(checker2 (args, envir)== 1)
         // 	copy_env3(main, envir);
@@ -157,5 +160,11 @@ int unset(t_main *main)
     // 	printf("%s", *envir);
     // 	envir++;
     // }
+//    if(flag == 0)
+//    {
+//        free(args);
+//        main->job->pipe->redir->args = NULL;
+//    }
+
     return(0);
 }

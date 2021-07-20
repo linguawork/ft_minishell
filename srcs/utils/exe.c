@@ -154,7 +154,20 @@ char** cmd_args_to_argv_recorder(t_main *main) // запись аргумент�
 //    return(e);
 //}
 
+int path_mistakes(t_main *main, char *p)
+{
+    char *error_mes;
 
+    error_mes = strerror(errno);
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(main->job->pipe->redir->command, 2);
+    ft_putstr_fd(": ", 2);
+    ft_putstr_fd(p, 2);
+    ft_putchar_fd(' ', 2);
+    ft_putstr_fd(error_mes, 2);
+    ft_putchar_fd('\n', 2);
+    return (1);
+}
 
 int process_exe(t_main *main)
 {
@@ -177,7 +190,10 @@ int process_exe(t_main *main)
     i = 0;
     path = ft_getenv(main, "PATH");
     if(!path)
-        return 0;
+    {
+        main->exit = 1;
+        return (path_mistakes(main, path));
+    }
     binar = ft_split(path, ':');
     while (binar[i] != NULL)
     {
@@ -229,14 +245,16 @@ int process_exe(t_main *main)
 
 
                     closedir(folder);
-                    arrays_free(binar);
+//                    arrays_free(binar);
                     return(1);// можно просто брейкать
                 }
             }
             closedir(folder);
         }
+//
         i++;
     }
+    arrays_free(binar);
     ft_putstr_fd("minishell: ", 2);
     ft_putstr_fd(command, 2);
     ft_putstr_fd(": Command not found\n", 2);

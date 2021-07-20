@@ -33,7 +33,7 @@ int check_doubles(t_main *main, char **args, char **en)
             {
                 free(*en);
                 *en =ft_strdup(*args);
-                free(*args);// убрал утечку после исполнения команды
+//                free(*args);// убрал утечку после исполнения команды
                 free(a_name);
                 main->sub = 1;
                 return(1);
@@ -54,7 +54,7 @@ int check_doubles(t_main *main, char **args, char **en)
             {
                 free(*en);
                 *en =ft_strdup(*args);// перезапись
-                free(*args);// убрал утечку после исполнения команды
+//                free(*args);// убрал утечку после исполнения команды
                 free(a_name);
                 free(e_name);
                 main->sub = 1;

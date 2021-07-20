@@ -71,7 +71,7 @@ int execute_pipes_and_redirs(t_main *main)
 //    t_job *job;
 
 //    int flag;
-    if (main->job->num_commands == main->job->num_pipes)
+    if ((main->job->num_commands == main->job->num_pipes) || (main->job->num_commands < main->job->num_pipes))
     {
         ft_putstr_fd("Error: According to the subject we do not need to process multiline!\n", 2);
 //        main->exit = 1;

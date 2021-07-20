@@ -1,14 +1,22 @@
 #include "minishell.h"
 
+
 void redir_one_right_in_pipes(t_main *main)
 {
     int fd;
     int saved_stdout;
+    t_pipe *pipe;
     t_redir *redir;
     int len;
 
+//    pipe = main->job->pipe;
+//    if (main->job->pipe_next)
+//        pipe = main->job->pipe_next;
+    pipe = get_current_pipe(main->job);
+//    redir = get_curren_redir(pipe->redir);
 
-    redir = main->job->pipe->redir;
+//    fprintf(stdout, "inside\n"); // печать номера 3
+    redir = pipe->redir;
     if (redir && redir->redir_next == NULL) // если есть структура redir - одна команда  один редирект и один файл
     {
         if (!redir->command && redir->redir_type == OUTPUT && redir->redir_file )// один редирект и один файл
@@ -18,16 +26,24 @@ void redir_one_right_in_pipes(t_main *main)
                 exit(1);
         }
         check_valid_redir(main);
-
-        if (redir->command && redir->redir_type == OUTPUT && redir->redir_file)// команда и редирект тип и файл
+//        fprintf(stdout, "> outside_if\n"); // печать номера 3
+//        ft_putstr_fd(redir->command, 1);
+        if ((redir->command && redir->redir_type == OUTPUT && redir->redir_file) || \
+        (redir->command && redir->redir_type == OUTPUT && redir->redir_file && redir->args) )// команда и редирект тип и файл
         {
+
             saved_stdout = dup(1);
+//            ft_putstr_fd(redir->redir_file, 1);
+//            ft_putstr_fd(*redir->args, 1);
             fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             if (fd == -1)
                 exit(1);
-//            printf("The fd to file1: %d\n", file1); // печать номера 3
+//            fprintf(stdout, "inside_function\n"); // печать номера 3
+//            fprintf(stderr, "The fd to file1: %d\n", fd); // печать номера 3
+
             dup2(fd, STDOUT_FILENO); // файл дескр 3 забирает номер у stdout, 1)
             close(fd);// закрытие фд3 так как он сдублировался в фд0
+//            fprintf(stdout, "> inside_if\n"); // печать номера 3
             process_builtins_and_divide_externals_in_rp(main);
             dup2(saved_stdout, 1);
             close(saved_stdout);
@@ -71,6 +87,8 @@ void redir_two_right_in_pipes(t_main *main)
     int saved_stdout;
     t_redir *redir;
     int len;
+    t_pipe *pipe;
+    pipe = get_current_pipe(main->job);
 
 
     redir = main->job->pipe->redir;
@@ -139,6 +157,8 @@ int redir_one_left_in_pipes(t_main *main)
 //    int len;
     char *cmd;
     int file;
+    t_pipe *pipe;
+    pipe = get_current_pipe(main->job);
 
 
     redir = main->job->pipe->redir;
@@ -264,6 +284,8 @@ int redir_two_left_in_pipes(t_main *main)
 //    int fork_res;
     char *cmd;
     char *file;
+    t_pipe *pipe;
+    pipe = get_current_pipe(main->job);
 
     check_valid_redir(main);
     file = "tmp";
@@ -281,15 +303,16 @@ int redir_two_left_in_pipes(t_main *main)
                 fd = open(file, O_RDWR | O_CREAT | O_TRUNC, S_IRWXU); // empty file
                 if (fd == -1)
                     exit(1);
+                ft_putstr_fd(redir->redir_file, fd);
 //                dup2(fd, STDIN_FILENO); // файл дескр 3 забирает номер у stdout, 0)
 //                close(fd);// закрытие фд3 так как он сдублировался в фд1
-                ft_putstr_fd(redir->redir_file, fd);
+
 //                dup2(saved_stdout, 0);
 //                close(saved_stdout);
-//                redir->args[0] = file;
-//                redir->args[1] = NULL;
                 redir->args[0] = file;
                 redir->args[1] = NULL;
+//                redir->args[0] = file;
+//                redir->args[1] = NULL;
 //                printf ("__%d___%d\n", dup2(fd, STDIN_FILENO), fd);
 
                 process_builtins_and_divide_externals_in_rp(main);
@@ -382,13 +405,26 @@ int redir_two_left_in_pipes(t_main *main)
 
 void process_redirects_in_pipes2(t_main *main)
 {
-    if (main->job->pipe->redir->redir_type == OUTPUT)
+//    t_pipe *pipe;
+//    pipe = main->job->pipe;
+//    if (main->job->pipe_next)
+//        pipe = main->job->pipe_next;
+
+    if (main->job->pipe_next->redir->redir_type == OUTPUT )
+    {
+        fprintf(stdout, "___>\n"); // печать номера 3
         redir_one_right_in_pipes(main);
+    }
     if (main->job->pipe->redir->redir_type == APPEND_OUTPUT)
         redir_two_right_in_pipes(main);
     if (main->job->pipe->redir->redir_type == INPUT)
         redir_one_left_in_pipes(main);
+
     if (main->job->pipe->redir->redir_type == INPUT_MULTILINE)
+    {
+        fprintf(stdout, "___<<\n"); // печать номера 3
         redir_two_left_in_pipes(main);
+    }
+
 
 }

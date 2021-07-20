@@ -71,7 +71,7 @@ void process_builtins_in_pipes(t_main *main, char **cmd)
 
 int process_exe_in_pipes(t_main *main, char **cmd)
 {
-    char *command;
+//    char *command;
 //    char **envir;
     char **binar;
     char *path;
@@ -84,7 +84,7 @@ int process_exe_in_pipes(t_main *main, char **cmd)
     struct dirent *entry;
 //    status = 0;
 
-    command = cmd[0];
+//    command = cmd[0];
 //    envir = main->my_env;
     i = 0;
     path = ft_getenv(main, "PATH");

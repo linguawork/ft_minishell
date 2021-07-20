@@ -46,6 +46,7 @@ int exit_command(t_main *main)
     if (cmd && !args)
     {
         ft_putstr_fd("exit\n", 1);
+        all_mem_free(main);
         exit(EXIT_SUCCESS); // выход с кодом 0
     }
     if (cmd && args[i] && !args[i+1]) // если один аргумент
@@ -54,11 +55,13 @@ int exit_command(t_main *main)
             (*args[0] == '+' && ft_strncmp(*args,"++", 2) != 0 && ft_strncmp(*args,"+-", 2) != 0))
         {
             ft_putstr_fd("exit\n", 1);
+            all_mem_free(main);
             exit((unsigned char) ft_atoi(*args));// кастануть чтобы выдать 255
         }
         else
             process_valid_args(args); // проверка на цифры в аргументе с выводом ошибки //и сохранением в структуру чтобы можно было вызвать через $?
         ft_putstr_fd("exit\n", 1);
+        all_mem_free(main);
         exit(ft_atoi(*args));// выход только с цифрами в аргументе (аргумент можно записать в main->exit) они будут выводится через $?
         // если подавать в аргумент цифру >256 то система дает остаток от деления на 256
     }
@@ -67,6 +70,7 @@ int exit_command(t_main *main)
         process_valid_args(args);
         ft_putstr_fd("exit\n", 1);
         ft_putstr_fd("minishell: exit: too many arguments\n", 1);
+        all_mem_free(main);
         exit(main->exit = 1);
     }
     // sleep(1000);// for test leaks

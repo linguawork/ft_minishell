@@ -31,7 +31,7 @@ void	*arrays_free(char **s)
     int	i;
 
     i = 0;
-    while (s[i])
+    while (s && s[i])
     {
         free(s[i]);
         i++;
@@ -98,6 +98,6 @@ void	copy_env2(t_main *main, char **env)
         if (!main->my_env[i])
             exit_with_error(main, ERROR_MALLOC);
     }
-    free(env);
+//    free(env);
     main->my_env[i] = NULL;
 }

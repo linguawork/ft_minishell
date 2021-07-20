@@ -1,7 +1,31 @@
 #include "minishell.h"
 
 
-int process_exe_in_rp(t_main *main)
+int
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+process_exe_in_rp(t_main *main)
 {
     char *command;
     char **envir;
@@ -46,7 +70,9 @@ int process_exe_in_rp(t_main *main)
 ////                        }
 //                        signal(SIGQUIT, SIG_DFL);
                         execve(exe2, argv, envir);
-//                        printf(" we are here\n");
+
+//                    ft_putstr_fd(command, 1);
+//                    return(0);
 
 //                    }
 ////
