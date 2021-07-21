@@ -50,6 +50,7 @@ int redir_two_left(t_main *main) {
 //                printf ("__%d___%d\n", dup2(fd, STDIN_FILENO), fd);
 
                 process_builtins_and_divide_externals(main);
+                free(redir->args);
 //                execute_pipes(main);
 //                redir->args = NULL;
 //            }

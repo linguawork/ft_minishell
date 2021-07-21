@@ -26,6 +26,7 @@ void	free_data_redir(t_redir *redir)
 	{
 		redir->redir_next->error = 1;
 		free_data_redir(redir->redir_next);
+        free(redir->redir_next);
 		redir->redir_next->error = 1;
 		redir->redir_next = NULL;
 	}

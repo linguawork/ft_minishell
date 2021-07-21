@@ -227,6 +227,7 @@ int process_exe(t_main *main)
                         main->exit = WEXITSTATUS(status);
                         free(exe);
                         free(exe2);
+                        free(argv);
                     }
 //                    ft_putstr_fd("status number is ", 1);
 //                    ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
@@ -245,7 +246,7 @@ int process_exe(t_main *main)
 
 
                     closedir(folder);
-//                    arrays_free(binar);
+                    arrays_free(binar);
                     return(1);// можно просто брейкать
                 }
             }
