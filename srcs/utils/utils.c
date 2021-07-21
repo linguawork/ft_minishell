@@ -29,20 +29,28 @@ void	free_data_redir(t_redir *redir)
 		redir->redir_next->error = 1;
 		redir->redir_next = NULL;
 	}
-	if (redir->error != 0)
-		redir_free(&redir);
+//	if (redir->error != 0)
+//		redir_free(&redir);
 }
 
-void	free_data_job(t_job *job)
+void	free_data_job(t_job **job_addr)
 {
+    t_job *job;
+
+    job = *job_addr;
 	free_data_redir(job->pipe->redir);
 	if (job->pipe_next)
 		free_data_redir(job->pipe_next->redir);
 	if (job->job_next)
-		free_data_job(job->job_next);
-	pipe_free(&job->pipe);
-	pipe_free(&job->pipe_next);
-	job_free(&job);
+		free_data_job(&job->job_next);
+//	pipe_free(&job->pipe);
+//	pipe_free(&job->pipe_next);
+//	job_free(&job);
+    free(job->pipe);
+    free(job->pipe_next);
+    free(job);
+    *job_addr = NULL;
+
 }
 
 void    free_data_pipe_next(t_job *job)
@@ -56,24 +64,58 @@ void    free_data_pipe_next(t_job *job)
     }
 }
 
+void    free_pipe(t_pipe *pipe)
+{
+    if (pipe)
+    {
+        free_data_redir(pipe->redir);
+        free(pipe->redir);
+        free(pipe);
+    }
+}
+
 void	all_mem_free(t_main *main)
 {
-	free_data_redir(main->job->pipe->redir);
-//    pipe_free(&main->job->pipe);
-	if (main->job->pipe_next)
-	{
-//        free_data_pipe_next(main->job);
-		main->job->pipe_next->redir->error = 1;
-		free_data_redir(main->job->pipe_next->redir);
-        pipe_free(&main->job->pipe_next);
-//        free(main->job->pipe_next);
-//        main->job->pipe_next = NULL;
-	}
-	if (main->job->job_next)
-    {
-	    free_data_job(main->job->job_next);
-//        free(main->job->job_next);
+    t_job   *job_tmp;
+    void    *asd;
+
+    job_tmp = main->job;
+    while (job_tmp) {
+
+        free_pipe(job_tmp->pipe_next);
+        if (job_tmp != main->job)
+        {
+            free_pipe(job_tmp->pipe);
+            asd = job_tmp->job_next;
+            free(job_tmp);
+            job_tmp = asd;
+        }
+        else
+        {
+            free_data_redir(job_tmp->pipe->redir);
+            job_tmp = job_tmp->job_next;
+        }
     }
+    main->job->job_next = NULL;
+    main->job->pipe_next = NULL;
+
+
+
+//	free_data_redir(main->job->pipe->redir);
+////    pipe_free(&main->job->pipe);
+//	if (main->job->pipe_next)
+//	{
+////        free_data_pipe_next(main->job);
+//		main->job->pipe_next->redir->error = 1;
+//		free_data_redir(main->job->pipe_next->redir);
+//        pipe_free(&main->job->pipe_next);
+////        free(main->job->pipe_next);
+////        main->job->pipe_next = NULL;
+//	}
+//	if (main->job->job_next)
+//    {
+//	    free_data_job(&main->job->job_next);
+//    }
 }
 
 void	exit_with_error(t_main *main, char *massage)

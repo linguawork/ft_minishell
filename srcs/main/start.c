@@ -39,7 +39,7 @@ void	ctrl_slash(int sig)
 
 void	ctrl_d(int sig)
 {
-	printf("\033[Aminishell: exit\n");
+//	printf("\033[Aminishell: exit\n");
 	exit(sig);
 }
 
@@ -102,11 +102,15 @@ int	main(int ac, char **av, char **env)
 	signal(SIGINT, &ctrl_c);
 	while (1)
 	{
+	    printf("\e[s");
 		string = readline("minishell: ");
-		if (!string)
-			ctrl_d(131);
+		if (!string) {
+            printf("\e[u\e[Aminishell: exit\n");
+            ctrl_d(131);
+        }
 		else if (*string)
 			add_history(string);
+
 		parser(&main, string);
 		mem_free(&string);
         if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0 &&

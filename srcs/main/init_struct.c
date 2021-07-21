@@ -48,6 +48,9 @@ void	end_session(t_main *main)
 	main->job->num_redirects = 0;
 	main->job->job_next = NULL;
 	main->job->pipe_next = NULL;
+    main->job->pipe->redir->command = NULL;
+    main->job->pipe->redir->args = NULL;
+    main->job->pipe->redir->redir_file = NULL;
 	main->job->pipe->redir->redir_next = NULL;
 	main->job->pipe->redir->error = 0;
 	main->job->pipe->redir->redir_type = ERROR;
