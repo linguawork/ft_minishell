@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/17 22:14:07 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/21 12:09:37 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,22 @@
 void	copy_env(t_main *main, char **env)
 {
 	int		i;
+	int		j;
 	int		len;
 
-	i = -1;
 	len = how_many_lines(env);
 	main->my_env = ft_calloc(len + 1, sizeof(char *));
 	if (!main->my_env)
 		exit_with_error(main, ERROR_MALLOC);
+	i = -1;
+	j = -1;
 	while (++i < len)
 	{
-		main->my_env[i] = ft_strdup(env[i]);
-		if (!main->my_env[i])
-			exit_with_error(main, ERROR_MALLOC);
+		if (strchr(env[i], '='))
+			main->my_env[j++] = ft_strdup(env[i]);
 	}
-	main->my_env[i] = NULL;
-}
-
-void	ctrl_slash(int sig)
-{
-	printf("CTRL + / %d  \n", sig);
-	sig = 1;
+	main->my_env[j] = NULL;
+	inc_SHLVL(main->my_env);
 }
 
 void	ctrl_d(int sig)
@@ -54,47 +50,14 @@ void	ctrl_c(int sig)
 	}
 }
 
-char *get_value(char *str, int *index)
-{
-	int	i;
-	i = 0;
-	while (str && str[i] != '=')
-		i++;
-	*index = ++i;
-	return (str + i);
-}
-
-void	inc_SHLVL(t_main *main)
-{
-	int		i;
-	int		len;
-	char 	**env;
-	int		nbr;
-	char 	*str;
-
-	i = -1;
-	env = main->my_env;
-	while (env[++i])
-	{
-		if (!ft_strncmp(env[i], "SHLVL", 5))
-		{
-			nbr = ft_atoi(get_value(env[i], &len));
-			str = ft_substr(env[i], 0, len);
-			free(env[i]);
-			env[i] = ft_strjoin(str, ft_itoa(++nbr));
-		}
-	}
-}
-
 int	main(int ac, char **av, char **env)
 {
 	t_main			main;
-	char			*string;
 	struct termios	term;
+	char			*string;
 
-	init_struct(&main);
+	init_minishell(&main);
 	copy_env(&main, env);
-	inc_SHLVL(&main);
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ECHOCTL);
 	tcsetattr(0, TCSANOW, &term);

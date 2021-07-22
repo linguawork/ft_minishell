@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_struct.c                                      :+:      :+:    :+:   */
+/*   init_minishell.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	init_struct(t_main *main)
+void	init_minishell(t_main *main)
 {
 	t_job	*job;
 	t_pipe	*pipe;
@@ -54,4 +54,34 @@ void	end_session(t_main *main)
 	main->job->pipe->redir->redir_next = NULL;
 	main->job->pipe->redir->error = 0;
 	main->job->pipe->redir->redir_type = ERROR;
+}
+
+char *get_value(char *str, int *index)
+{
+	int	i;
+	i = 0;
+	while (str && str[i] != '=')
+		i++;
+	*index = ++i;
+	return (str + i);
+}
+
+void	inc_SHLVL(char **env)
+{
+	int		i;
+	int		len;
+	int		nbr;
+	char 	*str;
+
+	i = -1;
+	while (env[++i])
+	{
+		if (ft_strnstr(env[i], "SHLVL", 5))
+		{
+			nbr = ft_atoi(get_value(env[i], &len));
+			str = ft_substr(env[i], 0, len);
+			free(env[i]);
+			env[i] = ft_strjoin(str, ft_itoa(++nbr));
+		}
+	}
 }

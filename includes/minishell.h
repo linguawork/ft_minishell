@@ -105,8 +105,9 @@ typedef struct s_main
 /*
 ** MAIN
 */
-void	init_struct(t_main *main);
+void	init_minishell(t_main *main);
 void	end_session(t_main *main);
+void	inc_SHLVL(char **env);
 
 /*
 ** PARSER
