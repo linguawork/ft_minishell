@@ -130,20 +130,9 @@ int execute_pipes_and_redirs(t_main *main)
                 }
             }
         }
-//        if (i != c_num - 1)
-//        {
-////            close(prev_pipe_fds[0]); // закрываем вход предыдущ
-//            close(prev_pipe_fds[1]); // закрываем вход предыдущ
-//        }
-//        else
-//        {
+
             close(prev_pipe_fds[0]); // закрываем вход предыдущ
             close(prev_pipe_fds[1]); // закрываем вход предыдущ
-//        }
-
-//        waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
-//        main->exit = WEXITSTATUS(status);
-
 
 //         for testing
 //        ft_putstr_fd("status number is ", 1);
@@ -158,8 +147,10 @@ int execute_pipes_and_redirs(t_main *main)
 //        ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
 //        ft_putnbr_fd (fork_res, 1);// ID родителя
 //        write(1, "\n", 1);
+        free(commands[i]);
         i++;
     }
+    free(commands);
     waitpid(fork_res, &status, 0); // через waitpid завершение до вывода минишелл
     main->exit = WEXITSTATUS(status);
     if (status == 11) // command not found
@@ -172,12 +163,8 @@ int execute_pipes_and_redirs(t_main *main)
     i = 1;
     while (i < c_num)
     {
-//        ft_putnbr_fd(i, 1);
         wait(NULL);
         i++;
     }
-    // один wait может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
-//    main->job->num_commands = 0; // занулил в end_session
-//    main->job->num_pipes = 0;
     return(0);
 }
