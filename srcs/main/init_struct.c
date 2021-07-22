@@ -72,6 +72,7 @@ void	inc_SHLVL(char **env)
 	int		len;
 	int		nbr;
 	char 	*str;
+	char 	*tmp;
 
 	i = -1;
 	while (env[++i])
@@ -81,7 +82,10 @@ void	inc_SHLVL(char **env)
 			nbr = ft_atoi(get_value(env[i], &len));
 			str = ft_substr(env[i], 0, len);
 			free(env[i]);
-			env[i] = ft_strjoin(str, ft_itoa(++nbr));
+			tmp = ft_itoa(++nbr);
+			env[i] = ft_strjoin(str, tmp);
+            free(tmp);
+            free(str);
 		}
 	}
 }
