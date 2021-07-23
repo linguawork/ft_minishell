@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/09 12:56:13 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/23 12:33:35 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,7 @@
 void	free_data_redir(t_redir *redir)
 {
 	mem_free(&redir->command);
-/*
-**	while (redir->args && *redir->args)
-**		mem_free(redir->args++);
-*/
-	free(redir->args);/* just free to avoid double freeing*/
+	arrays_free(redir->args);
 	redir->args = NULL;
 	mem_free(&redir->redir_file);
 	if (redir->redir_next)
@@ -66,8 +62,8 @@ void	exit_with_error(t_main *main, char *massage)
 
 char 	**ft_arrdup(char **src, int len)
 {
-	int i;
-	char **dst;
+	int		i;
+	char	**dst;
 
 	dst = ft_calloc(len + 2, sizeof(char *));
 	i = 0;

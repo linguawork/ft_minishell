@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_minishell.c                                      :+:      :+:    :+:   */
+/*   init_minishell.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/09 12:40:47 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/17 21:57:12 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/23 10:58:48 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,10 @@ void	end_session(t_main *main)
 	main->job->pipe->redir->redir_type = ERROR;
 }
 
-char *get_value(char *str, int *index)
+char	*get_value(char *str, int *index)
 {
 	int	i;
+
 	i = 0;
 	while (str && str[i] != '=')
 		i++;
@@ -68,7 +69,7 @@ void	inc_SHLVL(char **env)
 	int		i;
 	int		len;
 	int		nbr;
-	char 	*str;
+	char	*str;
 
 	i = -1;
 	while (env[++i])
