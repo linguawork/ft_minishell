@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:06:52 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/22 22:12:06 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/23 20:32:17 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,10 +138,8 @@ int process_exe(t_main *main)
     char *exe2;
     int i;
     int fork_res;
-    int status;
     DIR *folder;
     struct dirent *entry;
-    status = 0;
 
     command = main->job->pipe->redir->command;
     char **argv;
@@ -178,8 +176,8 @@ int process_exe(t_main *main)
                     }
                     if (fork_res > 0)
                     {
-                        waitpid(fork_res, &status, 0);
-                        main->exit = WEXITSTATUS(status);
+                        waitpid(fork_res, &main->exit, 0);
+                        exit_code(main);
                         free(exe);
                         free(exe2);
                         free(argv);

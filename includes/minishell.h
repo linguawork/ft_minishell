@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/15 20:27:36 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/23 20:34:03 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,7 @@ void    process_redirects_in_pipes2(t_main *main);
 void    process_builtins_and_divide_externals_in_rp(t_main *main);
 int     process_buildins(t_main *main);
 int     redir_two_left_in_pipes(t_main *main);
+void	exit_code(t_main *main);
 
 
 
