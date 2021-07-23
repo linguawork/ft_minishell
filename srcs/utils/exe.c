@@ -6,153 +6,112 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:06:52 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/18 18:06:53 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/22 22:12:06 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
 #include "minishell.h"
 
-char *return_cmd_from_absolute_path(t_main *main)
+char	*return_cmd_from_absolute_path(t_main *main)
 {
-    char *cmd;
-    char **parts;
-    int len;
+	char	*cmd;
+	char	**parts;
+	int		len;
 
-    parts = ft_split(main->job->pipe->redir->command, '/');
-    len = how_many_lines(parts);
-    cmd = parts[len-1];
-    return(cmd);
+	parts = ft_split(main->job->pipe->redir->command, '/');
+	len = how_many_lines(parts);
+	cmd = parts[len-1];
+	return(cmd);
 }
 
-char** cmd_args_to_argv_recorder2(t_main *main) // запись аргументов в 2мер массив
+char	**cycle(int length, char *cmd, char **e, char **a)
 {
-    char **e;
-    int length;
-    char **a;
-    char *cmd;
-    cmd = return_cmd_from_absolute_path(main);
-    a = main->job->pipe->redir->args;
-    int i = 1;
-    int j = 0;
-    if (a == NULL)// если аргумент всего 1 (то это сама команда) то пишем его в массив env и 1 ячейку резерв для терминатора
-    {
-        e = (char **) malloc(sizeof(char *) * (1 + 1));
-        e[0] = cmd;
-    }
-    else// если аргументов не один
-    {
-        length = how_many_lines((char **) a);// считаем кол-во аргументов
-        e = (char **) malloc(sizeof(char *) * (length + 1+1)); // выделяем память + 1 для ноля и +1 для команды
-        e[0] = cmd;
-        while (a[j] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала после записи команды
-        {
-            e[i] = a[j];// лучше записывать через индекс// i = 1 так как в ноль записана команда, j = 0
-            j++;
-            i++;
-        }
-    }
-    e[i]=NULL;// в конце добав терминатор
-    return(e);
+	int	i;
+	int	j;
+
+	i = 1;
+	j = 0;
+	length = how_many_lines((char **) a);
+	e = (char **) malloc(sizeof(char *) * (length + 1 + 1));
+	e[0] = cmd;
+	while (a[j] != NULL)
+	{
+		e[i] = a[j];
+		j++;
+		i++;
+	}
+	e[i] = NULL;
+	return (e);
 }
 
-char** cmd_args_to_argv_recorder_p(t_job *job) // запись аргументов в 2мер массив
+char** cmd_args_to_argv_recorder2(t_main *main)
 {
-    char **e;
-    int length;
-    char **a;
-    char *cmd;
-//    cmd = main->job->pipe->redir->command;
-//    a = main->job->pipe->redir->args;
-    cmd = job->pipe->redir->command;
-    a = job->pipe->redir->args;
-    int i = 1;
-    int j = 0;
-    if (a == NULL)// если аргумент всего 1 (то это сама команда) то пишем его в массив env и 1 ячейку резерв для терминатора
-    {
-        e = (char **) malloc(sizeof(char *) * (1 + 1));
-        e[0] = cmd;
-    }
-    else// если аргументов не один
-    {
-        length = how_many_lines((char **) a);// считаем кол-во аргументов
-        e = (char **) malloc(sizeof(char *) * (length + 1+1)); // выделяем память + 1 для ноля и +1 для команды
-        e[0] = cmd;
-        while (a[j] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала после записи команды
-        {
-            e[i] = a[j];// лучше записывать через индекс// i = 1 так как в ноль записана команда, j = 0
-            j++;
-            i++;
-        }
-    }
-    e[i]=NULL;// в конце добав терминатор
-    return(e);
+	char	**e;
+	int		length;
+	char	**a;
+	char	*cmd;
+
+	e = NULL;
+	length = 0; 
+	cmd = return_cmd_from_absolute_path(main);
+	a = main->job->pipe->redir->args;
+	int i = 1;
+	if (a == NULL)
+	{
+		e = (char **) malloc(sizeof(char *) * (1 + 1));
+		e[0] = cmd;
+		e[i] = NULL;
+	}
+	else
+		e = cycle(length, cmd, e, a);
+	return (e);
 }
 
-char** cmd_args_to_argv_recorder(t_main *main) // запись аргументов в 2мер массив
+char**	cmd_args_to_argv_recorder_p(t_job *job)
 {
-    char **e;
-    int length;
-    char **a;
-    char *cmd;
-    cmd = main->job->pipe->redir->command;
-    a = main->job->pipe->redir->args;
-    int i = 1;
-    int j = 0;
-    if (a == NULL)// если аргумент всего 1 (то это сама команда) то пишем его в массив env и 1 ячейку резерв для терминатора
-    {
-        e = (char **) malloc(sizeof(char *) * (1 + 1));
-        e[0] = cmd;
-    }
-    else// если аргументов не один
-    {
-        length = how_many_lines((char **) a);// считаем кол-во аргументов
-        e = (char **) malloc(sizeof(char *) * (length + 1+1)); // выделяем память + 1 для ноля и +1 для команды
-        e[0] = cmd;
-        while (a[j] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала после записи команды
-        {
-            e[i] = a[j];// лучше записывать через индекс// i = 1 так как в ноль записана команда, j = 0
-            j++;
-            i++;
-        }
-    }
-    e[i]=NULL;// в конце добав терминатор
-    return(e);
+	char	**e;
+	int		length;
+	char	**a;
+	char	*cmd;
+
+	e = NULL;
+	length = 0;
+	cmd = job->pipe->redir->command;
+	a = job->pipe->redir->args;
+	int i = 1;
+	if (a == NULL)
+	{
+		e = (char **)malloc(sizeof(char *) * (1 + 1));
+		e[0] = cmd;
+		e[i]=NULL;
+	}
+	else
+		e = cycle(length, cmd, e, a);
+	return(e);
 }
 
-//char** cmd_args_to_argv_recorder_p(t_main *main) // запись аргументов в 2мер массив
-//{
-//    char **e;
-//    int length;
-//    char **a;
-//    char *cmd;
-////    cmd = main->job->pipe->redir->command;
-////    a = main->job->pipe->redir->args;
-//    cmd = job->pipe->redir->command;
-//    a = job->pipe->redir->args;
-//    int i = 1;
-//    int j = 0;
-//    if (a == NULL)// если аргумент всего 1 (то это сама команда) то пишем его в массив env и 1 ячейку резерв для терминатора
-//    {
-//        e = (char **) malloc(sizeof(char *) * (1 + 1));
-//        e[0] = cmd;
-//    }
-//    else// если аргументов не один
-//    {
-//        length = how_many_lines((char **) a);// считаем кол-во аргументов
-//        e = (char **) malloc(sizeof(char *) * (length + 1+1)); // выделяем память + 1 для ноля и +1 для команды
-//        e[0] = cmd;
-//        while (a[j] != NULL) // запись из оригинала в замолоченный двумерный массив с размером рядов оригинала после записи команды
-//        {
-//            e[i] = a[j];// лучше записывать через индекс// i = 1 так как в ноль записана команда, j = 0
-//            j++;
-//            i++;
-//        }
-//    }
-//    e[i]=NULL;// в конце добав терминатор
-//    return(e);
-//}
+char** cmd_args_to_argv_recorder(t_main *main)
+{
+	char	**e;
+	int		length;
+	char	**a;
+	char	*cmd;
+
+	e = NULL;
+	length = 0;
+	cmd = main->job->pipe->redir->command;
+	a = main->job->pipe->redir->args;
+	int i = 1;
+	if (a == NULL)
+	{
+		e = (char **) malloc(sizeof(char *) * (1 + 1));
+		e[0] = cmd;
+		e[i] = NULL;
+	}
+	else
+		e = cycle(length, cmd, e, a);
+	return (e);
+}
 
 int path_mistakes(t_main *main, char *p)
 {
@@ -209,18 +168,14 @@ int process_exe(t_main *main)
                     argv = cmd_args_to_argv_recorder(main);
                     exe = ft_strjoin(binar[i], "/");
                     exe2 = ft_strjoin(exe, command);
+                    signal(SIGINT, SIG_IGN);
                     fork_res = fork();
                     if (fork_res == 0)
                     {
-//                        for (int j = 0; argv[j] != NULL; ++j) {
-//                            printf("%s\n", argv[i]);
-//                        }
+                        signal(SIGINT, SIG_DFL);
                         signal(SIGQUIT, SIG_DFL);
                         execve(exe2, argv, envir);
-//                        printf(" we are here\n");
-
                     }
-//
                     if (fork_res > 0)
                     {
                         waitpid(fork_res, &status, 0);
@@ -229,30 +184,14 @@ int process_exe(t_main *main)
                         free(exe2);
                         free(argv);
                     }
-//                    ft_putstr_fd("status number is ", 1);
-//                    ft_putnbr_fd (WEXITSTATUS(status), 1); // запись кода выхода 1
-//                    write(1, "\n", 1);
-//                    ft_putstr_fd("main_>exit is ", 1);
-//                    ft_putnbr_fd (main->exit, 1);
-//                    write(1, "\n", 1);
-//                    ft_putstr_fd("parent id is ", 1); // если использовать printf то печатает после завершения программы
-//                    ft_putnbr_fd (fork_res, 1);// ID родителя
-//                    write(1, "\n", 1);
-
-//                    ft_putnbr_fd (WIFSIGNALED(status), 2);// для теста сигнала
-//                    write(1, "\n", 1);// для теста сигнала
-//                    if (WIFSIGNALED(status)== 1) // if true
-//                        ft_putstr_fd("^\\Quit: 3\n", 2);
-
-
                     closedir(folder);
                     arrays_free(binar);
-                    return(1);// можно просто брейкать
+                    signal(SIGINT, &ctrl_c);
+                    return(1);
                 }
             }
             closedir(folder);
         }
-//
         i++;
     }
     arrays_free(binar);

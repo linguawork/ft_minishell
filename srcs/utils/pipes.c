@@ -198,7 +198,7 @@ int execute_pipes(t_main *main)
         wait(NULL);
         i++;
     }
-     ft_putstr_fd(": one fork in all pipes checked, function: execute_pipes\n", 1);
+
     //один wait не может ждать несколько процессов без pid но проблема что долго ждет и выводит после minishell
 //    main->job->num_commands = 0; // занулил в end_session
 //    main->job->num_pipes = 0;

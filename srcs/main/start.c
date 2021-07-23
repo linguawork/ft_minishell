@@ -63,7 +63,7 @@ int	main(int ac, char **av, char **env)
 	tcsetattr(0, TCSANOW, &term);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, &ctrl_c);
-	while (1)
+    while (1)
 	{
 	    printf("\e[s");
 		string = readline("minishell: ");

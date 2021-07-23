@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirects_in_pipes.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/22 17:59:55 by areggie           #+#    #+#             */
+/*   Updated: 2021/07/22 17:59:58 by areggie          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 
@@ -405,26 +417,13 @@ int redir_two_left_in_pipes(t_main *main)
 
 void process_redirects_in_pipes2(t_main *main)
 {
-//    t_pipe *pipe;
-//    pipe = main->job->pipe;
-//    if (main->job->pipe_next)
-//        pipe = main->job->pipe_next;
 
     if (main->job->pipe_next->redir->redir_type == OUTPUT )
-    {
-        fprintf(stdout, "___>\n"); // печать номера 3
         redir_one_right_in_pipes(main);
-    }
     if (main->job->pipe->redir->redir_type == APPEND_OUTPUT)
         redir_two_right_in_pipes(main);
     if (main->job->pipe->redir->redir_type == INPUT)
         redir_one_left_in_pipes(main);
-
     if (main->job->pipe->redir->redir_type == INPUT_MULTILINE)
-    {
-        fprintf(stdout, "___<<\n"); // печать номера 3
         redir_two_left_in_pipes(main);
-    }
-
-
 }

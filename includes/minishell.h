@@ -108,6 +108,7 @@ typedef struct s_main
 void	init_minishell(t_main *main);
 void	end_session(t_main *main);
 void	inc_SHLVL(char **env);
+void	ctrl_c(int sig);
 
 /*
 ** PARSER
