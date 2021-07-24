@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/23 20:34:03 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/24 22:11:54 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,8 @@ void    process_builtins_and_divide_externals_in_rp(t_main *main);
 int     process_buildins(t_main *main);
 int     redir_two_left_in_pipes(t_main *main);
 void	exit_code(t_main *main);
+int		path_mistakes(t_main *main);
+void	command_not_found(t_main *main, char *command);
 
 
 
