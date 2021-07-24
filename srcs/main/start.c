@@ -27,9 +27,9 @@ void	copy_env(t_main *main, char **env)
 	while (++i < len)
 	{
 		if (strchr(env[i], '='))
-			main->my_env[j++] = ft_strdup(env[i]);
+			main->my_env[++j] = ft_strdup(env[i]);
 	}
-	main->my_env[j] = NULL;
+	main->my_env[++j] = NULL;
 	inc_SHLVL(main->my_env);
 }
 

@@ -128,31 +128,63 @@ int path_mistakes(t_main *main, char *p)
     return (1);
 }
 
-int process_exe(t_main *main)
+void command_not_found(t_main *main, char *command)
 {
-    char *command;
-    char **envir;
-    char **binar;
-    char *path;
+    ft_putstr_fd("minishell: ", 2);
+    ft_putstr_fd(command, 2);
+    ft_putstr_fd(": Command not found\n", 2);
+    main->exit = 127;
+}
+
+void free_exes(   char *exe, char *exe2, char **argv)
+{
+    free(exe);
+    free(exe2);
+    free(argv);
+}
+
+void forking(t_main *main, char **binar, int i, char *command)
+{
     char *exe;
     char *exe2;
-    int i;
     int fork_res;
+    char **argv;
+
+    argv = cmd_args_to_argv_recorder(main);
+    exe = ft_strjoin(binar[i], "/");
+    exe2 = ft_strjoin(exe, command);
+    signal(SIGINT, SIG_IGN);
+    fork_res = fork();
+    if (fork_res == 0)
+    {
+        signal(SIGINT, SIG_DFL);
+        signal(SIGQUIT, SIG_DFL);
+        execve(exe2, argv, NULL);
+    }
+    if (fork_res > 0)
+    {
+        waitpid(fork_res, &main->exit, 0);
+        exit_code(main);
+        free_exes(exe, exe2, argv);
+    }
+}
+
+void forking2(t_main *main, char **binar, int i, char *command)
+{
+    DIR *folder;
+
+    folder = opendir(binar[i]);
+    forking(main, binar, i, command);
+    closedir(folder);
+    signal(SIGINT, &ctrl_c);
+}
+
+int searching_cmd_cycle(t_main *main, char **binar, int i, char *command)
+{
     DIR *folder;
     struct dirent *entry;
 
-    command = main->job->pipe->redir->command;
-    char **argv;
-    envir = main->my_env;
-    i = 0;
-    path = ft_getenv(main, "PATH");
-    if(!path)
-    {
-        main->exit = 1;
-        return (path_mistakes(main, path));
-    }
-    binar = ft_split(path, ':');
-    while (binar[i] != NULL)
+    while (binar[i++] != NULL)
     {
         folder = opendir(binar[i]);
         if(folder == NULL)
@@ -163,39 +195,38 @@ int process_exe(t_main *main)
             {
                 if (ft_strcmp(entry->d_name, command) == 0)
                 {
-                    argv = cmd_args_to_argv_recorder(main);
-                    exe = ft_strjoin(binar[i], "/");
-                    exe2 = ft_strjoin(exe, command);
-                    signal(SIGINT, SIG_IGN);
-                    fork_res = fork();
-                    if (fork_res == 0)
-                    {
-                        signal(SIGINT, SIG_DFL);
-                        signal(SIGQUIT, SIG_DFL);
-                        execve(exe2, argv, envir);
-                    }
-                    if (fork_res > 0)
-                    {
-                        waitpid(fork_res, &main->exit, 0);
-                        exit_code(main);
-                        free(exe);
-                        free(exe2);
-                        free(argv);
-                    }
+                    forking2(main, binar, i, command);
                     closedir(folder);
-                    arrays_free(binar);
-                    signal(SIGINT, &ctrl_c);
                     return(1);
                 }
             }
             closedir(folder);
         }
-        i++;
     }
+    return(0);
+}
+
+
+int process_exe(t_main *main)
+{
+    char *command;
+    char **binar;
+    char *path;
+    int i;
+    int flag;
+
+    command = main->job->pipe->redir->command;
+    i = 0;
+    path = ft_getenv(main, "PATH");
+    if(!path)
+    {
+        main->exit = 1;
+        return (path_mistakes(main, path));
+    }
+    binar = ft_split(path, ':');
+    flag = searching_cmd_cycle(main, binar, i, command);
     arrays_free(binar);
-    ft_putstr_fd("minishell: ", 2);
-    ft_putstr_fd(command, 2);
-    ft_putstr_fd(": Command not found\n", 2);
-    main->exit = 127;
+    if (flag == 0)
+        command_not_found(main, command);
     return(0);
 }
