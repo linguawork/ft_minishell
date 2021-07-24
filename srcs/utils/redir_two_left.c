@@ -51,6 +51,7 @@ int redir_two_left(t_main *main) {
 
                 process_builtins_and_divide_externals(main);
                 free(redir->args);
+
 //                execute_pipes(main);
 //                redir->args = NULL;
 //            }
@@ -87,6 +88,7 @@ int redir_two_left(t_main *main) {
     }
     cmd =NULL;
     redir->args = NULL;
+    unlink(file);
     return 0;
 }
 
