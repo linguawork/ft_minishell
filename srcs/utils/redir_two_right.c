@@ -6,74 +6,86 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:08:57 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/18 18:09:00 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/27 22:56:25 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void redir_two_right(t_main *main)
+void	double_right_cycle_first_node(t_redir *redir, int fd)
 {
-    int fd;
-    int saved_stdout;
-    t_redir *redir;
-    int len;
+	if (redir->command && redir->redir_type == APPEND_OUTPUT && \
+	redir->redir_file)
+	{
+		fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+			exit(1);
+	}
+}
 
+void	first_node_double_right(t_redir *redir, int fd, t_main *main)
+{
+	int	saved_stdout;
 
-    redir = main->job->pipe->redir;
+	if (redir->command && redir->redir_type == APPEND_OUTPUT && \
+	redir->redir_file)
+	{
+		saved_stdout = dup(1);
+		fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+			exit(1);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+		process_builtins_and_divide_externals(main);
+		dup2(saved_stdout, 1);
+		close(saved_stdout);
+	}
+}
 
-    if (redir && redir->redir_next == NULL) // если есть структура redir - одна команда  один редирект и один файл
-    {
-//        if (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file )// костыль пока парсер правит один редирект >> и один файл
-//        {
-//            fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644); // empty file // поменяли флаг на дозапись
-//            if (fd == -1)
-//                exit(1);
-//        }
-        check_valid_redir(main);
+void	double_right_cycle_last_node(t_redir *redir, int fd, t_main *main, \
+int len)
+{
+	int	saved_stdout;
 
-        if (redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)// команда и редирект тип >> и файл
-        {
-            saved_stdout = dup(1);
-            fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644); // поменяли флаг на дозапись
-            if (fd == -1)
-                exit(1);
-//            printf("The fd to file1: %d\n", file1); // печать номера 3
-            dup2(fd, STDOUT_FILENO); // файл дескр 3 забирает номер у stdout, 1)
-            close(fd);// закрытие фд3 так как он сдублировался в фд1
-            process_builtins_and_divide_externals(main);
-            dup2(saved_stdout, 1);
-            close(saved_stdout);
-        }
-    }
-    len = count_redirects(main);
-    while (redir->redir_next != NULL) // если есть структура redir   и redir_next( 1 комманда и редирект >1)
-    {
-        if (redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)// команда и редирект тип и файл
-        {
-            fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644);// fd 1-3
-            if (fd == -1)
-                exit(1);
-        }
-        redir = redir->redir_next;
-        if (!redir->command && redir->redir_type == APPEND_OUTPUT && redir->redir_file)// команда и редирект тип и файл
-        {
-            while (len-1) // отняли один предыдущий с командой и печатаем всю длину
-            {
-                fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644);// создание файлов по одной
-                if (fd == -1)
-                    exit(1);
-                len--;
-                redir = redir->redir_next; // переход к след редиректу
-            }
-            saved_stdout = dup(1);// сохранение
-//            printf("The fd to file1: %d\n", file1); // печать номера 3
-            dup2(fd, STDOUT_FILENO); // файл дескр 3 забирает номер у stdout, 1)
-            close(fd);// закрытие фд3 так как он сдублировался в фд1
-            process_builtins_and_divide_externals(main);
-            dup2(saved_stdout, 1);
-            close(saved_stdout);
-            break ;
-        }
-    }
+	if (!redir->command && redir->redir_type == APPEND_OUTPUT && \
+	redir->redir_file)
+	{
+		while (len - 1)
+		{
+			fd = open(redir->redir_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fd == -1)
+				exit(1);
+			len--;
+			redir = redir->redir_next;
+		}
+		saved_stdout = dup(1);
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+		process_builtins_and_divide_externals(main);
+		dup2(saved_stdout, 1);
+		close(saved_stdout);
+	}
+}
+
+void	redir_two_right(t_main *main)
+{
+	int		fd;
+	t_redir	*redir;
+	int		len;
+
+	fd = 0;
+	redir = main->job->pipe->redir;
+	if (redir && redir->redir_next == NULL)
+	{
+		check_valid_redir(main);
+		first_node_double_right(redir, fd, main);
+	}
+	len = count_redirects(main);
+	while (redir->redir_next != NULL)
+	{
+		double_right_cycle_first_node(redir, fd);
+		redir = redir->redir_next;
+		double_right_cycle_last_node(redir, fd, main, len);
+		break ;
+	}
 }

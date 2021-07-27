@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/27 15:05:38 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/27 23:42:21 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,8 +251,15 @@ void	process_builtins_in_pipes3(t_main *main, char **cmd, int i);
 void	command_not_found_in_pipes(char **command);
 int		exec_mistakes(t_main *main);
 void	one_node_to_left(t_main *main, t_redir	*redir, int file);
-
-
+void	cycle_first_node(t_redir *redir, int fd);
+void	cycle_to_last_node(t_redir *redir, int fd, t_main *main, int len);
+void	first_node_one_right_part_one(t_redir *redir, int fd);
+void	first_node_double_right(t_redir *redir, int fd, t_main *main);
+void	double_right_cycle_last_node(t_redir *redir, int fd, t_main *main, \
+int len);
+void	double_right_cycle_first_node(t_redir *redir, int fd);
+int		check_if_file_exists(t_main *main, t_redir *redir, int file);
+void	first_if(t_redir *redir, int file, t_main *main);
 
 void	rl_replace_line();
 #endif //MINISHELL_H

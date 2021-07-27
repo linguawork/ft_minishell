@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:08:22 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/27 15:03:17 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/27 23:46:44 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,11 +79,9 @@ int	redir_one_left(t_main *main)
 
 	file = 0;
 	redir = main->job->pipe->redir;
+	check_valid_redir(main);
 	if (redir && redir->redir_next == NULL)
-	{
-		check_valid_redir(main);
 		one_node_to_left(main, redir, file);
-	}
 	while (redir->redir_next != NULL)
 	{
 		cmd = redir->command;
@@ -94,7 +92,7 @@ int	redir_one_left(t_main *main)
 		second_if(cmd, redir, file, main);
 		if (main->redir_flag == 1)
 			break ;
-        main->redir_flag = 0;
+		main->redir_flag = 0;
 		break ;
 	}
 	return (0);
