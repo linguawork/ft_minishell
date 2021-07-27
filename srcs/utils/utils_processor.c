@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:09:25 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/18 18:09:28 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/26 19:51:08 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,18 @@ void	copy_env2(t_main *main, char **env)
     }
 //    free(env);
     main->my_env[i] = NULL;
+}
+
+int	exec_mistakes(t_main *main)
+{
+	char	*error_mes;
+
+	error_mes = strerror(errno);
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(main->job->pipe->redir->command, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putchar_fd(' ', 2);
+	ft_putstr_fd(error_mes, 2);
+	ft_putchar_fd('\n', 2);
+	return (1);
 }

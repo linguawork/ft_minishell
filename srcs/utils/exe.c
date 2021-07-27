@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:06:52 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/24 22:09:56 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/26 21:36:04 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	forking(t_main *main, char **binar, int i, char *command)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		execve(exe2, argv, NULL);
+		exec_mistakes(main);
+		exit(126);
 	}
 	if (fork_res > 0)
 	{
@@ -104,6 +106,6 @@ int	process_exe(t_main *main)
 	flag = searching_cmd_cycle(main, binar, i, command);
 	arrays_free(binar);
 	if (flag == 0)
-		command_not_found(main, command);
+		command_not_found_in_exe(main, &command);
 	return (0);
 }

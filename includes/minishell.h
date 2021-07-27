@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/24 22:11:54 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/27 15:05:38 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # define NO_VALID_DOBLE_QUOTE "!"
 # define SPEC_SYMBOLS "$'\" \n><|"
 # define SPECIFICATORS "&;|><!()"
+# define INVALID_CHAR_STR "-+,.:"
 
 /*
 ** Errors
@@ -100,6 +101,8 @@ typedef struct s_main
 	int				exit;
 	int             sub;
 	int             flag2;
+	int				fork_res;
+	int				redir_flag;
 }					t_main;
 
 /*
@@ -233,7 +236,21 @@ int     process_buildins(t_main *main);
 int     redir_two_left_in_pipes(t_main *main);
 void	exit_code(t_main *main);
 int		path_mistakes(t_main *main);
-void	command_not_found(t_main *main, char *command);
+void	command_not_found_in_exe(t_main *main, char **command);
+// void	command_not_found(t_main *main, char **command);
+void	double_for_sort_algo(char **envir, int size);
+void	put_da_brackets(char **e);
+void	process_multiline_in_pipes(t_main *main);
+void	next_pipe_init(int *next_pipe_fds);
+void	execute_pipes_cycle_part1(t_main *main, int i, int *prev_pipe_fds, \
+int *next_pipe_fds);
+char	***one_pipe_cmd(t_job *job, char ***cmds, int i);
+char	***many_pipes_cmd(t_job *job, char ***cmds, int i);
+void	free_exes(char *exe, char *exe2, char **argv);
+void	process_builtins_in_pipes3(t_main *main, char **cmd, int i);
+void	command_not_found_in_pipes(char **command);
+int		exec_mistakes(t_main *main);
+void	one_node_to_left(t_main *main, t_redir	*redir, int file);
 
 
 

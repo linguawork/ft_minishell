@@ -9,10 +9,10 @@ TESTS_DIR = ./srcs/tests/
 MAIN_FILES = start.c init_struct.c
 PARS_FILES = parser.c init_structures.c pipe.c redirect.c write_to_main.c env.c
 UTILS_FILES = utils.c processor.c utils_parser.c utils_processor.c exe.c cd.c \
-pipes.c  echo.c pwd.c exit.c env.c export.c export2.c unset.c utils_processor2.c \
-processor2.c pipes2.c pipes3.c redir_one_right.c redir_two_right.c redir_one_left.c \
+pipes.c  echo.c pwd.c exit.c env.c export.c export2.c export3.c unset.c utils_processor2.c \
+processor2.c pipes2.c pipes3.c pipes4.c pipes5.c redir_one_right.c redir_two_right.c redir_one_left.c \
 free_structures.c redir_two_left.c redirects.c pipes_and_redirs.c redirects_in_pipes.c \
-redirects_in_pipes2.c exe2.c exe3.c
+redirects_in_pipes2.c exe2.c exe3.c redir_one_left2.c
 TESTS_FILES = #tests_parser.c
 
 MAIN = $(addprefix $(MAIN_DIR), $(MAIN_FILES))
