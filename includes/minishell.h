@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/28 19:55:58 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/29 00:04:24 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ typedef struct s_main
 	t_job			*job;
 	char			**my_env;
 	int				exit;
-	int             sub;
-	int             flag2;
+	int				sub;
+	int				flag2;
 	int				fork_res;
 	int				redir_flag;
 }					t_main;
@@ -142,6 +142,7 @@ void	pars_quote(t_parser *parser, t_main *main);
 void	redirect(t_main *main, t_job *job, t_parser *parser);
 t_pipe	*get_current_pipe(t_job *job);
 t_redir	*get_curren_redir(t_redir *redir);
+void	append_to_redir_file(t_main *main, t_parser *parser, char *buf);
 
 /*
 ** PARSER WRITE TO MAIN
@@ -189,6 +190,7 @@ void	tests(void);
 /*
 ** EXECUTION BUILTINS
 */
+void	processor(t_main *main);
 int		pwd(t_main *main);
 void	process_builtins_and_divide_externals(t_main *main);
 void	copy_env(t_main *main, char **env);
@@ -201,44 +203,43 @@ int		process_exe(t_main *main);
 int		how_many_lines(char **a);
 char	**cmd_args_to_argv_recorder(t_main *main);
 void	*arrays_free(char **s);
-char    *ft_getenv(t_main *main, char *name);
-int     cd(t_main *main);
-char**  cmd_args_to_argv_recorder2(t_main *main);
-int     exists(const char *command);
-int     check_dir (char *cmd);
-int     execute_pipes (t_main *main);
-char**  cmd_args_to_argv_recorder_p(t_job *job);
-int     echo(t_main *main);
-int     exit_command(t_main *main);
-int     env(t_main *main);
-int     export(t_main *main);
-char**  env_recorder(t_main *main);
-char**  env_recorder2(char **envir, int len);
-int     checker (t_main *main, char **a, char **e);
-int     unset(t_main *main);
-void    process_folder_or_ready_exe(t_main *main);
-void    process_builtins_in_pipes(t_main *main, char **cmd);
-int     process_exe_in_pipes(t_main *main, char **cmd);
-void    process_folder_in_pipes(t_main *main, char **cmd);
-void    redir_one_right(t_main *main);
-void    redir_two_right(t_main *main);
-int     count_redirects(t_main *main);
-int     redir_one_left(t_main *main);
-char    *check_valid_redir(t_main *main);
-int     redir_two_left(t_main *main);
-void    process_redirects(t_main *main);
-int     execute_pipes_and_redirs(t_main *main);
-char    ***pipe_cmd_args_recorder(t_main *main);
-void    stdin_and_out_to_pipes(int prev_fds[], int next_fds[]);
-int     find_file_in_folder(t_redir * redir);
-void    process_redirects_in_pipes2(t_main *main);
-void    process_builtins_and_divide_externals_in_rp(t_main *main);
-int     process_buildins(t_main *main);
-int     redir_two_left_in_pipes(t_main *main);
+char	*ft_getenv(t_main *main, char *name);
+int		cd(t_main *main);
+char	**cmd_args_to_argv_recorder2(t_main *main);
+int		exists(const char *command);
+int		check_dir (char *cmd);
+int		execute_pipes (t_main *main);
+char	**cmd_args_to_argv_recorder_p(t_job *job);
+int		echo(t_main *main);
+int		exit_command(t_main *main);
+int		env(t_main *main);
+int		export(t_main *main);
+char	**env_recorder(t_main *main);
+char	**env_recorder2(char **envir, int len);
+int		checker (t_main *main, char **a, char **e);
+int		unset(t_main *main);
+void	process_folder_or_ready_exe(t_main *main);
+void	process_builtins_in_pipes(t_main *main, char **cmd);
+int		process_exe_in_pipes(t_main *main, char **cmd);
+void	process_folder_in_pipes(t_main *main, char **cmd);
+void	redir_one_right(t_main *main);
+void	redir_two_right(t_main *main);
+int		count_redirects(t_main *main);
+int		redir_one_left(t_main *main);
+char	*check_valid_redir(t_main *main);
+int		redir_two_left(t_main *main);
+void	process_redirects(t_main *main);
+int		execute_pipes_and_redirs(t_main *main);
+char	***pipe_cmd_args_recorder(t_main *main);
+void	stdin_and_out_to_pipes(int prev_fds[], int next_fds[]);
+int		find_file_in_folder(t_redir *redir);
+void	process_redirects_in_pipes2(t_main *main);
+void	process_builtins_and_divide_externals_in_rp(t_main *main);
+int		process_buildins(t_main *main);
+int		redir_two_left_in_pipes(t_main *main);
 void	exit_code(t_main *main);
 int		path_mistakes(t_main *main);
 void	command_not_found_in_exe(t_main *main, char **command);
-// void	command_not_found(t_main *main, char **command);
 void	double_for_sort_algo(char **envir, int size);
 void	put_da_brackets(char **e);
 void	process_multiline_in_pipes(t_main *main);
@@ -274,5 +275,5 @@ char **cmd);
 void	close_free(char ***commands, int i, int *prev_pipe_fds);
 void	execute_pipes_end_part(t_main *main, int i, char ***commands);
 
-void	rl_replace_line();
+void	rl_replace_line(const char *text, int clear_undo);
 #endif //MINISHELL_H

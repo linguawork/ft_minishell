@@ -6,11 +6,25 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/22 18:01:15 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/28 17:42:21 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/28 23:34:54 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	processor(t_main *main)
+{
+	if (main->job->pipe->redir->command && \
+		!main->job->pipe->redir->error && main->job->num_pipes == 0 && \
+		main->job->num_redirects == 0)
+		process_builtins_and_divide_externals(main);
+	if (main->job->num_pipes != 0 && main->job->num_redirects == 0)
+		execute_pipes(main);
+	if (main->job->num_pipes == 0 && main->job->num_redirects != 0)
+		process_redirects(main);
+	if (main->job->num_pipes != 0 && main->job->num_redirects != 0)
+		execute_pipes_and_redirs(main);
+}
 
 void	process_redirects(t_main *main)
 {

@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:09:25 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/28 14:57:01 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/28 23:42:33 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ void	*arrays_free(char **s)
 		free(s[i]);
 		i++;
 	}
-	free(s);
+	if (s)
+		free(s);
 	return (NULL);
 }
 

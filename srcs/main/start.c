@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   start.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:41 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/21 12:09:37 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/28 23:34:06 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	copy_env(t_main *main, char **env)
 
 void	ctrl_d(int sig)
 {
-//	printf("\033[Aminishell: exit\n");
+	printf("\e[u\e[Aminishell: exit\n");
 	exit(sig);
 }
 
@@ -48,6 +48,19 @@ void	ctrl_c(int sig)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+}
+
+char	*get_line(void)
+{
+	char	*string;
+
+	printf("\e[s");
+	string = readline("minishell: ");
+	if (!string)
+		ctrl_d(131);
+	else if (*string)
+		add_history(string);
+	return (string);
 }
 
 int	main(int ac, char **av, char **env)
@@ -63,28 +76,12 @@ int	main(int ac, char **av, char **env)
 	tcsetattr(0, TCSANOW, &term);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, &ctrl_c);
-    while (1)
+	while (1)
 	{
-	    printf("\e[s");
-		string = readline("minishell: ");
-		if (!string) {
-            printf("\e[u\e[Aminishell: exit\n");
-            ctrl_d(131);
-        }
-		else if (*string)
-			add_history(string);
-
+		string = get_line();
 		parser(&main, string);
 		mem_free(&string);
-        if (main.job->pipe->redir->command && !main.job->pipe->redir->error && main.job->num_pipes == 0 &&
-        main.job->num_redirects == 0)
-            process_builtins_and_divide_externals(&main);
-        if (main.job->num_pipes != 0 && main.job->num_redirects == 0)
-            execute_pipes(&main);
-        if (main.job->num_pipes == 0 && main.job->num_redirects != 0)
-            process_redirects(&main);
-        if (main.job->num_pipes != 0 && main.job->num_redirects != 0)
-            execute_pipes_and_redirs(&main);
+		processor(&main);
 		end_session(&main);
 	}
 	av[ac] = env[ac];

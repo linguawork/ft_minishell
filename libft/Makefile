@@ -47,7 +47,7 @@ FLAGS = -Wall -Wextra -Werror
 all: $(NAME) $?
 
 %.o: %.c
-	gcc  -c $? #$(FLAGS)
+	gcc  -c $? $(FLAGS)
 
 $(NAME): ${OBJS}
 	ar rc $(NAME) $?

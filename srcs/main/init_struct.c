@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_minishell.c                                   :+:      :+:    :+:   */
+/*   init_struct.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/09 12:40:47 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/23 10:58:48 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/29 00:01:49 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@ void	end_session(t_main *main)
 	main->job->num_redirects = 0;
 	main->job->job_next = NULL;
 	main->job->pipe_next = NULL;
-    main->job->pipe->redir->command = NULL;
-    main->job->pipe->redir->args = NULL;
-    main->job->pipe->redir->redir_file = NULL;
+	main->job->pipe->redir->command = NULL;
+	main->job->pipe->redir->args = NULL;
+	main->job->pipe->redir->redir_file = NULL;
 	main->job->pipe->redir->redir_next = NULL;
 	main->job->pipe->redir->error = 0;
 	main->job->pipe->redir->redir_type = ERROR;
@@ -72,8 +72,8 @@ void	inc_SHLVL(char **env)
 	int		i;
 	int		len;
 	int		nbr;
-	char 	*str;
-	char 	*tmp;
+	char	*str;
+	char	*tmp;
 
 	i = -1;
 	while (env[++i])
@@ -85,8 +85,8 @@ void	inc_SHLVL(char **env)
 			free(env[i]);
 			tmp = ft_itoa(++nbr);
 			env[i] = ft_strjoin(str, tmp);
-            free(tmp);
-            free(str);
+			free(tmp);
+			free(str);
 		}
 	}
 }

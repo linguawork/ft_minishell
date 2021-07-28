@@ -58,7 +58,6 @@ static char	*get_multi_text(t_main *main, t_parser *parser)
 	int		find_key;
 	char	*del;
 	char	*buf;
-	char	*tmp;
 
 	del = NULL;
 	buf = NULL;
@@ -72,20 +71,13 @@ static char	*get_multi_text(t_main *main, t_parser *parser)
 	while (!find_key)
 	{
 		if (buf)
-        {
-//          append_buf(main, parser, buf);
-            append_to_redir_file(main, parser, buf);
-            tmp = parser->line;
-            parser->line = ft_strjoin(parser->line, "\n");
-            mem_free(&tmp);
-            mem_free(&buf);
-        }
+			append_buf(main, parser, buf);
 		buf = readline("> ");
 		if (ft_strnstr(del, buf, ft_strlen(del)))
 			find_key = 1;
 	}
-    mem_free(&buf);
-    mem_free(&del);
+	mem_free(&buf);
+	mem_free(&del);
 	return (parser->line);
 }
 

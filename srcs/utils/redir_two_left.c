@@ -68,7 +68,7 @@ int	redir_two_left(t_main *main)
 		redir = redir->redir_next;
 	last_node_double_left(redir, file, main, cmd);
 	cmd =NULL;
-//	redir->args = NULL;
+	redir->args = NULL;
 	unlink(file);
 	return (0);
 }
