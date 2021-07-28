@@ -105,7 +105,7 @@ int	process_exe(t_main *main)
 	binar = ft_split(path, ':');
 	flag = searching_cmd_cycle(main, binar, i, command);
 	arrays_free(binar);
-	if (flag == 0)
+	if (flag == 0 && !(ft_strchr(command, '/')))
 		command_not_found_in_exe(main, &command);
 	return (0);
 }

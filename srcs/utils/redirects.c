@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/22 18:01:15 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/28 23:34:54 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/29 01:56:37 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,25 @@ void	process_redirects(t_main *main)
 		redir_one_left(main);
 	if (main->job->pipe->redir->redir_type == INPUT_MULTILINE)
 		redir_two_left(main);
+}
+
+char	*ft_strchr_equal(const char *s, int c)
+{
+	size_t		len;
+	char		*str;
+	int			equal;
+
+	equal = 0;
+	if (!s || *s == '\0')
+		return (NULL);
+	str = (char *)s;
+	len = ft_strlen(str) + 1;
+	while (len-- && !equal)
+	{
+		if (*str == '=')
+			equal = 1;
+		if (*str++ == c)
+			return (str - 1);
+	}
+	return (NULL);
 }

@@ -65,14 +65,6 @@ int	process_buildins(t_main *main)
 	}
 }
 
-// void	command_not_found(t_main *main, char **command)
-// {
-// 	ft_putstr_fd("minishell: ", 2);
-// 	ft_putstr_fd(*command, 2);
-// 	ft_putstr_fd(": Command not found\n", 2);
-// 	main->exit = 127;
-// }
-
 void	process_builtins_and_divide_externals(t_main *main)
 {
 	int	flag;

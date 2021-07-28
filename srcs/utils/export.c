@@ -23,7 +23,7 @@ void	check_args(t_main *main, char **a)
 	i = 0;
 	while (invalid_char_str[i])
 	{
-		if (!ft_isalpha(*a[0]) || (ft_strchr(*a, invalid_char_str[i])))
+		if (!ft_isalpha(*a[0]) || (ft_strchr_equal(*a, invalid_char_str[i])))
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(main->job->pipe->redir->command, 2);

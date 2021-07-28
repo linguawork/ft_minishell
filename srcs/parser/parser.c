@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
+static void	pars_double_quote(t_parser *parser, t_main *main)
 {
 	int		c;
 
@@ -21,11 +21,7 @@ static void	pars_double_quote(t_parser *parser, t_main *main, t_job *job)
 		   && c != '\0')
 	{
 		if (c == '$')
-		{
 			pars_env_and_append_line(parser, main);
-			if (parser->cur_c == '"')
-				set_error_and_free_pipe(job, -1);
-		}
 		else
 			add_char(&parser->line, c);
 	}
@@ -42,7 +38,7 @@ static t_job	*distribution_parser(t_main *main, t_job *job, t_parser *parser)
 	if (!ft_isprint(c) || c == ';')
 		return (job);
 	else if (c == '"')
-		pars_double_quote(parser, main, job);
+		pars_double_quote(parser, main);
 	else if (c == '\'')
 		pars_quote(parser, main);
 	else if (c == '$')

@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/29 00:04:24 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/29 00:08:41 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,6 +274,7 @@ void	forking_in_pipes(t_main *main, int *prev_pipe_fds, int *next_pipe_fds, \
 char **cmd);
 void	close_free(char ***commands, int i, int *prev_pipe_fds);
 void	execute_pipes_end_part(t_main *main, int i, char ***commands);
+char	*ft_strchr_equal(const char *s, int c);
 
 void	rl_replace_line(const char *text, int clear_undo);
 #endif //MINISHELL_H
