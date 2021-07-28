@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:40:14 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/15 20:20:04 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/23 10:43:28 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static int	check_error_syntax(t_parser *parser)
 {
 	char	*str;
 	char	c;
-	int ret;
+	int		ret;
 
 	ret = 0;
 	str = parser->string;
@@ -73,7 +73,7 @@ static int	check_error_syntax(t_parser *parser)
 		&& (*++str == '\0' || (ft_strchr(SPECIFICATORS, *str) && *str != c)))
 		ret = 1;
 	else if (ft_strchr(SPECIFICATORS, *str) && *str == c && ft_strchr
-	(SPECIFICATORS, *++str))
+		(SPECIFICATORS, *++str))
 		ret = 2;
 	if (ret == 1 || ret == 2)
 		print_error_syntax_message(parser->string, ret);
@@ -84,7 +84,7 @@ static void	parser_go(t_main *main, t_parser *parser)
 {
 	int		c;
 	t_job	*job;
-	int error;
+	int		error;
 
 	job = main->job;
 	error = check_error_syntax(parser);

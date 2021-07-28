@@ -58,4 +58,13 @@ run: $(NAME)
 norm:
 	norminette $(SRC_FILES) includes/*.h $(LIBFT_PATH)*.c
 
+norm_pars:
+	norminette $(PARS)
+
+norm_start:
+	norminette $(MAIN)
+
+norm_utils:
+	norminette $(UTILS)
+
 .PHONY:	all clean fclean re norm run

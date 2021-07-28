@@ -22,7 +22,7 @@ static int	ft_realloc(char **dst, int size)
 
 int	add_char(char **str, int c)
 {
-	int	len;
+	int		len;
 	char	*res;
 
 	len = ft_strlen(*str);
@@ -49,7 +49,7 @@ int	get_next_char(t_parser *parser, int *c)
 
 void	set_error_and_free_pipe(t_job *job, int n)
 {
-	t_pipe *pipe;
+	t_pipe	*pipe;
 
 	pipe = get_current_pipe(job);
 	free_data_redir(pipe->redir);
@@ -59,6 +59,7 @@ void	set_error_and_free_pipe(t_job *job, int n)
 void	print_error_syntax_message(char *string, int len)
 {
 	char	*error;
+
 	error = "minishell: syntax error near unexpected token `";
 	write(1, error, strlen(error));
 	write(1, string, len);

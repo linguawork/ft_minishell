@@ -6,7 +6,7 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/10 06:32:21 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/14 12:43:25 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/23 10:53:54 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ static char	*get_redir_file(t_parser *parser)
 {
 	int	c;
 
-	while (parser->cur_c && get_next_char(parser, &c) && (ft_strchr(VALID_SYMBOLS_FILES, c)
+	while (parser->cur_c && get_next_char(parser, &c)
+		&& (ft_strchr(VALID_SYMBOLS_FILES, c)
 			|| ft_isalnum(c)) && c != '\0')
 	{
 		if (c == '>' || c == '<')
@@ -31,9 +32,9 @@ static char	*get_redir_file(t_parser *parser)
 
 void	append_to_redir_file(t_main *main, t_parser *parser, char *buf)
 {
-	int	c;
-	int	i_old;
-	char *str_old;
+	int		c;
+	int		i_old;
+	char	*str_old;
 
 	i_old = parser->index;
 	str_old = parser->string;
@@ -51,8 +52,7 @@ void	append_to_redir_file(t_main *main, t_parser *parser, char *buf)
 	parser->cur_c = (int)str_old[i_old];
 }
 
-static char	*
-get_multi_text(t_main *main, t_parser *parser)
+static char	*get_multi_text(t_main *main, t_parser *parser)
 {
 	int		c;
 	int		find_key;
@@ -66,13 +66,14 @@ get_multi_text(t_main *main, t_parser *parser)
 		add_char(&parser->line, c);
 	del = parser->line;
 	if (!del)
-        return (check_valid_redir(main));
+		return (check_valid_redir(main));
 	parser->line = NULL;
 	find_key = 0;
 	while (!find_key)
 	{
 		if (buf)
         {
+//          append_buf(main, parser, buf);
             append_to_redir_file(main, parser, buf);
             tmp = parser->line;
             parser->line = ft_strjoin(parser->line, "\n");
@@ -82,9 +83,6 @@ get_multi_text(t_main *main, t_parser *parser)
 		buf = readline("> ");
 		if (ft_strnstr(del, buf, ft_strlen(del)))
 			find_key = 1;
-//		else if (parser->line)
-//			parser->line = ft_strjoin(parser->line, "\n");
-//        check_valid_redir(main);
 	}
     mem_free(&buf);
     mem_free(&del);
@@ -127,7 +125,7 @@ void	redirect(t_main *main, t_job *job, t_parser *parser)
 	redir = get_curren_redir(pipe->redir);
 	redir_type = get_redir_type(parser);
 	if (parser->cur_c)
-	    get_next_char(parser, &c);
+		get_next_char(parser, &c);
 	if (c && c != ' ' && c != '>' && c != '<')
 		add_char(&parser->line, c);
 	if (redir_type == INPUT_MULTILINE)
