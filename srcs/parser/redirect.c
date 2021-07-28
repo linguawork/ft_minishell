@@ -51,7 +51,8 @@ void	append_to_redir_file(t_main *main, t_parser *parser, char *buf)
 	parser->cur_c = (int)str_old[i_old];
 }
 
-static char	*get_multi_text(t_main *main, t_parser *parser)
+static char	*
+get_multi_text(t_main *main, t_parser *parser)
 {
 	int		c;
 	int		find_key;

@@ -59,7 +59,7 @@ int	redir_two_left(t_main *main)
 	char	*file;
 
 	check_valid_redir(main);
-	file = "tmp";
+	file = ft_strdup("tmp");
 	redir = main->job->pipe->redir;
 	cmd = redir->command;
 	if (redir && redir->redir_next == NULL)
@@ -68,7 +68,7 @@ int	redir_two_left(t_main *main)
 		redir = redir->redir_next;
 	last_node_double_left(redir, file, main, cmd);
 	cmd =NULL;
-	redir->args = NULL;
+//	redir->args = NULL;
 	unlink(file);
 	return (0);
 }
