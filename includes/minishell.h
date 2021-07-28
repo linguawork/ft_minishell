@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/27 23:42:21 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/28 19:55:58 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 # define SPEC_SYMBOLS "$'\" \n><|"
 # define SPECIFICATORS "&;|><!()"
 # define INVALID_CHAR_STR "-+,.:"
+# define UNSET_INVALID_CHAR_STR "=-+,.:"
 
 /*
 ** Errors
@@ -260,6 +261,18 @@ int len);
 void	double_right_cycle_first_node(t_redir *redir, int fd);
 int		check_if_file_exists(t_main *main, t_redir *redir, int file);
 void	first_if(t_redir *redir, int file, t_main *main);
+int		redir_one_left_in_pipes(t_main *main);
+void	redir_one_right_in_pipes(t_main *main);
+void	redir_two_right_in_pipes(t_main *main);
+void	check_string_two_cycles(char **en, int i);
+void	process_folder2(t_main *main, int status_num, char *command, int d);
+void	process_folder3(t_main *main, int status_num, char *command, int d);
+void	no_forking2_in_rp(t_main *main, char **binar, int i, char *command);
+void	execute_pipes_beginning_part(t_main *main, int *next_pipe_fds);
+void	forking_in_pipes(t_main *main, int *prev_pipe_fds, int *next_pipe_fds, \
+char **cmd);
+void	close_free(char ***commands, int i, int *prev_pipe_fds);
+void	execute_pipes_end_part(t_main *main, int i, char ***commands);
 
 void	rl_replace_line();
 #endif //MINISHELL_H

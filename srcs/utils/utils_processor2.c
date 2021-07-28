@@ -6,31 +6,33 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:09:32 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/27 18:42:22 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/28 17:42:33 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int count_args(char **args)
+int	count_args(char **args)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while(args[i])
-        i++;
-    return(i);
+	i = 0;
+	while (args[i])
+		i++;
+	return (i);
 }
 
-int exists(const char *command)
+int	exists(const char *command)
 {
-    FILE *file;
-    if ((file = fopen(command, "r+")))
-    {
-        fclose(file);
-        return 1;
-    }
-    return 0;
+	FILE	*file;
+
+	file = fopen(command, "r+");
+	if (file)
+	{
+		fclose(file);
+		return (1);
+	}
+	return (0);
 }
 
 int	count_redirects(t_main *main)
@@ -46,4 +48,29 @@ int	count_redirects(t_main *main)
 		i++;
 	}
 	return (i);
+}
+
+int	how_many_lines(char **a)
+{
+	int		i;
+	char	**env;
+
+	i = 0;
+	env = a;
+	while (env[i] != NULL)
+	{
+		i++;
+	}
+	return (i);
+}
+
+void	check_string_two_cycles(char **en, int i)
+{
+	while (en[i])
+	{
+		en[i] = en[i + 1];
+		i++;
+	}
+	while (en[i])
+		i--;
 }

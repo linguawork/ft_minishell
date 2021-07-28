@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:07:31 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/26 17:06:40 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/28 20:41:41 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@ char **cmd)
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (ft_strchr(cmd[0], '/'))
+	{
 		execve(cmd[0], cmd, NULL);
+		exec_mistakes(main);
+		exit(126);
+	}
 	else
 		process_exe_in_pipes(main, cmd);
 }
