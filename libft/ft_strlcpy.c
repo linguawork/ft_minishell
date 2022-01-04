@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/28 21:06:11 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/25 19:53:31 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/28 23:47:21 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,8 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
 	size_t	src_len;
 
-//	if (dst == NULL || src == NULL)
-//		return (0);
-    if (src == NULL)
-        return (0);
+	if (src == NULL)
+		return (0);
 	src_len = ft_strlen(src);
 	if (src_len < dstsize)
 		ft_memcpy(dst, src, src_len + 1);

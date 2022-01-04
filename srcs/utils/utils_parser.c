@@ -6,13 +6,13 @@
 /*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/18 08:32:49 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/10 06:07:09 by meunostu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	ft_realloc(char **dst, int size)
+static int	ft_realloc(char **dst, int size)
 {
 	*dst = ft_calloc(size, 1);
 	if (!*dst)
@@ -22,7 +22,7 @@ int	ft_realloc(char **dst, int size)
 
 int	add_char(char **str, int c)
 {
-	int	len;
+	int		len;
 	char	*res;
 
 	len = ft_strlen(*str);
@@ -37,28 +37,31 @@ int	add_char(char **str, int c)
 	return (1);
 }
 
-int	get_next_char(t_parser *parser,int *c)
+int	get_next_char(t_parser *parser, int *c)
 {
-	char	*buf;
-	int		readed;
-
 	parser->index++;
-	*c = parser->string[index];
-	if (!parser->string[index])
-        return (0);
-//	buf = malloc(sizeof(char) * 1);
-//	readed = read(0, buf, 1);
-//	if (readed == 0)
-//		return (0);
-//	else if (readed < 0)
-//		return (-1);
-//	*c = *buf;
-//	parser->cur_c = *buf;
-//	mem_free(&buf);buf
+	*c = parser->string[parser->index];
+	parser->cur_c = *c;
+	if (!parser->string[parser->index])
+		return (0);
 	return (1);
 }
 
-void	set_error(t_redir *redir, char *error)
+void	set_error_and_free_pipe(t_job *job, int n)
 {
-	redir->error = error;
+	t_pipe	*pipe;
+
+	pipe = get_current_pipe(job);
+	free_data_redir(pipe->redir);
+	pipe->redir->error = n;
+}
+
+void	print_error_syntax_message(char *string, int len)
+{
+	char	*error;
+
+	error = "minishell: syntax error near unexpected token `";
+	write(1, error, strlen(error));
+	write(1, string, len);
+	write(1, "'\n", 2);
 }

@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:42:03 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/28 23:44:20 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	all_mem_free(t_main *main)
-{
-	while (main->my_env)
-		mem_free(main->my_env++);
-}
 
 void	exit_with_error(t_main *main, char *massage)
 {
@@ -25,16 +19,14 @@ void	exit_with_error(t_main *main, char *massage)
 	exit(-1);
 }
 
-void	arr_free(char **arr)
+char 	**ft_arrdup(char **src, int len)
 {
-    int i;
+	int		i;
+	char	**dst;
 
-    i = 0;
-	while (arr && arr[i])
-	{
-		mem_free(arr + i);
-		arr[i] = NULL;
-		i++;
-	}
-    arr = NULL;
+	dst = ft_calloc(len + 2, sizeof(char *));
+	i = 0;
+	while (src && *src)
+		dst[i++] = *src++;
+	return (dst);
 }

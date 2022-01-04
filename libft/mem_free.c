@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mem_free.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 08:27:31 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Updated: 2021/07/28 23:46:38 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void	mem_free(char **str)
 {
-	if (*str)
+	if (str && *str)
+	{
 		free(*str);
-	*str = NULL;
+		*str = NULL;
+	}
 }
