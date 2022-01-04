@@ -1,3 +1,0 @@
-du: /Users/meunostu/.DocumentRevisions-V100: Permission denied
-du: /Users/meunostu/.fseventsd: Permission denied
-du: /Users/meunostu/.TemporaryItems: Permission denied
