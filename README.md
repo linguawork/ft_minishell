@@ -15,10 +15,7 @@ Developed by: **mihdevel** and **linguawork**
 ##Getting Started
 
 1. Inslall `readline` library:
-2. Use `git` to clone this project
-
-    `git clone https://github.com/mihdevel/minishell`
-
+2. Use `git` to clone this project `git clone https://github.com/mihdevel/minishell`
 4. Direct to the root directory `cd ./minishell`
 5. Build this project using Makefile `make` (make rules: all, run, clean, fclean and re)
 6. Get Started! `./minishell`
