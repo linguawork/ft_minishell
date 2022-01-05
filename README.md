@@ -1,6 +1,6 @@
-##Info
+## Info
 
-###Shell for Unix 👹
+### Shell for Unix 👹
 
 Minishell is the project of the **School 21**. It's a minimum viable version of a real shell. 
 The main goal is to have a good understanding of process creation and synchronisation using the C programmming language.
@@ -12,7 +12,7 @@ The main goal is to have a good understanding of process creation and synchronis
 Developed by: **mihdevel** and **linguawork**
 ***
 
-##Getting Started
+## Getting Started
 
 1. Inslall `readline` library:
 2. Use `git` to clone this project `git clone https://github.com/mihdevel/minishell`
@@ -21,9 +21,9 @@ Developed by: **mihdevel** and **linguawork**
 6. Get Started! `./minishell`
 ***
 
-##How install readline library
+## How install readline library
 
-###Linux
+### Linux
 
 On Debian based platforms, like Ubuntu:
 
@@ -35,6 +35,6 @@ Platforms with yum, like SUSE:
 
 For other platform please search for the package name on google, thx :)
 
-###MAC
+### MAC
 
     brew install readline
