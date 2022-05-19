@@ -48,7 +48,8 @@ Developed by:  **linguawork** and **mihdevel**
 ## Getting Started
 
 1. Inslall `readline` library;
-2. Use `git` to clone this project `git clone https://github.com/linguawork/ft_minishell`;
+2. Make sure you have brew installed to run readline,otherwise check the bottom of the page for the command to run
+3. Use `git` to clone this project `git clone https://github.com/linguawork/ft_minishell`;
 4. Direct to the root directory `cd ./minishell`;
 5. Build this project using Makefile `make` (make rules: all, run, clean, fclean and re);
 6. Get Started! `./minishell`.
