@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 05:36:17 by meunostu          #+#    #+#             */
-/*   Updated: 2022/01/04 19:26:00 by meunostu         ###   ########.fr       */
+/*   Updated: 2022/05/19 14:21:20 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,8 +148,8 @@ void	append_to_redir_file(t_main *main, t_parser *parser, char *buf);
 ** PARSER WRITE TO MAIN
 */
 void	write_pars_line(t_main *main, t_job *job, t_parser *parser);
-void	check_symbols_and_append_line(t_main *main, t_job *job, t_parser
-			*parser);
+void	check_symbols_and_append_line(t_main *main, t_job *job, \
+t_parser *parser);
 void	append_buf(t_main *main, t_parser *parser, char *buf);
 
 /*
@@ -216,7 +216,7 @@ int		env(t_main *main);
 int		export(t_main *main);
 char	**env_recorder(t_main *main);
 char	**env_recorder2(char **envir, int len);
-int		checker (t_main *main, char **a, char **e);
+int		checker(t_main *main, char **a, char **e);
 int		unset(t_main *main);
 void	process_folder_or_ready_exe(t_main *main);
 void	process_builtins_in_pipes(t_main *main, char **cmd);
@@ -275,6 +275,5 @@ char **cmd);
 void	close_free(char ***commands, int i, int *prev_pipe_fds);
 void	execute_pipes_end_part(t_main *main, int i, char ***commands);
 char	*ft_strchr_equal(const char *s, int c);
-
 void	rl_replace_line(const char *text, int clear_undo);
 #endif //MINISHELL_H

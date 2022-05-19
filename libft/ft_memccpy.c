@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memccpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 19:45:24 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/02 19:05:34 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 21:08:23 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 
 void	*ft_memccpy(void *dst, const void *src, int c, size_t n)
 {
-	unsigned char		*dstcpy;
-	const unsigned char	*srccpy;
+	unsigned char	*first;
+	unsigned char	*second;
+	unsigned char	d;
+	int				i;
 
-	dstcpy = (unsigned char *)dst;
-	srccpy = (unsigned char *)src;
-	if (n)
+	first = (unsigned char *)src;
+	second = (unsigned char *)dst;
+	d = (unsigned char)c;
+	i = 0;
+	while (n != 0)
 	{
-		while (n--)
-		{
-			if (*srccpy == (unsigned char)c)
-			{
-				*dstcpy++ = *srccpy++;
-				return (dstcpy);
-			}
-			*dstcpy++ = *srccpy++;
-		}
+		second[i] = first[i];
+		if (first[i] == d)
+			return ((void *)&second[i + 1]);
+		i++;
+		n--;
 	}
-	return (NULL);
+	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 16:24:55 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/18 17:33:10 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 22:31:10 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,22 @@
 
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	char			*dest;
-	unsigned int	i;
+	int		length;
+	int		i;
+	char	*newstring;
 
+	if (s == 0)
+		return (0);
+	length = ft_strlen(s);
+	newstring = (char *)malloc(sizeof(char) * length + 1);
+	if (newstring == 0)
+		return (0);
 	i = 0;
-	if (!s)
-		return (NULL);
-	dest = (char *)malloc(sizeof(char) * (ft_strlen(s) + 1));
-	if (!dest)
-		return (NULL);
-	while (*s)
+	while (i < length)
 	{
-		dest[i] = f(i, *s++);
-		if (!dest[i])
-			return (NULL);
+		newstring[i] = f(i, s[i]);
 		i++;
 	}
-	dest[i] = '\0';
-	return (dest);
+	newstring[i] = '\0';
+	return (newstring);
 }

@@ -3,93 +3,91 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/18 09:53:26 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/30 12:26:03 by areggie           #+#    #+#             */
+/*   Updated: 2022/04/26 22:16:10 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	char	*before_n(char *cache)
+int	see_remnants_else_if1(char *r, char **l)
 {
-	char		*dst;
-	size_t		i;
-
-	i = 0;
-	while (cache && cache[i] && cache[i] != '\n')
-		i++;
-	dst = malloc(i + 1);
-	if (!dst)
-		return (NULL);
-	dst[i] = '\0';
-	while (i--)
-		dst[i] = cache[i];
-	return (dst);
-}
-
-static	char	*after_n(char *cache)
-{
-	char		*p_n;
-	char		*dst;
-
-	p_n = ft_strchr(cache, '\n');
-	if (!cache || !*cache || !p_n)
-	{
-		free(cache);
-		return (NULL);
-	}
-	dst = ft_strdup(p_n + 1);
-	free(cache);
-	return (dst);
-}
-
-static int	write_cache(char **cache, int fd)
-{
-	int		readed;
-	char	*buf;
-
-	readed = 1;
-	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buf)
+	*l = ft_strdup(r);
+	if (!(*l))
 		return (-1);
-	while (!ft_strchr(*cache, '\n'))
+	ft_bzero(r, ft_strlen(r));
+	return (0);
+}
+
+int	see_remnants_else_if2(char **l)
+{
+	*l = ft_calloc(1, 1);
+	if (!(*l))
+		return (-1);
+	return (0);
+}
+
+int	see_remnants(char *rem, char **line)
+{
+	char		*ptr;
+
+	ptr = NULL;
+	if (rem[0] != '\0')
 	{
-		readed = read(fd, buf, BUFFER_SIZE);
-		if (readed == 0)
-			break ;
-		else if (readed < 0)
+		ptr = ft_strchr(rem, '\n');
+		if (ptr)
 		{
-			free(buf);
-			free(*cache);
-			return (-1);
+			*ptr = '\0';
+			*line = ft_strdup(rem);
+			if (!(*line))
+				return (-1);
+			ptr++;
+			ft_strlcpy(rem, ptr, BUFFER_SIZE + 1);
+			return (1);
 		}
-		buf[readed] = '\0';
-		*cache = ft_strjoin(*cache, buf);
-		if (!*cache)
-			return (-1);
+		else
+			see_remnants_else_if1 (rem, line);
 	}
-	free(buf);
-	return (readed);
+	else
+		see_remnants_else_if2 (line);
+	return (0);
+}
+
+int	record_to_line(char **line, char *buffer)
+{
+	*line = ft_strjoin(*line, buffer);
+	if (!(*line))
+		return (-1);
+	return (0);
 }
 
 int	get_next_line(int fd, char **line)
 {
-	static char	*cache;
-	int			readed;
+	static char	remnants[BUFFER_SIZE + 1];
+	int			whatwasread;
+	char		buffer[BUFFER_SIZE + 1];
+	char		*ptr;
+	int			flag;
 
-	if (fd < 0 || !line || BUFFER_SIZE <= 0 || (read(fd, NULL, 0) == -1))
+	ptr = NULL;
+	if (!line || ((read(fd, ptr, 0)) < 0) || BUFFER_SIZE < 1)
 		return (-1);
-	readed = write_cache(&cache, fd);
-	if (readed == -1)
-		return (-1);
-	*line = before_n(cache);
-	if (!*line)
-		return (-1);
-	cache = after_n(cache);
-	if (readed == 0)
-		return (0);
-	else
-		return (1);
+	flag = see_remnants(remnants, line);
+	if ((flag == 1) || (flag == -1))
+		return (flag);
+	buffer[0] = 0;
+	whatwasread = 1;
+	while (!(ft_strchr(buffer, '\n')) && whatwasread != 0)
+	{
+		record_to_line (line, buffer);
+		whatwasread = read(fd, buffer, BUFFER_SIZE);
+		if (!(whatwasread))
+			return (0);
+		buffer[whatwasread] = '\0';
+	}
+	process_rem_and_buf(ptr, remnants, buffer);
+	record_to_line (line, buffer);
+	return (1);
 }

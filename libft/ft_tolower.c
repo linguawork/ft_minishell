@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_tolower.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 18:38:54 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/10/31 19:45:09 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/11 18:55:17 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 int	ft_tolower(int c)
 {
 	if (c >= 65 && c <= 90)
-		c = c + 32;
-	return (c);
+	{
+		return (c + ('a' - 'A'));
+	}
+	else
+	{
+		return (c);
+	}
 }

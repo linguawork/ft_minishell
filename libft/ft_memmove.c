@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/04 11:29:10 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:33 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/02 23:17:49 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 21:29:50 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,24 @@
 
 void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	unsigned char	*s;
-	unsigned char	*d;
+	unsigned char	*a;
+	unsigned char	*b;
 
-	s = (unsigned char *)src;
-	d = (unsigned char *)dst;
-	if (s == d)
+	a = (unsigned char *)src;
+	b = (unsigned char *)dst;
+	if (a == NULL && b == NULL)
 		return (dst);
-	if (s < d)
+	if (b > a)
 	{
-		s = (unsigned char *)src + len - 1;
-		d = (unsigned char *)dst + len - 1;
-		while (len--)
-			*d-- = *s--;
+		while (len)
+		{
+			len = len - 1;
+			b[len] = a[len];
+		}
 	}
-	else
+	if (b <= a)
 	{
-		while (len--)
-			*d++ = *s++;
+		ft_memcpy(b, a, len);
 	}
 	return (dst);
 }

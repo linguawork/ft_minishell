@@ -3,21 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   ft_putstr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/03 10:33:44 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2021/03/01 19:28:54 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 21:33:44 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_putstr(char *str)
+void	ft_putstr(char *str)
 {
-	int	count;
-
-	count = 0;
-	while (*str)
-		count += ft_putchar(*(str++));
-	return (count);
+	while (*str != '\0')
+	{
+		ft_putchar(*str);
+		str++;
+	}
 }

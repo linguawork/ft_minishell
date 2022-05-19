@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/29 14:39:21 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/09 14:11:02 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 22:30:13 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,20 @@
 
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 {
-	const char	*dst2;
-	const char	*src2;
-	size_t		dstsizecpy;
-	size_t		dst_new_len;
+	size_t		d;
+	size_t		s;
+	int			i;
 
-	dst2 = dst;
-	src2 = src;
-	dstsizecpy = dstsize;
-	while (dstsizecpy-- != 0 && *dst != '\0')
-		dst++;
-	dst_new_len = dst - dst2;
-	dstsizecpy = dstsize - dst_new_len;
-	if (dstsizecpy-- == 0)
-		return (dst_new_len + ft_strlen(src));
-	while (*src != '\0')
+	d = ft_strlen(dst);
+	s = ft_strlen(src);
+	if (d >= dstsize)
+		return (s + dstsize);
+	i = 0;
+	while (src[i] && d + i + 1 < dstsize)
 	{
-		if (dstsizecpy != 0)
-		{
-			*dst++ = *src;
-			dstsizecpy--;
-		}
-		src++;
+		dst[d + i] = src[i];
+		i++;
 	}
-	*dst = '\0';
-	return (dst_new_len + (src - src2));
+	dst[i + d] = '\0';
+	return (d + s);
 }
