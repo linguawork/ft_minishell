@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isdigit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 19:08:27 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:33 by meunostu         ###   ########.fr       */
+/*   Created: 2020/10/30 21:28:22 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/09 20:17:32 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,12 @@
 
 int	ft_isdigit(int c)
 {
-	if (c >= 48 && c <= 57)
+	if ((c >= 48 && c <= 57))
+	{
 		return (1);
+	}
 	else
+	{
 		return (0);
+	}
 }

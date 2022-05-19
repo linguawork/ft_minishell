@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/06 14:23:16 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:33 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/04 22:22:40 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 21:29:03 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,22 @@
 
 int	ft_memcmp(const void *s1, const void *s2, size_t n)
 {
-	const unsigned char	*copy1;
-	const unsigned char	*copy2;
+	unsigned char	*line1;
+	unsigned char	*line2;
+	size_t			i;
 
-	copy1 = s1;
-	copy2 = s2;
-	while (n--)
-		if (*copy1++ != *copy2++)
-			return (*--copy1 - *--copy2);
+	line1 = (unsigned char *)s1;
+	line2 = (unsigned char *)s2;
+	i = 0;
+	if (s1 == NULL && s2 == NULL)
+		return (0);
+	while (i < n)
+	{
+		if (line1[i] != line2[i])
+		{
+			return (line1[i] - line2[i]);
+		}
+		i++;
+	}
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 19:19:27 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:13:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/10/30 18:41:15 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/09 20:16:41 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 int	ft_isalpha(int c)
 {
 	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122))
+	{
 		return (1);
-	else
-		return (0);
+	}
+	return (0);
 }

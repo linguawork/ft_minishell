@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/28 21:06:11 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/28 23:47:21 by areggie          ###   ########.fr       */
+/*   Created: 2020/11/05 21:47:41 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/10 22:30:28 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,29 @@
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
-	size_t	src_len;
+	char		*d;
+	const char	*s;
+	int			i;
+	int			j;
 
-	if (src == NULL)
+	d = (char *)dst;
+	s = (const char *)src;
+	i = 0;
+	j = 0;
+	if (s == NULL && d == NULL)
 		return (0);
-	src_len = ft_strlen(src);
-	if (src_len < dstsize)
-		ft_memcpy(dst, src, src_len + 1);
-	else if (dstsize != 0)
+	if ((!(dstsize)))
+		return (ft_strlen(s));
+	while (dstsize != 0 && s[i] != 0)
 	{
-		ft_memcpy(dst, src, dstsize - 1);
-		dst[dstsize - 1] = '\0';
+		d[j] = s[i];
+		i++;
+		j++;
+		dstsize--;
 	}
-	return (src_len);
+	if (dstsize > 0)
+		d[j] = '\0';
+	else
+		d[j - 1] = '\0';
+	return (ft_strlen(s));
 }

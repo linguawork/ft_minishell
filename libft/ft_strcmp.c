@@ -6,12 +6,11 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 18:41:33 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/28 23:48:07 by areggie          ###   ########.fr       */
+/*   Updated: 2021/05/16 18:52:55 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <stdio.h>
 
 int	ft_strcmp(const char *s1, const char *s2)
 {
@@ -25,4 +24,5 @@ int	ft_strcmp(const char *s1, const char *s2)
 	while (line1[i] == line2[i] && line1[i] != '\0' && line2[i] != '\0')
 		i++;
 	return (line1[i] - line2[i]);
+	return (0);
 }

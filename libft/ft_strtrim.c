@@ -3,31 +3,55 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/06 15:20:09 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/15 20:21:34 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/11 18:53:38 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
+int	ternary(int r, int l, int length)
+{
+	if (r - l < 0)
+		length = 0;
+	else
+		length = (r - l);
+	return (length);
+}
+
+void	*strtrim_m_alloc(char	*str, size_t arr_length)
+{
+	str = (char *)malloc(sizeof(char) * (arr_length + 1));
+	if (!str)
+		return (NULL);
+	else
+		return (str);
+}
+
 char	*ft_strtrim(char const *s1, char const *set)
 {
-	char	*dest;
-	int		size;
+	int		right;
+	char	*nova;
+	int		left;
+	int		len;
 
-	size = 0;
-	if (!s1)
+	left = 0;
+	len = 0;
+	nova = NULL;
+	if (!s1 || !set)
 		return (NULL);
-	if (!set)
-		return ((char *)s1);
-	while (*s1 && ft_strchr(set, *s1))
-		s1++;
-	if (*s1)
-		size = ft_strlen(s1);
-	while (*s1 && ft_strrchr(set, s1[size]) && size > 0)
-		size--;
-	dest = ft_substr(s1, 0, size + 1);
-	return (dest);
+	right = ft_strlen(s1);
+	while (s1[left] && ft_strchr(set, s1[left]))
+		left++;
+	while (right && ft_strchr(set, s1[right - 1]))
+		right--;
+	len = ternary(right, left, len);
+	nova = strtrim_m_alloc(nova, len);
+	nova[len] = '\0';
+	right = 0;
+	while (right < len)
+		nova[right++] = s1[left++];
+	return (nova);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 10:58:33 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/11/13 20:38:35 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/11 18:54:53 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,28 +14,28 @@
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	size_t			len_s;
-	char			*dest;
-	unsigned int	count;
-	unsigned int	size;
+	char	*p;
+	int		i;
+	size_t	reallen;
 
-	count = 0;
-	if (!s)
+	if (!(s))
 		return (NULL);
-	len_s = ft_strlen(s);
-	if (start >= len_s)
-		return (ft_strdup(""));
-	size = len_s - start;
-	if (len > size)
-		len = size;
-	dest = (char *)malloc(sizeof(char) * (len + 1));
-	if (!dest)
+	reallen = ft_strlen(s);
+	if (start > reallen)
+		start = reallen;
+	if (len > reallen - start)
+		len = reallen - start;
+	if (start >= reallen)
+		return (ft_calloc(1, 1));
+	p = malloc(len + 1);
+	if (p == NULL)
 		return (NULL);
-	while (count < len)
+	i = 0;
+	while (s[start + i] != 0 && (size_t)i != len)
 	{
-		dest[count] = s[start + count];
-		count++;
+		p[i] = s[start + i];
+		i++;
 	}
-	dest[count] = '\0';
-	return (dest);
+	p[i] = '\0';
+	return (p);
 }

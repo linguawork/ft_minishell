@@ -6,7 +6,7 @@
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/18 18:08:49 by areggie           #+#    #+#             */
-/*   Updated: 2021/07/27 19:09:34 by areggie          ###   ########.fr       */
+/*   Updated: 2021/07/29 02:18:55 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,6 @@ int	redir_two_left(t_main *main)
 	cmd =NULL;
 	redir->args = NULL;
 	unlink(file);
+	free(file);
 	return (0);
 }

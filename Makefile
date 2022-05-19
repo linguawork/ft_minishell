@@ -36,7 +36,7 @@ all:$(NAME) $?
 
 $(NAME): $(OBJ_FILES)
 	$(MAKE) -C $(LIBFT_PATH)
-	$(CC) $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME) -lreadline -I/Users/meunostu/$(USER)/Cellar/readline/8.1/include -L/Users/$(USER)/.brew/Cellar/readline/8.1/lib/
+	$(CC) $(OBJ_FILES) $(LIBFT_PATH)libft.a -o $(NAME) -lreadline -I/Users/meunostu/$(USER)/Cellar/readline/8.1/include -L/Users/$(USER)/.brew/Cellar/readline/8.1.2/lib/
 
 clean:
 	$(MAKE) clean -C $(LIBFT_PATH)

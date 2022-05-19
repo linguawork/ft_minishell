@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 15:01:51 by meunostu          #+#    #+#             */
-/*   Updated: 2021/07/28 23:47:48 by areggie          ###   ########.fr       */
+/*   Created: 2020/11/15 16:17:27 by areggie           #+#    #+#             */
+/*   Updated: 2022/04/26 22:20:39 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,29 @@
 
 char	*ft_strjoin(char *s1, char *s2)
 {
-	size_t		len_s1;
-	size_t		len_s2;
-	char		*cat_s;
-	char		*start_s1;
-	char		*start_cat_s;
+	char	*s3;
+	size_t	i;
+	size_t	j;
 
-	if (!s2)
+	if (s1 == NULL || s2 == NULL)
 		return (NULL);
-	len_s1 = ft_strlen(s1);
-	len_s2 = ft_strlen(s2);
-	cat_s = malloc(sizeof(char) * (len_s1 + len_s2 + 1));
-	if (!cat_s)
+	s3 = malloc((sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1)));
+	if (!(s3))
 		return (NULL);
-	start_cat_s = cat_s;
-	start_s1 = s1;
-	while (s1 && *s1)
-		*cat_s++ = *s1++;
-	while (s2 && *s2)
-		*cat_s++ = *s2++;
-	*cat_s = '\0';
-	return (start_cat_s);
+	i = 0;
+	j = 0;
+	while (s1[i] != '\0')
+	{
+		s3[i] = s1[i];
+		i++;
+	}
+	while (s2[j] != '\0')
+	{
+		s3[i] = s2[j];
+		i++;
+		j++;
+	}
+	s3[i] = '\0';
+	/*free(s1);*/
+	return (s3);
 }

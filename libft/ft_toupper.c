@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_toupper.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: meunostu <meunostu@student.42.fr>          +#+  +:+       +#+        */
+/*   By: areggie <areggie@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/10/30 18:54:53 by meunostu          #+#    #+#             */
-/*   Updated: 2021/06/22 10:30:28 by meunostu         ###   ########.fr       */
+/*   Created: 2020/10/30 23:04:29 by areggie           #+#    #+#             */
+/*   Updated: 2021/04/11 18:55:25 by areggie          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 int	ft_toupper(int c)
 {
 	if (c >= 97 && c <= 122)
-		c = c - 32;
-	return (c);
+	{
+		return (c - ('a' - 'A'));
+	}
+	else
+	{
+		return (c);
+	}
 }
