@@ -79,3 +79,8 @@ Initially make sure you have brew installed. If not, please, run:
 then run:
 
     brew install readline
+
+Additional resources:
+An instruction document that describes how to debug a child process in VSCode.
+[ChildProcessDebuggingVSCode.docx](https://github.com/linguawork/ft_minishell/files/8890385/ChildProcessDebuggingVSCode.docx)
+
