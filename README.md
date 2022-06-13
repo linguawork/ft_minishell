@@ -84,3 +84,63 @@ Additional resources:
 An instruction document that describes how to debug a child process in VSCode.
 [ChildProcessDebuggingVSCode.docx](https://github.com/linguawork/ft_minishell/files/8890385/ChildProcessDebuggingVSCode.docx)
 
+
+Отладка дочерних процессов в VS Code
+
+Настройка конфигурации LLDB
+
+Создаем стандартный launch.json с конфигурацией lldb
+
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug",
+            "program": "${workspaceFolder}/minishell",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
+
+Вставка в код вызова расширения LLDB
+
+Необходимо сформировать текст команды и вызвать ее.
+Объявляем переменную char command[256], после каждого форка, если pid > 0, вызываем следующий код
+snprintf(command, sizeof(command), "code --open-url \"vscode://vadimcn.vscode-lldb/launch/config?{'request':'attach','pid':%d,'stopOnEntry':true}\"", pid);
+system(command);
+
+Если pid == 0, делаем задержку. Например, секунд 20.
+sleep(20);
+
+Полный пример:
+pid_t   pid;
+char    command[256];
+    
+pid = fork();
+if (pid > 0)
+{
+    // запуск отладки процесса по его pid
+    snprintf(command, sizeof(command), "code --open-url \"vscode://vadimcn.vscode-       lldb/launch/config?{'request':'attach','pid':%d,'stopOnEntry':true}\"", pid);
+    system(command);
+    // ---
+}
+else if (pid == 0)
+{
+    sleep(20); // ожидание присоединения отладчика
+    // код дочернего процесса
+}
+
+Отладка
+Запускаем отладку без каких-либо точек остановы. Все дочерние процессы остановятся на функции sleep (дизассемблер). В каждом процессе нужно выполнить шаг с выходом.
+
+
+Переключаться между дочерними процессами можно в вышеуказанной панели (undefined, undefined2, …)
+
+
+Ссылки
+
+https://github.com/vadimcn/vscode-lldb/blob/v1.6.5/MANUAL.md#attaching-debugger-to-the-current-process-c
+
